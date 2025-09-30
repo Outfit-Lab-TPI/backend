@@ -1,5 +1,8 @@
-C:\Users\germa\OneDrive\Escritorio\TPI-OutfitLab\src\main\java\com\outfitlab\project\domain\entities\User.java
-C:\Users\germa\OneDrive\Escritorio\TPI-OutfitLab\src\main\java\com\outfitlab\project\domain\exceptions\UserNotFound.java
-C:\Users\germa\OneDrive\Escritorio\TPI-OutfitLab\src\main\java\com\outfitlab\project\infrastructure\UserService.java
-C:\Users\germa\OneDrive\Escritorio\TPI-OutfitLab\src\main\java\com\outfitlab\project\presentation\UserController.java
-C:\Users\germa\OneDrive\Escritorio\TPI-OutfitLab\src\main\java\com\outfitlab\project\ProjectApplication.java
+C:\TPI\backend\src\main\java\com\outfitlab\project\domain\entities\User.java
+C:\TPI\backend\src\main\java\com\outfitlab\project\domain\exceptions\UserNotFound.java
+C:\TPI\backend\src\main\java\com\outfitlab\project\infrastructure\UserService.java
+C:\TPI\backend\src\main\java\com\outfitlab\project\presentation\UserController.java
+C:\TPI\backend\src\main\java\com\outfitlab\project\ProjectApplication.java
+C:\TPI\backend\src\main\java\com\outfitlab\project\security\config\CorsConfig.java
+C:\TPI\backend\src\main\java\com\outfitlab\project\security\config\HttpConfig.java
+C:\TPI\backend\src\main\java\com\outfitlab\project\security\config\SecurityConfig.java
