@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables ###
+.env
+
+### Docker ###
+docker-compose.override.yml
+
+### IA .MD ###
+dev_notes.md
