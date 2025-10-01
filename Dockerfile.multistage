@@ -1,0 +1,54 @@
+# Compila y ejecuta todo dentro de Docker
+
+# ===== STAGE 1: Build =====
+FROM amazoncorretto:17-alpine-jdk AS builder
+
+# Instalar Maven
+RUN apk add --no-cache maven
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de configuración Maven
+COPY pom.xml .
+COPY mvnw .
+COPY mvnw.cmd .
+COPY .mvn .mvn
+
+# Descargar dependencias (se cachea esta capa)
+RUN mvn dependency:go-offline -B
+
+# Copiar código fuente
+COPY src ./src
+
+# Compilar aplicación
+RUN mvn clean package -DskipTests
+
+# ===== STAGE 2: Runtime =====
+FROM amazoncorretto:17-alpine
+
+# Crear usuario no-root para seguridad
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar JAR desde stage de build
+COPY --from=builder /app/target/project-*.jar /app/outfitlab-backend.jar
+
+# Cambiar ownership al usuario de la app
+RUN chown -R appuser:appgroup /app
+
+# Cambiar a usuario no-root
+USER appuser
+
+# Exponer puerto
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+
+# Punto de entrada
+ENTRYPOINT ["java", "-jar", "/app/outfitlab-backend.jar"]
