@@ -42,12 +42,7 @@ public class TrippoService implements ITrippoService {
         }
         uploadResult.put("fileExtension", getFileExtension(image.getOriginalFilename()));
 
-        ByteArrayResource imageResource = new ByteArrayResource(image.getBytes()) {
-            @Override
-            public String getFilename() {
-                return image.getOriginalFilename();
-            }
-        };
+        ByteArrayResource imageResource = this.getImageResource(image);
 
         HttpHeaders uploadHeaders = new HttpHeaders();
         uploadHeaders.setBearerAuth(tripoApiKey);
@@ -74,6 +69,16 @@ public class TrippoService implements ITrippoService {
         return uploadResult;
     }
 
+    @Override
+    public ByteArrayResource getImageResource(MultipartFile image) throws IOException {
+        return new ByteArrayResource(image.getBytes()) {
+            @Override
+            public String getFilename() {
+                return image.getOriginalFilename();
+            }
+        };
+    }
+
 
     @Override
     public String generateImageToModelTrippo(Map<String, String> uploadData) throws JsonProcessingException {
@@ -82,7 +87,7 @@ public class TrippoService implements ITrippoService {
         taskHeaders.setContentType(MediaType.APPLICATION_JSON);
         taskHeaders.setBearerAuth(tripoApiKey);
 
-        Map<String, Object> fileMap = new HashMap<>();
+        Map<String, String> fileMap = new HashMap<>();
         fileMap.put("type", uploadData.get("fileExtension"));
         fileMap.put("file_token", uploadData.get("imageToken"));
 
