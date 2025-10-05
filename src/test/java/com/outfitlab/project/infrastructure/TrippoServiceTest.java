@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -81,6 +79,33 @@ public class TrippoServiceTest {
         assertEquals("task_id_12345", trippoServiceMock.generateImageToModelTrippo(uploadData));
     }
 
+    @Test
+    public void givenTaskSuccessWhenCheckTaskStatusThenReturnUrls() throws Exception {
+
+        String taskId = "tsk_123456";
+        Map<String, String> expectedResult = new HashMap<>();
+        expectedResult.put("glbUrl", "https://cdn.tripo3d.ai/model.glb");
+        expectedResult.put("webpUrl", "https://cdn.tripo3d.ai/image.webp");
+        expectedResult.put("taskId", taskId);
+
+        when(trippoServiceMock.checkTaskStatus(taskId)).thenReturn(expectedResult);
+
+        Map<String, String> result = trippoServiceMock.checkTaskStatus(taskId);
+
+        assertEquals("https://cdn.tripo3d.ai/model.glb", result.get("glbUrl"));
+        assertEquals("https://cdn.tripo3d.ai/image.webp", result.get("webpUrl"));
+        assertEquals(taskId, result.get("taskId"));
+    }
+
+    @Test
+    public void givenTaskFailedWhenCheckTaskStatusTheThrowException() throws Exception {
+
+        String taskId = "tsk_123456";
+        when(trippoServiceMock.checkTaskStatus(taskId)).thenThrow(RuntimeException.class);
+        assertThrows(RuntimeException.class, () -> trippoServiceMock.checkTaskStatus(taskId));
+    }
+    
+    
     @Test
     public void givenFileNameWhenCheckExtensionThenReturnExtension(){
         String fileName = "foto.png";
