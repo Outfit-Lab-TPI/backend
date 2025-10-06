@@ -24,32 +24,6 @@ public class TripoController {
         this.modelDownloadService = modelDownloadService;
     }
 
-    @PostMapping("/text-to-model")
-    public Mono<ResponseEntity<TripoCreateTaskResponse>> createTextToModel(
-            @RequestBody TripoTextToModelRequest request) {
-        
-        return tripoService.createTextToModelTask(request.getPrompt())
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    e.printStackTrace();
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
-    }
-
-    @PostMapping("/image-to-model")
-    public Mono<ResponseEntity<TripoCreateTaskResponse>> createImageToModel(
-            @RequestBody Map<String, String> request) {
-        
-        String imageUrl = request.get("imageUrl");
-        
-        return tripoService.createImageToModelTask(imageUrl)
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    e.printStackTrace();
-                    return Mono.just(ResponseEntity.internalServerError().build());
-                });
-    }
-
     @GetMapping("/task/{taskId}")
     public Mono<ResponseEntity<TripoTaskStatusResponse>> getTaskStatus(
             @PathVariable String taskId) {

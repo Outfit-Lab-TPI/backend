@@ -1,6 +1,5 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.dto.GarmentUploadResponse;
 import com.outfitlab.project.domain.dto.TripoCreateTaskResponse;
 import com.outfitlab.project.infrastructure.ImgBBService;
 import com.outfitlab.project.infrastructure.TripoService;
@@ -25,40 +24,55 @@ public class GarmentUploadController {
     }
 
     @PostMapping("/generate")
-public Mono<ResponseEntity<TripoCreateTaskResponse>> generateGarmentModel(
-        @RequestParam("files") MultipartFile[] files) {
-    
-    try {
-        if (files.length != 4) {
-            System.err.println("Error: Se requieren exactamente 4 imágenes, recibidas: " + files.length);
-            return Mono.just(ResponseEntity.badRequest().build());
-        }
+    public Mono<ResponseEntity<TripoCreateTaskResponse>> generateGarmentModel(
+            @RequestParam("back") MultipartFile backImage,
+            @RequestParam("front") MultipartFile frontImage,
+            @RequestParam("left") MultipartFile leftImage,
+            @RequestParam("right") MultipartFile rightImage) {
 
-        System.out.println("Uploading 4 files to ImgBB...");
-        
-        List<String> imageUrls = new ArrayList<>();
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                String publicUrl = imgBBService.uploadImage(file);
-                imageUrls.add(publicUrl);
-                System.out.println("Uploaded: " + publicUrl);
+        try {
+            System.out.println("Uploading images to ImgBB in correct order for multiview_to_model...");
+
+            // Verificar que al menos la imagen frontal esté presente (requerida por Tripo)
+            if (frontImage.isEmpty()) {
+                System.err.println("Error: La imagen frontal es requerida");
+                return Mono.just(ResponseEntity.badRequest().build());
             }
-        }
 
-        if (imageUrls.size() != 4) {
-            System.err.println("Error: No se pudieron subir las 4 imágenes");
+            // Subir imagen frontal (requerida)
+            String frontUrl = imgBBService.uploadImage(frontImage);
+            System.out.println("Front image uploaded: " + frontUrl);
+
+            // Subir imagen izquierda (opcional)
+            String leftUrl = null;
+            if (!leftImage.isEmpty()) {
+                leftUrl = imgBBService.uploadImage(leftImage);
+                System.out.println("Left image uploaded: " + leftUrl);
+            }
+
+            // Subir imagen trasera (opcional)
+            String backUrl = null;
+            if (!backImage.isEmpty()) {
+                backUrl = imgBBService.uploadImage(backImage);
+                System.out.println("Back image uploaded: " + backUrl);
+            }
+
+            // Subir imagen derecha (opcional)
+            String rightUrl = null;
+            if (!rightImage.isEmpty()) {
+                rightUrl = imgBBService.uploadImage(rightImage);
+                System.out.println("Right image uploaded: " + rightUrl);
+            }
+
+            System.out.println("Images uploaded. Creating multiview_to_model task...");
+            return tripoService.createMultiviewToModelTask(frontUrl, leftUrl, backUrl, rightUrl)
+                    .map(ResponseEntity::ok);
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
             return Mono.just(ResponseEntity.internalServerError().build());
         }
-
-        System.out.println("All 4 images uploaded. Using multiview_to_model");
-        return tripoService.createMultiviewToModelTask(imageUrls)
-                .map(ResponseEntity::ok);
-
-    } catch (Exception e) {
-        System.err.println("Error: " + e.getMessage());
-        e.printStackTrace();
-        return Mono.just(ResponseEntity.internalServerError().build());
     }
-}
 
 }
