@@ -28,7 +28,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/YOUR_GITHUB_USERNAME/backend-tpi # Reemplaza con tu usuario y nombre de imagen
+          images: ghcr.io/Outfit-Lab-TPI/backend-tpi
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
