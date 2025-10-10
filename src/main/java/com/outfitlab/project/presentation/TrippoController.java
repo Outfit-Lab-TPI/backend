@@ -5,6 +5,7 @@ import com.outfitlab.project.domain.repositories.TripoModelRepository;
 import com.outfitlab.project.infrastructure.MinioStorageService;
 import com.outfitlab.project.infrastructure.TrippoService;
 import com.outfitlab.project.presentation.dto.TripoModelResponse;
+import com.outfitlab.project.s3.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.google.common.io.Files.getFileExtension;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/trippo")
@@ -22,39 +25,54 @@ public class TrippoController {
     private final TrippoService trippoService;
     private final TripoModelRepository tripoModelRepository;
     private final MinioStorageService minioService;
+    private final S3Service s3Service;
 
     public TrippoController(TrippoService trippoService, 
                            TripoModelRepository tripoModelRepository,
-                           MinioStorageService minioService) {
+                           MinioStorageService minioService, S3Service s3Service) {
         this.trippoService = trippoService;
         this.tripoModelRepository = tripoModelRepository;
         this.minioService = minioService;
+        this.s3Service = s3Service;
     }
 
     @PostMapping("/upload/image")
     public ResponseEntity<TripoModelResponse> uploadImage(@RequestParam("image") MultipartFile imageFile) {
         try {
             log.info("Recibiendo imagen: {} ({} bytes)", imageFile.getOriginalFilename(), imageFile.getSize());
-            
-            // 1. Subir imagen a Tripo3D y MinIO
+
+            if (imageFile.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(TripoModelResponse.builder()
+                                .message("Archivo vacío")
+                                .build());
+            }
+
+            // 1. Subir imagen al bucket S3
+            String s3ImageURL = s3Service.uploadFile(imageFile, "models_images");
+
+            // 2. Subir imagen a Trippo
             Map<String, String> uploadData = trippoService.uploadImageToTrippo(imageFile);
             
-            // 2. Crear tarea de generación de modelo 3D
+            // 3. Crear tarea de generación de modelo 3D
             String taskId = trippoService.generateImageToModelTrippo(uploadData);
             
-            // 3. Buscar el modelo guardado en BD
+            // 4. Buscar el modelo guardado en BD
             Optional<TripoModel> modelOpt = tripoModelRepository.findByTaskId(taskId);
-            
+
             if (modelOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(TripoModelResponse.builder()
                                 .message("Error: Modelo no encontrado en base de datos")
                                 .build());
             }
-            
+
+            // 5. Guardar la URL de la imagen S3 en el registro del modelo
             TripoModel model = modelOpt.get();
-            
-            // 4. Preparar respuesta
+            model.setMinioImagePath(s3ImageURL);
+
+            tripoModelRepository.save(model);
+
             TripoModelResponse response = TripoModelResponse.builder()
                     .id(model.getId())
                     .taskId(model.getTaskId())
@@ -62,7 +80,7 @@ public class TrippoController {
                     .originalFilename(model.getOriginalFilename())
                     .fileExtension(model.getFileExtension())
                     .minioImagePath(model.getMinioImagePath())
-                    .imageUrl(minioService.getImageUrl(model.getMinioImagePath()))
+                    .imageUrl(model.getMinioImagePath())
                     .message("Imagen subida exitosamente. El modelo 3D se está generando.")
                     .build();
             

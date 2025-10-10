@@ -2,6 +2,8 @@ package com.outfitlab.project.infrastructure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
+import com.outfitlab.project.domain.repositories.TripoModelRepository;
+import com.outfitlab.project.s3.S3Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -16,7 +18,10 @@ import static org.mockito.Mockito.when;
 public class TrippoServiceTest {
 
     private TrippoService trippoServiceMock = mock(TrippoService.class);
-    private TrippoService trippoService = new TrippoService();
+    private MinioStorageService minioStorageService = mock(MinioStorageService.class);
+    private S3Service s3Service = mock(S3Service.class);
+    private TripoModelRepository trippoModelRepository = mock(TripoModelRepository.class);
+    private TrippoService trippoService = new TrippoService(s3Service, minioStorageService, trippoModelRepository);
 
     public MockMultipartFile giveFakeFile(){
         byte[] content = "fake image content".getBytes();

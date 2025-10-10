@@ -7,6 +7,7 @@ import com.outfitlab.project.domain.entities.TripoModel;
 import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
 import com.outfitlab.project.domain.interfaces.ITrippoService;
 import com.outfitlab.project.domain.repositories.TripoModelRepository;
+import com.outfitlab.project.s3.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -35,15 +36,18 @@ public class TrippoService implements ITrippoService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
     private final MinioStorageService minioService;
+    private final S3Service s3Service;
     private final TripoModelRepository tripoModelRepository;
 
-    public TrippoService(MinioStorageService minioService, TripoModelRepository tripoModelRepository) {
+    public TrippoService(S3Service s3Service, MinioStorageService minioService, TripoModelRepository tripoModelRepository) {
         this.minioService = minioService;
+        this.s3Service = s3Service;
         this.tripoModelRepository = tripoModelRepository;
     }
 
     @Override
     public Map<String, String> uploadImageToTrippo(MultipartFile image) throws IOException {
+        /*
         Map<String, String> uploadResult = new HashMap<>();
 
         if (!validateExtension(image.getOriginalFilename())) {
@@ -86,6 +90,51 @@ public class TrippoService implements ITrippoService {
         uploadResult.put("imageToken", imageToken);
         log.info("Imagen subida exitosamente a Tripo3D. Token: {}", imageToken);
         
+        return uploadResult;*/
+
+
+        // Leer bytes una sola vez
+        byte[] imageBytes = image.getBytes();
+        String originalFilename = image.getOriginalFilename();
+        String extension = getFileExtension(originalFilename);
+
+        Map<String, String> uploadResult = new HashMap<>();
+        uploadResult.put("originalFilename", originalFilename);
+        uploadResult.put("fileExtension", extension);
+
+        // 1️⃣ Subir imagen a MinIO
+        log.info("Guardando imagen en MinIO: {}", originalFilename);
+        String s3Url = s3Service.uploadFile(image, "models_images");
+        uploadResult.put("minioImagePath", s3Url);
+
+        // 2️⃣ Subir imagen a Trippo
+        ByteArrayResource imageResource = new ByteArrayResource(imageBytes) {
+            @Override
+            public String getFilename() {
+                return originalFilename;
+            }
+        };
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", imageResource);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.setBearerAuth(tripoApiKey);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(uploadUrl, requestEntity, String.class);
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Error al subir imagen a Trippo: " + response.getBody());
+        }
+
+        JsonNode json = mapper.readTree(response.getBody());
+        String imageToken = json.get("data").get("image_token").asText();
+        uploadResult.put("imageToken", imageToken);
+
+        log.info("Imagen subida exitosamente a Trippo. Token: {}", imageToken);
+
         return uploadResult;
     }
 
