@@ -1,5 +1,6 @@
 package com.outfitlab.project.infrastructure;
 
+import org.springframework.http.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -173,5 +180,74 @@ public class TrippoService implements ITrippoService {
             return nombreArchivo.substring(dotIndex+1).toLowerCase();
         }
         return "";
+    }
+
+    @Override
+    public Map<String, String> checkTaskStatus(String taskId) throws JsonProcessingException, InterruptedException {
+        Map<String, String> taskStatus = new HashMap<>();
+        String glbUrl = null;
+        String webpUrl = null;
+
+        for (int i = 0; i < 30; i++) { // acá espero 1 min para ver si ya me generó el glb
+            Thread.sleep(2000);
+
+            HttpHeaders taskHeaders = new HttpHeaders();
+            taskHeaders.setContentType(MediaType.APPLICATION_JSON);
+            taskHeaders.setBearerAuth(tripoApiKey);
+
+            HttpEntity<Void> entityWithTaskHeaders = new HttpEntity<>(taskHeaders);
+            ResponseEntity<String> statusResponse = restTemplate.exchange(
+                    taskUrl + "/" + taskId,
+                    HttpMethod.GET,
+                    entityWithTaskHeaders,
+                    String.class);
+
+            JsonNode statusJson = mapper.readTree(statusResponse.getBody());
+            String status = statusJson.path("data").get("status").asText();
+
+            if (status.equalsIgnoreCase("success")) {
+                glbUrl = statusJson.path("data").get("result").get("pbr_model").get("url").asText();
+                webpUrl = statusJson.path("data").get("result").get("rendered_image").get("url").asText();
+                taskStatus.put("glbUrl", glbUrl);
+                taskStatus.put("webpUrl", webpUrl);
+                taskStatus.put("taskId", taskId);
+                break;
+            } else if (status.equalsIgnoreCase("failed")) {
+                throw new RuntimeException("La tarea falló: " + statusResponse.getBody());
+            }
+        }
+        return taskStatus;
+    }
+
+    @Override
+    public Map<String, String> saveFilesFromTask(Map<String, String> taskResponse) throws IOException {
+        // cuando tengamos el AWS, la idea es que estas url las bajemos y enviemos esos archivos a nuestro AWS y luego obtener
+        // la URL de ESOS archivos recién alojados en nuestro AWS y enviarlas al front así pueden usarlas para mostrarlos.
+        // (ya que las url de trippo no nos deja usarla en el front)
+
+        String imageUrl = taskResponse.get("webpUrl");
+        String modelUrl = taskResponse.get("glbUrl");
+        String taskId = taskResponse.get("taskId");
+
+        if (imageUrl == null || modelUrl == null || taskId == null) {
+            throw new IllegalArgumentException("Faltan datos en el mapa");
+        }
+
+        Path resourcesPath = Paths.get("src/main/resources");
+        Map<String, String> localPaths = new HashMap<>();
+
+        Path imagePath = resourcesPath.resolve(taskId + "_image.webp");
+        try (InputStream in = new URL(imageUrl).openStream()) {
+            Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        localPaths.put("image", "resources/" + imagePath.getFileName());
+
+        Path modelPath = resourcesPath.resolve(taskId + "_3d.glb");
+        try (InputStream in = new URL(modelUrl).openStream()) {
+            Files.copy(in, modelPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        localPaths.put("glb", "resources/" + modelPath.getFileName());
+
+        return localPaths;
     }
 }
