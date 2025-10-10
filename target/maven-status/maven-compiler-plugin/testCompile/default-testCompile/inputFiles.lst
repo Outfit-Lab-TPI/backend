@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 C:\Users\germa\OneDrive\Escritorio\backend\src\test\java\com\outfitlab\project\infrastructure\TrippoServiceTest.java
 C:\Users\germa\OneDrive\Escritorio\backend\src\test\java\com\outfitlab\project\ProjectApplicationTests.java
+=======
+C:\TPI\backend\src\test\java\com\outfitlab\project\infrastructure\TrippoServiceTest.java
+C:\TPI\backend\src\test\java\com\outfitlab\project\ProjectApplicationTests.java
+>>>>>>> feature/integration-s3-storage

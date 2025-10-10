@@ -1,39 +1,56 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.infrastructure.TrippoService;
+import com.outfitlab.project.domain.entities.TripoModel;
+import com.outfitlab.project.infrastructure.TrippoControllerService;
+import com.outfitlab.project.presentation.dto.TripoModelResponse;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/upload")
+@RequestMapping("/api/trippo")
+@AllArgsConstructor
 public class TrippoController {
 
-    private final TrippoService trippoService;
+    private final TrippoControllerService trippoControllerService;
 
-    public TrippoController(TrippoService trippoService) {
-        this.trippoService = trippoService;
+    @PostMapping("/upload/image")
+    public ResponseEntity<TripoModelResponse> uploadImage(@RequestParam("image") MultipartFile imageFile) {
+        try {
+            TripoModel model = trippoControllerService.uploadAndProcessImage(imageFile);
+            return ResponseEntity.ok(buildResponse(model));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(TripoModelResponse.builder().message(e.getMessage()).build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(TripoModelResponse.builder().message("Error: " + e.getMessage()).build());
+        }
     }
 
-    @PostMapping("/image")
-    public ResponseEntity<String> uploadStaticImage(@RequestParam("image") MultipartFile imageFile) {
+    @GetMapping("/models/{taskId}")
+    public ResponseEntity<TripoModelResponse> getModelStatus(@PathVariable String taskId) {
         try {
-            Map<String, String> uploadData = trippoService.uploadImageToTrippo(imageFile);
-            String taskId = trippoService.generateImageToModelTrippo(uploadData);
-            Map<String, String> taskResponse = trippoService.checkTaskStatus(taskId);
-            Map<String, String> urlFiles = trippoService.saveFilesFromTask(taskResponse);
-
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(urlFiles);
-
-            return ResponseEntity.ok(json);
+            TripoModel model = trippoControllerService.getModelByTaskId(taskId);
+            return ResponseEntity.ok(buildResponse(model));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(TripoModelResponse.builder().message(e.getMessage()).build());
         }
+    }
+
+    private TripoModelResponse buildResponse(TripoModel model) {
+        return TripoModelResponse.builder()
+                .id(model.getId())
+                .taskId(model.getTaskId())
+                .status(model.getStatus().name())
+                .originalFilename(model.getOriginalFilename())
+                .fileExtension(model.getFileExtension())
+                .minioImagePath(model.getMinioImagePath())
+                .imageUrl(model.getMinioImagePath())
+                .message("Imagen subida exitosamente. El modelo 3D se está generando.")
+                .build();
     }
 }
