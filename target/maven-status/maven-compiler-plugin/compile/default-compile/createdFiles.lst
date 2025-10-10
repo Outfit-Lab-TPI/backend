@@ -1,8 +1,9 @@
 com\outfitlab\project\security\config\CorsConfig.class
 com\outfitlab\project\domain\exceptions\ImageInvalidFormatException.class
 com\outfitlab\project\domain\entities\User.class
+com\outfitlab\project\infrastructure\config\RestTemplateConfig.class
 com\outfitlab\project\presentation\dto\TripoModelResponse$TripoModelResponseBuilder.class
-com\outfitlab\project\infrastructure\MinioStorageService.class
+com\outfitlab\project\infrastructure\TrippoControllerService.class
 com\outfitlab\project\presentation\dto\TripoModelResponse.class
 com\outfitlab\project\s3\S3Service.class
 com\outfitlab\project\presentation\UserController.class

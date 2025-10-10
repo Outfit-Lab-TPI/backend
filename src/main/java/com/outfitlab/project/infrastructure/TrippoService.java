@@ -33,67 +33,23 @@ public class TrippoService implements ITrippoService {
     private String uploadUrl = "https://api.tripo3d.ai/v2/openapi/upload";
     private String taskUrl = "https://api.tripo3d.ai/v2/openapi/task";
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final ObjectMapper mapper = new ObjectMapper();
-    private final MinioStorageService minioService;
     private final S3Service s3Service;
     private final TripoModelRepository tripoModelRepository;
 
-    public TrippoService(S3Service s3Service, MinioStorageService minioService, TripoModelRepository tripoModelRepository) {
-        this.minioService = minioService;
+    public TrippoService(S3Service s3Service, TripoModelRepository tripoModelRepository, RestTemplate restTemplate) {
         this.s3Service = s3Service;
         this.tripoModelRepository = tripoModelRepository;
+        this.restTemplate = restTemplate;
     }
 
     @Override
     public Map<String, String> uploadImageToTrippo(MultipartFile image) throws IOException {
-        /*
-        Map<String, String> uploadResult = new HashMap<>();
-
         if (!validateExtension(image.getOriginalFilename())) {
             throw new ImageInvalidFormatException("Formato de imagen no válido. Solo se aceptan JPG, JPEG, PNG y WEBP.");
         }
-        
-        String fileExtension = getFileExtension(image.getOriginalFilename());
-        uploadResult.put("fileExtension", fileExtension);
-        uploadResult.put("originalFilename", image.getOriginalFilename());
 
-        // 1. Guardar imagen en MinIO
-        log.info("Guardando imagen en MinIO: {}", image.getOriginalFilename());
-        String minioImagePath = minioService.uploadImage(image);
-        uploadResult.put("minioImagePath", minioImagePath);
-
-        // 2. Subir imagen a Tripo3D
-        ByteArrayResource imageResource = this.getImageResource(image);
-
-        HttpHeaders uploadHeaders = new HttpHeaders();
-        uploadHeaders.setBearerAuth(tripoApiKey);
-        uploadHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file",imageResource);
-
-        HttpEntity<MultiValueMap<String, Object>> uploadRequest = new HttpEntity<>(body, uploadHeaders);
-        ResponseEntity<String> uploadResponse = restTemplate.postForEntity(
-                uploadUrl,
-                uploadRequest,
-                String.class
-        );
-
-        if (!uploadResponse.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Error al cargarle la imagen a Trippo: " + uploadResponse.getBody());
-        }
-
-        JsonNode uploadJson = mapper.readTree(uploadResponse.getBody());
-        String imageToken = uploadJson.get("data").get("image_token").asText();
-
-        uploadResult.put("imageToken", imageToken);
-        log.info("Imagen subida exitosamente a Tripo3D. Token: {}", imageToken);
-        
-        return uploadResult;*/
-
-
-        // Leer bytes una sola vez
         byte[] imageBytes = image.getBytes();
         String originalFilename = image.getOriginalFilename();
         String extension = getFileExtension(originalFilename);
