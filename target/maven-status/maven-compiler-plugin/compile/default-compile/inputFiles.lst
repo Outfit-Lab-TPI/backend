@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\entities\User.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\exceptions\ImageInvalidFormatException.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\exceptions\UserNotFound.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\interfaces\ITrippoService.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\infrastructure\TrippoService.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\infrastructure\UserService.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\presentation\TrippoController.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\presentation\UserController.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\ProjectApplication.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\security\config\CorsConfig.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\security\config\HttpConfig.java
-C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\security\config\SecurityConfig.java
-=======
 C:\TPI\backend\src\main\java\com\outfitlab\project\domain\entities\TripoModel.java
 C:\TPI\backend\src\main\java\com\outfitlab\project\domain\interfaces\ITrippoService.java
 C:\TPI\backend\src\main\java\com\outfitlab\project\security\config\SecurityConfig.java
@@ -32,4 +18,3 @@ C:\TPI\backend\src\main\java\com\outfitlab\project\infrastructure\UserService.ja
 C:\TPI\backend\src\main\java\com\outfitlab\project\domain\exceptions\UserNotFound.java
 C:\TPI\backend\src\main\java\com\outfitlab\project\infrastructure\config\RestTemplateConfig.java
 C:\TPI\backend\src\main\java\com\outfitlab\project\s3\S3Config.java
->>>>>>> feature/integration-s3-storage

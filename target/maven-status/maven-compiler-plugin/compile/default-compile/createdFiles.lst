@@ -1,13 +1,6 @@
 com\outfitlab\project\security\config\CorsConfig.class
 com\outfitlab\project\domain\exceptions\ImageInvalidFormatException.class
 com\outfitlab\project\domain\entities\User.class
-<<<<<<< HEAD
-com\outfitlab\project\ProjectApplication.class
-com\outfitlab\project\infrastructure\UserService.class
-com\outfitlab\project\presentation\UserController.class
-com\outfitlab\project\domain\exceptions\UserNotFound.class
-com\outfitlab\project\security\config\SecurityConfig.class
-=======
 com\outfitlab\project\infrastructure\config\RestTemplateConfig.class
 com\outfitlab\project\presentation\dto\TripoModelResponse$TripoModelResponseBuilder.class
 com\outfitlab\project\infrastructure\TrippoControllerService.class
@@ -29,5 +22,4 @@ com\outfitlab\project\domain\entities\TripoModel$TripoModelBuilder.class
 com\outfitlab\project\domain\exceptions\UserNotFound.class
 com\outfitlab\project\infrastructure\config\MinioConfig.class
 com\outfitlab\project\infrastructure\TrippoService$1.class
->>>>>>> feature/integration-s3-storage
 com\outfitlab\project\security\config\HttpConfig.class
