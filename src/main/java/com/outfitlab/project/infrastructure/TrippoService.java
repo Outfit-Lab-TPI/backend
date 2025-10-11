@@ -188,8 +188,8 @@ public class TrippoService implements ITrippoService {
         String glbUrl = null;
         String webpUrl = null;
 
-        for (int i = 0; i < 30; i++) { // acá espero 1 min para ver si ya me generó el glb
-            Thread.sleep(2000);
+        for (int i = 0; i < 40; i++) { // acá espero 1 min para ver si ya me generó el glb
+            Thread.sleep(10000);
 
             HttpHeaders taskHeaders = new HttpHeaders();
             taskHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -204,6 +204,7 @@ public class TrippoService implements ITrippoService {
 
             JsonNode statusJson = mapper.readTree(statusResponse.getBody());
             String status = statusJson.path("data").get("status").asText();
+            System.out.println("EL ESTADO ACTUAL ES: " + status + ". ITERACIÓN N°: " + i);
 
             if (status.equalsIgnoreCase("success")) {
                 glbUrl = statusJson.path("data").get("result").get("pbr_model").get("url").asText();
