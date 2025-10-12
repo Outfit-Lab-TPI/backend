@@ -7,8 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Map;
 
-public interface ITrippoService {
-    Map<String, String> uploadImageToTrippo(MultipartFile image) throws IOException; // me va a devolver el image_token
+public interface ITripoService {
+
+    String requestUploadImageApiTripo(MultipartFile image) throws IOException;
 
     ByteArrayResource getImageResource(MultipartFile image) throws IOException;
 

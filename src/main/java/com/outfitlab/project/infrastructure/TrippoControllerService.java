@@ -1,6 +1,6 @@
 package com.outfitlab.project.infrastructure;
 
-import com.outfitlab.project.domain.entities.TripoModel;
+import com.outfitlab.project.domain.models.TripoModel;
 import com.outfitlab.project.domain.repositories.TripoModelRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class TrippoControllerService {
     public TripoModel uploadAndProcessImage(MultipartFile imageFile) throws Exception {
         if (imageFile.isEmpty()) throw new IllegalArgumentException("Archivo vacío");
 
-        Map<String, String> uploadData = trippoService.uploadImageToTrippo(imageFile);
+        Map<String, String> uploadData = trippoService.requestUploadImageApiTripo(imageFile);
         String taskId = trippoService.generateImageToModelTrippo(uploadData);
         System.out.println(this.trippoService.checkTaskStatus(taskId));
 

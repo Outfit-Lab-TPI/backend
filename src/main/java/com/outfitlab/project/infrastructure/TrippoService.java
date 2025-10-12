@@ -4,9 +4,8 @@ import org.springframework.http.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.outfitlab.project.domain.entities.TripoModel;
-import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
-import com.outfitlab.project.domain.interfaces.ITrippoService;
+import com.outfitlab.project.domain.models.TripoModel;
+import com.outfitlab.project.domain.interfaces.ITripoService;
 import com.outfitlab.project.domain.repositories.TripoModelRepository;
 import com.outfitlab.project.s3.S3Service;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class TrippoService implements ITrippoService {
+public class TrippoService implements ITripoService {
 
     @Value("${tripo.api.key}")
     private String tripoApiKey;
@@ -52,34 +51,10 @@ public class TrippoService implements ITrippoService {
     }
 
     @Override
-    public Map<String, String> uploadImageToTrippo(MultipartFile image) throws IOException {
-        if (!validateExtension(image.getOriginalFilename())) {
-            throw new ImageInvalidFormatException("Formato de imagen no válido. Solo se aceptan JPG, JPEG, PNG y WEBP.");
-        }
-
-        byte[] imageBytes = image.getBytes();
-        String originalFilename = image.getOriginalFilename();
-        String extension = getFileExtension(originalFilename);
-
-        Map<String, String> uploadResult = new HashMap<>();
-        uploadResult.put("originalFilename", originalFilename);
-        uploadResult.put("fileExtension", extension);
-
-        // 1️⃣ Subir imagen a MinIO
-        log.info("Guardando imagen en MinIO: {}", originalFilename);
-        String s3Url = s3Service.uploadFile(image, "models_images");
-        uploadResult.put("minioImagePath", s3Url);
-
-        // 2️⃣ Subir imagen a Trippo
-        ByteArrayResource imageResource = new ByteArrayResource(imageBytes) {
-            @Override
-            public String getFilename() {
-                return originalFilename;
-            }
-        };
+    public String requestUploadImageApiTripo(MultipartFile image) throws IOException {
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", imageResource);
+        body.add("file", getImageResource(image));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -94,11 +69,10 @@ public class TrippoService implements ITrippoService {
 
         JsonNode json = mapper.readTree(response.getBody());
         String imageToken = json.get("data").get("image_token").asText();
-        uploadResult.put("imageToken", imageToken);
 
         log.info("Imagen subida exitosamente a Trippo. Token: {}", imageToken);
 
-        return uploadResult;
+        return imageToken;
     }
 
     @Override
@@ -145,14 +119,7 @@ public class TrippoService implements ITrippoService {
         String taskId = taskJson.get("data").get("task_id").asText();
         
         // Guardar en base de datos
-        TripoModel tripoModel = TripoModel.builder()
-                .taskId(taskId)
-                .imageToken(uploadData.get("imageToken"))
-                .originalFilename(uploadData.get("originalFilename"))
-                .fileExtension(uploadData.get("fileExtension"))
-                .minioImagePath(uploadData.get("minioImagePath"))
-                .status(TripoModel.ModelStatus.PENDING)
-                .build();
+        TripoModel tripoModel = new TripoModel(taskId, uploadData.get("imageToken"), uploadData.get("originalFilename"), uploadData.get("fileExtension"), uploadData.get("minioImagePath"), TripoModel.ModelStatus.PENDING);
         
         tripoModelRepository.save(tripoModel);
         log.info("Modelo guardado en BD con taskId: {}", taskId);

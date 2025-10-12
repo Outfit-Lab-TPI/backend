@@ -1,6 +1,6 @@
 package com.outfitlab.project.infrastructure;
 
-import com.outfitlab.project.domain.entities.TripoModel;
+import com.outfitlab.project.domain.models.TripoModel;
 import com.outfitlab.project.domain.repositories.TripoModelRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class TrippoControllerServiceTest {
         savedModel.setTaskId("1234");
         savedModel.setMinioImagePath("path/to/image.jpg");
 
-        when(trippoService.uploadImageToTrippo(imageFile)).thenReturn(uploadData);
+        when(trippoService.requestUploadImageApiTripo(imageFile)).thenReturn(uploadData);
         when(trippoService.generateImageToModelTrippo(uploadData)).thenReturn("1234");
         when(tripoModelRepository.findByTaskId("1234")).thenReturn(Optional.of(modelFromDb));
         when(tripoModelRepository.save(any(TripoModel.class))).thenReturn(savedModel);
@@ -55,7 +55,7 @@ class TrippoControllerServiceTest {
 
         assertEquals("1234", result.getTaskId());
         assertEquals("path/to/image.jpg", result.getMinioImagePath());
-        verify(trippoService, times(1)).uploadImageToTrippo(imageFile);
+        verify(trippoService, times(1)).requestUploadImageApiTripo(imageFile);
         verify(trippoService, times(1)).generateImageToModelTrippo(uploadData);
         verify(tripoModelRepository, times(1)).findByTaskId("1234");
         verify(tripoModelRepository, times(1)).save(any(TripoModel.class));

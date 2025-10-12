@@ -1,7 +1,7 @@
 package com.outfitlab.project.infrastructure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.outfitlab.project.domain.entities.TripoModel;
+import com.outfitlab.project.domain.models.TripoModel;
 import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
 import com.outfitlab.project.domain.repositories.TripoModelRepository;
 import com.outfitlab.project.s3.S3Service;
@@ -65,7 +65,7 @@ public class TrippoServiceTest {
     @Test
     void givenInvalidExtensionWhenUploadThenThrows() {
         MockMultipartFile file = createFakeFile("file.svg", "image/svg+xml");
-        assertThrows(ImageInvalidFormatException.class, () -> trippoService.uploadImageToTrippo(file));
+        assertThrows(ImageInvalidFormatException.class, () -> trippoService.requestUploadImageApiTripo(file));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TrippoServiceTest {
         ResponseEntity<String> responseEntity = new ResponseEntity<>(fakeResponse, HttpStatus.OK);
         when(restTemplateMock.postForEntity(anyString(), any(), eq(String.class))).thenReturn(responseEntity);
 
-        Map<String, String> result = trippoService.uploadImageToTrippo(file);
+        Map<String, String> result = trippoService.requestUploadImageApiTripo(file);
 
         assertEquals("foto.jpg", result.get("originalFilename"));
         assertEquals("jpg", result.get("fileExtension"));

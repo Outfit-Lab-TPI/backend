@@ -1,6 +1,6 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.entities.User;
+import com.outfitlab.project.domain.models.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFound;
 import com.outfitlab.project.infrastructure.UserService;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable int id) throws UserNotFound {
+    public UserModel getUser(@PathVariable int id) throws UserNotFound {
         return this.userService.findUserById(id);
     }
 

@@ -1,20 +1,11 @@
-package com.outfitlab.project.domain.entities;
+package com.outfitlab.project.infrastructure.entities;
 
+import com.outfitlab.project.domain.models.TripoModel;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "tripo_models")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TripoModel {
+public class Prenda {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,10 +62,28 @@ public class TripoModel {
     }
 
     public enum ModelStatus {
-        PENDING,        // Imagen subida, esperando procesamiento
-        PROCESSING,     // Tripo3D está generando el modelo
-        COMPLETED,      // Modelo 3D generado exitosamente
-        FAILED,         // Falló la generación
-        DOWNLOADED      // Modelo descargado y guardado en MinIO
+        PENDING,
+        PROCESSING,
+        COMPLETED,
+        FAILED,
+        DOWNLOADED
     }
+
+    public static Prenda convertToEntity(TripoModel model) {
+        Prenda prenda = new Prenda();
+        prenda.id = model.getId();
+        prenda.taskId = model.getTaskId();
+        prenda.imageToken = model.getImageToken();
+        prenda.originalFilename = model.getOriginalFilename();
+        prenda.fileExtension = model.getFileExtension();
+        prenda.status = Prenda.ModelStatus.valueOf(model.getStatus().name());
+        prenda.minioImagePath = model.getMinioImagePath();
+        prenda.minioModelPath = model.getMinioModelPath();
+        prenda.tripoModelUrl = model.getTripoModelUrl();
+        prenda.createdAt = model.getCreatedAt();
+        prenda.updatedAt = model.getUpdatedAt();
+        prenda.errorMessage = model.getErrorMessage();
+        return prenda;
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.outfitlab.project.domain.repositories;
 
-import com.outfitlab.project.domain.entities.TripoModel;
+import com.outfitlab.project.domain.models.TripoModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

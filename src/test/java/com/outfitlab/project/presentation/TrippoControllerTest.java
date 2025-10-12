@@ -1,6 +1,6 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.entities.TripoModel;
+import com.outfitlab.project.domain.models.TripoModel;
 import com.outfitlab.project.infrastructure.TrippoControllerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,14 +35,15 @@ class TrippoControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "image", "test.jpg", "image/jpeg", "dummy data".getBytes());
 
-        TripoModel model = TripoModel.builder()
-                .id(1L)
-                .taskId("task123")
-                .status(TripoModel.ModelStatus.PENDING)
-                .originalFilename("test.jpg")
-                .fileExtension("jpg")
-                .minioImagePath("path/to/image.jpg")
-                .build();
+        TripoModel model = new TripoModel(
+                "task123",
+                null,
+                "test.jpg",
+                "jpg",
+                "path/to/image.jpg",
+                TripoModel.ModelStatus.PENDING
+        );
+        model.setId(1L);
 
         when(trippoControllerService.uploadAndProcessImage(any())).thenReturn(model);
 
@@ -78,14 +79,15 @@ class TrippoControllerTest {
 
     @Test
     void givenTaskIdWhenGetModelStatusThenReturnOk() throws Exception {
-        TripoModel model = TripoModel.builder()
-                .id(1L)
-                .taskId("task123")
-                .status(TripoModel.ModelStatus.PENDING)
-                .originalFilename("test.jpg")
-                .fileExtension("jpg")
-                .minioImagePath("path/to/image.jpg")
-                .build();
+        TripoModel model = new TripoModel(
+                "task123",
+                null,
+                "test.jpg",
+                "jpg",
+                "path/to/image.jpg",
+                TripoModel.ModelStatus.PENDING
+        );
+        model.setId(1L);
 
         when(trippoControllerService.getModelByTaskId("task123")).thenReturn(model);
 

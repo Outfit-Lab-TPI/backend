@@ -1,6 +1,7 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.entities.TripoModel;
+import com.outfitlab.project.domain.models.TripoModel;
+import com.outfitlab.project.domain.uc.UploadImageToTripo;
 import com.outfitlab.project.infrastructure.TrippoControllerService;
 import com.outfitlab.project.presentation.dto.TripoModelResponse;
 import lombok.AllArgsConstructor;
@@ -9,15 +10,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/trippo")
 @AllArgsConstructor
 public class TrippoController {
 
     private final TrippoControllerService trippoControllerService;
+    private final UploadImageToTripo uploadImageToTripo;
 
     @PostMapping("/upload/image")
     public ResponseEntity<TripoModelResponse> uploadImage(@RequestParam("image") MultipartFile imageFile) {
+        try {
+            Map<String, String> uploadResult = this.uploadImageToTripo.execute(imageFile);
+        }catch (Exception e){
+
+        }
+
+
         try {
             TripoModel model = trippoControllerService.uploadAndProcessImage(imageFile);
             return ResponseEntity.ok(buildResponse(model));
