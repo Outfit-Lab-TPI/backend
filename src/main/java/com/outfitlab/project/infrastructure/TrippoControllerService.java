@@ -20,6 +20,7 @@ public class TrippoControllerService {
 
         Map<String, String> uploadData = trippoService.uploadImageToTrippo(imageFile);
         String taskId = trippoService.generateImageToModelTrippo(uploadData);
+        System.out.println(this.trippoService.checkTaskStatus(taskId));
 
         TripoModel model = tripoModelRepository.findByTaskId(taskId)
                 .orElseThrow(() -> new IllegalStateException("Modelo no encontrado en base de datos"));
