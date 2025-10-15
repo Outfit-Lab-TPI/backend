@@ -17,7 +17,10 @@ public class CorsConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of("http://localhost:5173"));
+        config.setAllowedOriginPatterns(List.of(
+                "https://*.vercel.app",
+                "http://localhost:5173"
+        ));  // le puse cualquiera q termine con vercel.app por si me llega a cambiar el dominio por los nuevos deploy CUIDADO.
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
 
