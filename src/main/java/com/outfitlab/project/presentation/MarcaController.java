@@ -33,18 +33,15 @@ public class MarcaController {
         }
     }
 
-
     @GetMapping("/marcas/{codigoMarca}")
     public ResponseEntity<?> getMarcaAtributes(@PathVariable String codigoMarca) {
         try {
-            Marca marcas = marcaService.getMarcaAtributesByCodigoMarca(codigoMarca);
-            return ResponseEntity.ok(marcas);
+            Marca marca = marcaService.getMarcaAtributesByCodigoMarca(codigoMarca);
+            return ResponseEntity.ok(marca);
         } catch (MarcasNotFoundException e) {
             return ResponseEntity
                     .status(404)
                     .body(e.getMessage());
         }
-
-
     }
 }
