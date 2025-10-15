@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.outfitlab.project.s3.S3ServiceTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.371 s -- in com.outfitlab.project.s3.S3ServiceTest
