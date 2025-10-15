@@ -1,14 +1,14 @@
 package com.outfitlab.project.presentation.dto;
 
 public class CombineRequest {
-    private String superiorUrl;
-    private String inferiorUrl;
+    private String superior;
+    private String inferior;
     private Boolean esHombre;
 
-    public String getSuperiorUrl() { return superiorUrl; }
-    public void setSuperiorUrl(String superiorUrl) { this.superiorUrl = superiorUrl; }
-    public String getInferiorUrl() { return inferiorUrl; }
-    public void setInferiorUrl(String inferiorUrl) { this.inferiorUrl = inferiorUrl; }
+    public String getSuperior() { return superior; }
+    public void setSuperior(String superior) { this.superior = superior; }
+    public String getInferior() { return inferior; }
+    public void setInferior(String inferior) { this.inferior = inferior; }
     public Boolean getEsHombre() {return esHombre;}
     public void setEsHombre(Boolean esHombre) {this.esHombre = esHombre;}
 }

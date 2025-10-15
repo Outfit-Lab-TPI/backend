@@ -19,6 +19,7 @@ public class TryOnController {
 
     @PostMapping("/combinar-prendas")
     public ResponseEntity<GeneratedResponse> combine(@RequestBody CombineRequest req) {
+        System.out.println(req.toString());
         try {
             String generatedUrl = tryOnService.combine(req);
             GeneratedResponse resp = new GeneratedResponse("OK", generatedUrl, null);
@@ -30,7 +31,6 @@ public class TryOnController {
             GeneratedResponse resp = new GeneratedResponse("TIMEOUT", null, ex.getMessage());
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(resp);
         } catch (FashnApiException ex) {
-            // error con la API de FASHN o conexión
             GeneratedResponse resp = new GeneratedResponse("ERROR", null, ex.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(resp);
         } catch (Exception ex) {

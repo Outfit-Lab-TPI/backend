@@ -28,16 +28,16 @@ public class TryOnService {
     private final String BASE_URL = "https://api.fashn.ai/v1";
 
     private final String AVATAR_HOMBRE = "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/models_images/men-with-jean-menmodel.jpg";
-    private final String AVATAR_MUJER = "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/models_images/avatar-mujer-alta-calidad-bkg-removed.png";
+    private final String AVATAR_MUJER = "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/models_images/avatar-mujer-real-grande.png";
 
     public TryOnService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     public String combine(CombineRequest req) {
-        String avatarUrl = AVATAR_MUJER;//req.getEsHombre()==true ? AVATAR_HOMBRE : AVATAR_MUJER;
-        String superior = "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/models_images/gap-con-negro.jpeg";//"https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/models_images/remera-adidas.png";//req.getSuperiorUrl();
-        String inferior = "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/models_images/imagen_joggin_negro.jpg";//req.getInferiorUrl();
+        String avatarUrl = req.getEsHombre() ? AVATAR_HOMBRE : AVATAR_MUJER;
+        String superior = req.getSuperior();
+        String inferior = req.getInferior();
         String category = "auto";
         String mode = "balanced";
         String garmentPhotoType = "flat-lay";
