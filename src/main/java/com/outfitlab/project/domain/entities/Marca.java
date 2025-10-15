@@ -1,5 +1,6 @@
 package com.outfitlab.project.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Marca {
+
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
@@ -28,6 +32,9 @@ public class Marca {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "marca", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Prenda> prendas = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -40,6 +47,8 @@ public class Marca {
         updatedAt = LocalDateTime.now();
     }
 
-
-
+    public void addPrenda(Prenda prenda) {
+        this.prendas.add(prenda);
+        prenda.setMarca(this);
+    }
 }
