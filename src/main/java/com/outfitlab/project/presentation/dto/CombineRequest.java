@@ -1,14 +1,14 @@
 package com.outfitlab.project.presentation.dto;
 
-import java.util.List;
-
 public class CombineRequest {
-    private String avatarUrl;
-    private String garmentUrl;
+    private String superiorUrl;
+    private String inferiorUrl;
+    private Boolean esHombre;
 
-    // getters y setters
-    public String getAvatarUrl() { return avatarUrl; }
-    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
-    public String getGarmentUrl() { return garmentUrl; }
-    public void setGarmentUrl(String garmentUrl) { this.garmentUrl = garmentUrl; }
+    public String getSuperiorUrl() { return superiorUrl; }
+    public void setSuperiorUrl(String superiorUrl) { this.superiorUrl = superiorUrl; }
+    public String getInferiorUrl() { return inferiorUrl; }
+    public void setInferiorUrl(String inferiorUrl) { this.inferiorUrl = inferiorUrl; }
+    public Boolean getEsHombre() {return esHombre;}
+    public void setEsHombre(Boolean esHombre) {this.esHombre = esHombre;}
 }

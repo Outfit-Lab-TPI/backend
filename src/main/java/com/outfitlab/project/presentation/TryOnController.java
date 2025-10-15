@@ -17,7 +17,7 @@ public class TryOnController {
         this.tryOnService = tryOnService;
     }
 
-    @PostMapping("/combine")
+    @PostMapping("/combinar-prendas")
     public ResponseEntity<GeneratedResponse> combine(@RequestBody CombineRequest req) {
         try {
             String generatedUrl = tryOnService.combine(req);
