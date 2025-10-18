@@ -212,4 +212,10 @@ public class TryOnService {
         logger.error("⏱️ Se agotaron los intentos de polling para la predicción {}", predictionId);
         throw new PredictionTimeoutException("Se agotaron los intentos de polling para la predicción " + predictionId);
     }
+
+    public String getCombinationUrl(String nombreCombinacion) {
+        System.out.println("Requested combination ****************************************** : " + nombreCombinacion);
+        return "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/combinaciones/" + nombreCombinacion + ".png";
+        // return "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Model_Posing_On_Typical_Studio_Set.jpg/250px-Model_Posing_On_Typical_Studio_Set.jpg";
+    }
 }

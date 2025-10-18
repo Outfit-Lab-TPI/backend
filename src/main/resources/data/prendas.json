@@ -1,0 +1,167 @@
+{
+  "puma": {
+    "nombre": "Puma srl",
+    "logoUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma-logo.png",
+    "sitioUrl": "https://www.puma.com",
+    "prendas": [
+      {
+        "nombre": "Wardrobe Essentials Suede",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma/superior/1.png",
+        "codigo": "s1"
+      },
+      {
+        "nombre": "The NeverWorn VI",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma/superior/2.png",
+        "codigo": "s2"
+      },
+      {
+        "nombre": "Junior Varsity III",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma/superior/3.png",
+        "codigo": "s3"
+      },
+      {
+        "nombre": "MMQ",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma/superior/4.png",
+        "codigo": "s4"
+      },
+      {
+        "nombre": "T7 ALWAYS ON",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma/inferior/1.png",
+        "codigo": "i1"
+      },
+      {
+        "nombre": "A$AP ROCKY",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma/inferior/2.png",
+        "codigo": "i2"
+      },
+      {
+        "nombre": "Porsche Legacy Lifestyle",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma/inferior/3.png",
+        "codigo": "i3"
+      },
+      {
+        "nombre": "MMQ CORDURA",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma/inferior/4.png",
+        "codigo": "i4"
+      }
+    ]
+  },
+  "vulk": {
+    "nombre": "Vulk Clothing",
+    "logoUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk-logo.webp",
+    "sitioUrl": "https://vulkclothing.com/",
+    "prendas": [
+      {
+        "nombre": "Traveler",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk/superior/1.png",
+        "codigo": "s1"
+      },
+      {
+        "nombre": "World Black",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk/superior/2.png",
+        "codigo": "s2"
+      },
+      {
+        "nombre": "Mart Black",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk/superior/3.png",
+        "codigo": "s3"
+      },
+      {
+        "nombre": "Demark Lined",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk/superior/4.png",
+        "codigo": "s4"
+      },
+      {
+        "nombre": "Shane Cargo",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk/inferior/1.png",
+        "codigo": "i1"
+      },
+      {
+        "nombre": "Blasting",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk/inferior/2.png",
+        "codigo": "i2"
+      },
+      {
+        "nombre": "Erza Wide",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk/inferior/3.png",
+        "codigo": "i3"
+      },
+      {
+        "nombre": "Marcus Wide",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk/inferior/4.png",
+        "codigo": "i4"
+      }
+    ]
+  },
+  "volcom": {
+    "nombre": "Volcom",
+    "logoUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom-logo.webp",
+    "sitioUrl": "https://www.volcom.com.ar/",
+    "prendas": [
+      {
+        "nombre": "Treehorn",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom/superior/1.png",
+        "codigo": "s1"
+      },
+      {
+        "nombre": "Eco Yarns",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom/superior/2.png",
+        "codigo": "s2"
+      },
+      {
+        "nombre": "Over Mishk",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom/superior/3.png",
+        "codigo": "s3"
+      },
+      {
+        "nombre": "Skate Vitals",
+        "tipo": "superior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom/superior/4.png",
+        "codigo": "s4"
+      },
+      {
+        "nombre": "Baggy Carpenter",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom/inferior/1.png",
+        "codigo": "i1"
+      },
+      {
+        "nombre": "Rise Horseshoe",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom/inferior/2.png",
+        "codigo": "i2"
+      },
+      {
+        "nombre": "Days Hybrid",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom/inferior/3.png",
+        "codigo": "i3"
+      },
+      {
+        "nombre": "Hybrid Frickin Shred",
+        "tipo": "inferior",
+        "imagenUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom/inferior/4.png",
+        "codigo": "i4"
+      }
+    ]
+  }
+}

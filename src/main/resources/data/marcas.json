@@ -1,0 +1,20 @@
+[
+  {
+    "codigoMarca": "puma",
+    "nombre": "Puma",
+    "logoUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/puma-logo.png",
+    "sitioUrl": "https://www.puma.com"
+  },
+  {
+    "codigoMarca": "vulk",
+    "nombre": "Vulk",
+    "logoUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/vulk-logo.webp",
+    "sitioUrl": "https://vulkclothing.com/"
+  },
+  {
+    "codigoMarca": "volcom",
+    "nombre": "Volcom",
+    "logoUrl": "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/marcas/volcom-logo.webp",
+    "sitioUrl": "https://www.volcom.com.ar/"
+  }
+]

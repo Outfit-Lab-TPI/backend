@@ -27,6 +27,8 @@ public class Marca {
     private String codigoMarca;
     @Column(nullable = false)
     private String logoUrl;
+    @Column
+    private String sitioUrl;
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

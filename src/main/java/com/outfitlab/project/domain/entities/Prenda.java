@@ -27,6 +27,9 @@ public class Prenda {
     @Column(nullable = false)
     private String imagenUrl;
 
+    @Column(nullable = false)
+    private String codigo;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marca_id", nullable = false)
     @JsonBackReference

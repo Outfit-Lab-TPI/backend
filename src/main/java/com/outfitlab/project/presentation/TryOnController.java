@@ -6,6 +6,9 @@ import com.outfitlab.project.presentation.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/fashion")
@@ -38,5 +41,16 @@ public class TryOnController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp);
         }
     }
+
+    @GetMapping("/combinacion/{nombreCombinacion}")
+    public String getMethodName(@PathVariable String nombreCombinacion) {
+        try {
+            String combinationUrl = tryOnService.getCombinationUrl(nombreCombinacion);
+            return combinationUrl;
+        } catch (Exception ex) {
+            return "Error inesperado: " + ex.getMessage();
+        }
+    }
+    
 }
 
