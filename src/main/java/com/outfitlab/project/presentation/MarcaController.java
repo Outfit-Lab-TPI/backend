@@ -33,6 +33,8 @@ public class MarcaController {
         }
     }
 
+    // Endpoint original comentado
+    /*
     @GetMapping("/marcas/{codigoMarca}")
     public ResponseEntity<?> getMarcaAtributes(@PathVariable String codigoMarca) {
         try {
@@ -42,6 +44,20 @@ public class MarcaController {
             return ResponseEntity
                     .status(404)
                     .body(e.getMessage());
+        }
+    }
+    */
+
+    // Nuevo endpoint que devuelve la marca con todas sus prendas desde prendas.json
+    @GetMapping("/marcas/{codigoMarca}")
+    public ResponseEntity<?> getMarcaConPrendas(@PathVariable String codigoMarca) {
+        try {
+            Object marcaConPrendas = marcaService.getMarcaConPrendasByCodigoMarca(codigoMarca);
+            return ResponseEntity.ok(marcaConPrendas);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(404)
+                    .body("No se encontró la marca: " + codigoMarca);
         }
     }
 }

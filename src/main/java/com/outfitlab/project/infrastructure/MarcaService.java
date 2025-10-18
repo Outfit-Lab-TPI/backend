@@ -1,6 +1,7 @@
 package com.outfitlab.project.infrastructure;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outfitlab.project.domain.entities.Marca;
 import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
@@ -73,5 +74,20 @@ public class MarcaService {
                 .filter(marca -> marca.getCodigoMarca().equals(codigoMarca))
                 .findFirst()
                 .orElseThrow(() -> new MarcasNotFoundException("No encontramos la marca: " + codigoMarca));
+    }
+
+    // Nuevo método que devuelve la marca con todas sus prendas desde prendas.json
+    public Object getMarcaConPrendasByCodigoMarca(String codigoMarca) throws IOException {
+        ClassPathResource resource = new ClassPathResource("data/prendas.json");
+        InputStream inputStream = resource.getInputStream();
+
+        JsonNode rootNode = objectMapper.readTree(inputStream);
+        JsonNode marcaNode = rootNode.get(codigoMarca);
+
+        if (marcaNode == null) {
+            throw new IOException("No se encontró la marca: " + codigoMarca);
+        }
+
+        return marcaNode;
     }
 }
