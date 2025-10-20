@@ -1,7 +1,7 @@
 package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.models.TripoModel;
-import com.outfitlab.project.infrastructure.TrippoControllerService;
+import com.outfitlab.project.infrastructure.trippo.TrippoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TrippoControllerTest {
 
     @Mock
-    private TrippoControllerService trippoControllerService;
+    private TrippoService trippoService;
 
     @InjectMocks
     private TrippoController trippoController;
@@ -45,7 +45,7 @@ class TrippoControllerTest {
         );
         model.setId(1L);
 
-        when(trippoControllerService.uploadAndProcessImage(any())).thenReturn(model);
+        when(trippoService.uploadAndProcessImage(any())).thenReturn(model);
 
         mockMvc.perform(multipart("/api/trippo/upload/image")
                         .file(file)
@@ -59,7 +59,7 @@ class TrippoControllerTest {
                 .andExpect(jsonPath("$.minioImagePath").value("path/to/image.jpg"))
                 .andExpect(jsonPath("$.message").value("Imagen subida exitosamente. El modelo 3D se está generando."));
 
-        verify(trippoControllerService, times(1)).uploadAndProcessImage(any());
+        verify(trippoService, times(1)).uploadAndProcessImage(any());
     }
 
     @Test
@@ -67,7 +67,7 @@ class TrippoControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "image", "", "image/jpeg", new byte[0]);
 
-        when(trippoControllerService.uploadAndProcessImage(any()))
+        when(trippoService.uploadAndProcessImage(any()))
                 .thenThrow(new IllegalArgumentException("Archivo vacío"));
 
         mockMvc.perform(multipart("/api/trippo/upload/image")
@@ -89,7 +89,7 @@ class TrippoControllerTest {
         );
         model.setId(1L);
 
-        when(trippoControllerService.getModelByTaskId("task123")).thenReturn(model);
+        when(trippoService.getModelByTaskId("task123")).thenReturn(model);
 
         mockMvc.perform(get("/api/trippo/models/task123"))
                 .andExpect(status().isOk())
@@ -99,7 +99,7 @@ class TrippoControllerTest {
 
     @Test
     void givenInvalidTaskIdWhenGetModelStatusThenReturnNotFound() throws Exception {
-        when(trippoControllerService.getModelByTaskId("invalid"))
+        when(trippoService.getModelByTaskId("invalid"))
                 .thenThrow(new IllegalStateException("Modelo no encontrado"));
 
         mockMvc.perform(get("/api/trippo/models/invalid"))

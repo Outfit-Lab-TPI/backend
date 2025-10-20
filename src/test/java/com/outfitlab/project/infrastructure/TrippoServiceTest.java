@@ -1,123 +1,129 @@
-package com.outfitlab.project.infrastructure;
+package com.outfitlab.project.infrastructure.trippo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.outfitlab.project.domain.models.TripoModel;
-import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
 import com.outfitlab.project.domain.repositories.TripoModelRepository;
-import com.outfitlab.project.s3.S3Service;
+import com.outfitlab.project.infrastructure.trippo.usecases.CheckTaskStatus;
+import com.outfitlab.project.infrastructure.trippo.usecases.GetImageResource;
+import com.outfitlab.project.infrastructure.trippo.usecases.SaveFilesFromTask;
+import com.outfitlab.project.infrastructure.trippo.usecases.UploadAndProcessImageToModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class TrippoServiceTest {
+class TrippoServiceTest {
 
-    private S3Service s3ServiceMock;
-    private TripoModelRepository tripoModelRepositoryMock;
-    private RestTemplate restTemplateMock;
+    private TripoModelRepository tripoModelRepository;
+    private UploadAndProcessImageToModel uploadAndProcessImageToModel;
+    private CheckTaskStatus checkTaskStatus;
+    private SaveFilesFromTask saveFilesFromTask;
+    private GetImageResource getImageResource;
+
     private TrippoService trippoService;
 
     @BeforeEach
     void setup() {
-        s3ServiceMock = mock(S3Service.class);
-        tripoModelRepositoryMock = mock(TripoModelRepository.class);
-        restTemplateMock = mock(RestTemplate.class);
+        tripoModelRepository = mock(TripoModelRepository.class);
+        uploadAndProcessImageToModel = mock(UploadAndProcessImageToModel.class);
+        checkTaskStatus = mock(CheckTaskStatus.class);
+        saveFilesFromTask = mock(SaveFilesFromTask.class);
+        getImageResource = mock(GetImageResource.class);
 
-        trippoService = new TrippoService(s3ServiceMock, tripoModelRepositoryMock, restTemplateMock);
+        trippoService = new TrippoService(
+                tripoModelRepository,
+                uploadAndProcessImageToModel,
+                checkTaskStatus,
+                saveFilesFromTask,
+                getImageResource
+        );
     }
 
-    private MockMultipartFile createFakeFile(String name, String contentType) {
-        return new MockMultipartFile("image", name, contentType, "fake content".getBytes());
-    }
-
-    // ------------------- VALIDACIÓN DE EXTENSIONES -------------------
+    // ------------------- uploadAndProcessImage -------------------
 
     @Test
-    void validateExtensionWorksCorrectly() {
-        assertTrue(trippoService.validateExtension("foto.jpg"));
-        assertTrue(trippoService.validateExtension("foto.jpeg"));
-        assertTrue(trippoService.validateExtension("foto.png"));
-        assertTrue(trippoService.validateExtension("foto.webp"));
-        assertFalse(trippoService.validateExtension("foto.svg"));
+    void uploadAndProcessImageDelegatesToUseCase() throws Exception {
+        MultipartFile file = new MockMultipartFile("image", "foto.jpg", "image/jpeg", "fake content".getBytes());
+        TripoModel mockModel = new TripoModel();
+        when(uploadAndProcessImageToModel.uploadAndProcessImageToModel(file)).thenReturn(mockModel);
+
+        TripoModel result = trippoService.uploadAndProcessImage(file);
+
+        assertEquals(mockModel, result);
+        verify(uploadAndProcessImageToModel, times(1)).uploadAndProcessImageToModel(file);
     }
 
-    @Test
-    void getFileExtensionWorksCorrectly() {
-        assertEquals("jpg", trippoService.getFileExtension("foto.jpg"));
-        assertEquals("png", trippoService.getFileExtension("foto.png"));
-        assertEquals("webp", trippoService.getFileExtension("foto.webp"));
-        assertEquals("", trippoService.getFileExtension(null));
-        assertEquals("", trippoService.getFileExtension(""));
-    }
-
-    // ------------------- UPLOAD DE IMAGEN -------------------
+    // ------------------- getModelByTaskId -------------------
 
     @Test
-    void givenInvalidExtensionWhenUploadThenThrows() {
-        MockMultipartFile file = createFakeFile("file.svg", "image/svg+xml");
-        assertThrows(ImageInvalidFormatException.class, () -> trippoService.requestUploadImageApiTripo(file));
-    }
+    void getModelByTaskIdReturnsModelIfExists() {
+        TripoModel mockModel = new TripoModel();
+        when(tripoModelRepository.findByTaskId("task123")).thenReturn(Optional.of(mockModel));
 
-    @Test
-    void givenValidImageWhenUploadThenS3Called() throws IOException {
-        MockMultipartFile file = createFakeFile("foto.jpg", "image/jpeg");
+        TripoModel result = trippoService.getModelByTaskId("task123");
 
-        // Simulamos que S3 devuelve una URL
-        when(s3ServiceMock.uploadFile(file, "models_images")).thenReturn("https://s3.fake/foto.jpg");
-
-        // Mock del RestTemplate para la subida a Trippo
-        String fakeResponse = "{\"data\":{\"image_token\":\"tk_12345\"}}";
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(fakeResponse, HttpStatus.OK);
-        when(restTemplateMock.postForEntity(anyString(), any(), eq(String.class))).thenReturn(responseEntity);
-
-        Map<String, String> result = trippoService.requestUploadImageApiTripo(file);
-
-        assertEquals("foto.jpg", result.get("originalFilename"));
-        assertEquals("jpg", result.get("fileExtension"));
-        assertEquals("https://s3.fake/foto.jpg", result.get("minioImagePath"));
-        assertEquals("tk_12345", result.get("imageToken"));
-
-        verify(s3ServiceMock, times(1)).uploadFile(file, "models_images");
-        verify(restTemplateMock, times(1)).postForEntity(anyString(), any(), eq(String.class));
+        assertEquals(mockModel, result);
+        verify(tripoModelRepository, times(1)).findByTaskId("task123");
     }
 
     @Test
-    void getImageResourceReturnsByteArrayResource() throws IOException {
-        MockMultipartFile file = createFakeFile("foto.jpg", "image/jpeg");
-        ByteArrayResource resource = trippoService.getImageResource(file);
+    void getModelByTaskIdThrowsIfNotFound() {
+        when(tripoModelRepository.findByTaskId("missing")).thenReturn(Optional.empty());
 
-        assertEquals(file.getOriginalFilename(), resource.getFilename());
-        assertArrayEquals(file.getBytes(), resource.getByteArray());
+        assertThrows(IllegalStateException.class, () -> trippoService.getModelByTaskId("missing"));
     }
 
-    // ------------------- GENERAR MODELO -------------------
+    // ------------------- checkTaskStatus -------------------
 
     @Test
-    void generateImageToModelTrippoSavesModel() throws JsonProcessingException {
-        Map<String, String> uploadData = new HashMap<>();
-        uploadData.put("fileExtension", "jpg");
-        uploadData.put("originalFilename", "foto.jpg");
-        uploadData.put("imageToken", "tk_12345");
-        uploadData.put("minioImagePath", "https://s3.fake/foto.jpg");
+    void checkTaskStatusDelegatesToUseCase() throws JsonProcessingException, InterruptedException {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("status", "completed");
 
-        // Simulamos el response de RestTemplate
-        String fakeTaskResponse = "{\"data\":{\"task_id\":\"task_12345\"}}";
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(fakeTaskResponse, HttpStatus.OK);
-        when(restTemplateMock.postForEntity(anyString(), any(), eq(String.class))).thenReturn(responseEntity);
+        when(checkTaskStatus.checkTaskStatus("task123")).thenReturn(expected);
 
-        trippoService.generateImageToModelTrippo(uploadData);
+        Map<String, String> result = trippoService.checkTaskStatus("task123");
 
-        // Verificamos que se haya llamado al repository para guardar
-        verify(tripoModelRepositoryMock, times(1)).save(any(TripoModel.class));
+        assertEquals(expected, result);
+        verify(checkTaskStatus, times(1)).checkTaskStatus("task123");
+    }
+
+    // ------------------- saveFilesFromTask -------------------
+
+    @Test
+    void saveFilesFromTaskDelegatesToUseCase() throws IOException {
+        Map<String, String> taskResponse = Map.of("taskId", "123");
+        Map<String, String> expected = Map.of("resultUrl", "https://s3.fake/model.glb");
+
+        when(saveFilesFromTask.saveFilesFromTask(taskResponse)).thenReturn(expected);
+
+        Map<String, String> result = trippoService.saveFilesFromTask(taskResponse);
+
+        assertEquals(expected, result);
+        verify(saveFilesFromTask, times(1)).saveFilesFromTask(taskResponse);
+    }
+
+    // ------------------- getImageResource -------------------
+
+    @Test
+    void getImageResourceDelegatesToUseCase() throws IOException {
+        MultipartFile file = new MockMultipartFile("image", "foto.jpg", "image/jpeg", "fake content".getBytes());
+        ByteArrayResource mockResource = new ByteArrayResource("fake content".getBytes());
+
+        when(getImageResource.getImageResource(file)).thenReturn(mockResource);
+
+        ByteArrayResource result = trippoService.getImageResource(file);
+
+        assertEquals(mockResource, result);
+        verify(getImageResource, times(1)).getImageResource(file);
     }
 }
