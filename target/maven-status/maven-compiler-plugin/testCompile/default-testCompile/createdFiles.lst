@@ -1,5 +1,3 @@
-com\outfitlab\project\infrastructure\TrippoControllerServiceTest.class
 com\outfitlab\project\presentation\TrippoControllerTest.class
 com\outfitlab\project\s3\S3ServiceTest.class
-com\outfitlab\project\infrastructure\TrippoServiceTest.class
 com\outfitlab\project\ProjectApplicationTests.class

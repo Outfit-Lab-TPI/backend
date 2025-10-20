@@ -1,12 +1,16 @@
 package com.outfitlab.project.domain.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Builder
 public class TripoModel {
 
+    @Id
     private Long id;
     private String taskId;
     private String imageToken;
