@@ -1,22 +1,40 @@
-name: ci_outfitlab
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Build and Push Backend Image
+
 on:
-  pull_request:
-    branches: ["**"]
   push:
-    branches: ["**"]
+    branches:
+      - "main"
+      - "dev"
+      - "deploy/expo"
+
 jobs:
-  Run-Test:
+  build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - run: echo "🎉 Esta tarea (job) fue lanzado automaticamente por el evento ${{ github.event_name }}"
-      - run: echo "🐧 Esta tarea esta corriendo en un servidor ${{ runner.os }} por GitHub!"
-      - run: echo "🔎 El nombre de la rama es ${{ github.ref }} y tu repositorio es ${{ github.repository }}."
-      - name: Descargando el codigo
-        uses: actions/checkout@v3
-      - run: echo "💡 El repositorio ${{ github.repository }} ha sido clonado."
-      - run: echo "🖥️ El workflow esta listo para testear el codigo"
-      - name: Corriendo las pruebas
-        run: |
-          mvn clean test
-      - run: echo "🍏 El estado de la tarea es ${{ job.status }}."
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/outfit-lab-tpi/backend-tpi
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
