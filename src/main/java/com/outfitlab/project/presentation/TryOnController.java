@@ -1,7 +1,7 @@
 package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.fashion.*;
-import com.outfitlab.project.infrastructure.TryOnService;
+import com.outfitlab.project.domain.service.TryOnService;
 import com.outfitlab.project.presentation.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

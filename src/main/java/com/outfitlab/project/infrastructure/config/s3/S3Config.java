@@ -1,4 +1,4 @@
-package com.outfitlab.project.s3;
+package com.outfitlab.project.infrastructure.config.s3;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

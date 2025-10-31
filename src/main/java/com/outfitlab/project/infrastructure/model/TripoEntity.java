@@ -1,4 +1,4 @@
-package com.outfitlab.project.domain.entities;
+package com.outfitlab.project.infrastructure.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TripoModel {
+public class TripoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

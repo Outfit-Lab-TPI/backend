@@ -1,7 +1,7 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.entities.TripoModel;
-import com.outfitlab.project.infrastructure.TrippoControllerService;
+import com.outfitlab.project.infrastructure.model.TripoEntity;
+import com.outfitlab.project.domain.service.TrippoControllerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -35,10 +35,10 @@ class TrippoControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "image", "test.jpg", "image/jpeg", "dummy data".getBytes());
 
-        TripoModel model = TripoModel.builder()
+        TripoEntity model = TripoEntity.builder()
                 .id(1L)
                 .taskId("task123")
-                .status(TripoModel.ModelStatus.PENDING)
+                .status(TripoEntity.ModelStatus.PENDING)
                 .originalFilename("test.jpg")
                 .fileExtension("jpg")
                 .minioImagePath("path/to/image.jpg")
@@ -78,10 +78,10 @@ class TrippoControllerTest {
 
     @Test
     void givenTaskIdWhenGetModelStatusThenReturnOk() throws Exception {
-        TripoModel model = TripoModel.builder()
+        TripoEntity model = TripoEntity.builder()
                 .id(1L)
                 .taskId("task123")
-                .status(TripoModel.ModelStatus.PENDING)
+                .status(TripoEntity.ModelStatus.PENDING)
                 .originalFilename("test.jpg")
                 .fileExtension("jpg")
                 .minioImagePath("path/to/image.jpg")

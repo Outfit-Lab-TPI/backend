@@ -1,5 +1,6 @@
 package com.outfitlab.project.s3;
 
+import com.outfitlab.project.infrastructure.config.s3.S3Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

@@ -1,4 +1,4 @@
-package com.outfitlab.project.infrastructure;
+package com.outfitlab.project.domain.service;
 
 import com.outfitlab.project.domain.exceptions.fashion.FashnApiException;
 import com.outfitlab.project.domain.exceptions.fashion.PredictionFailedException;

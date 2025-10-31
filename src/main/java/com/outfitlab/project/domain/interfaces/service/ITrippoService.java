@@ -1,4 +1,4 @@
-package com.outfitlab.project.domain.interfaces;
+package com.outfitlab.project.domain.interfaces.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.core.io.ByteArrayResource;

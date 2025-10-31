@@ -1,7 +1,7 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.entities.TripoModel;
-import com.outfitlab.project.infrastructure.TrippoControllerService;
+import com.outfitlab.project.infrastructure.model.TripoEntity;
+import com.outfitlab.project.domain.service.TrippoControllerService;
 import com.outfitlab.project.presentation.dto.TripoModelResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class TrippoController {
     @PostMapping("/upload/image")
     public ResponseEntity<TripoModelResponse> uploadImage(@RequestParam("image") MultipartFile imageFile) {
         try {
-            TripoModel model = trippoControllerService.uploadAndProcessImage(imageFile);
+            TripoEntity model = trippoControllerService.uploadAndProcessImage(imageFile);
             return ResponseEntity.ok(buildResponse(model));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
@@ -33,7 +33,7 @@ public class TrippoController {
     @GetMapping("/models/{taskId}")
     public ResponseEntity<TripoModelResponse> getModelStatus(@PathVariable String taskId) {
         try {
-            TripoModel model = trippoControllerService.getModelByTaskId(taskId);
+            TripoEntity model = trippoControllerService.getModelByTaskId(taskId);
             return ResponseEntity.ok(buildResponse(model));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -41,7 +41,7 @@ public class TrippoController {
         }
     }
 
-    private TripoModelResponse buildResponse(TripoModel model) {
+    private TripoModelResponse buildResponse(TripoEntity model) {
         return TripoModelResponse.builder()
                 .id(model.getId())
                 .taskId(model.getTaskId())

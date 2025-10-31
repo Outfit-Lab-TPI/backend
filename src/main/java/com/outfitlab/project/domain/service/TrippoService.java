@@ -1,14 +1,14 @@
-package com.outfitlab.project.infrastructure;
+package com.outfitlab.project.domain.service;
 
 import org.springframework.http.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.outfitlab.project.domain.entities.TripoModel;
+import com.outfitlab.project.infrastructure.model.TripoEntity;
 import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
-import com.outfitlab.project.domain.interfaces.ITrippoService;
-import com.outfitlab.project.domain.repositories.TripoModelRepository;
-import com.outfitlab.project.s3.S3Service;
+import com.outfitlab.project.domain.interfaces.service.ITrippoService;
+import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
+import com.outfitlab.project.infrastructure.config.s3.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -43,9 +43,9 @@ public class TrippoService implements ITrippoService {
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper = new ObjectMapper();
     private final S3Service s3Service;
-    private final TripoModelRepository tripoModelRepository;
+    private final ITripoRepository tripoModelRepository;
 
-    public TrippoService(S3Service s3Service, TripoModelRepository tripoModelRepository, RestTemplate restTemplate) {
+    public TrippoService(S3Service s3Service, ITripoRepository tripoModelRepository, RestTemplate restTemplate) {
         this.s3Service = s3Service;
         this.tripoModelRepository = tripoModelRepository;
         this.restTemplate = restTemplate;
@@ -145,13 +145,13 @@ public class TrippoService implements ITrippoService {
         String taskId = taskJson.get("data").get("task_id").asText();
         
         // Guardar en base de datos
-        TripoModel tripoModel = TripoModel.builder()
+        TripoEntity tripoModel = TripoEntity.builder()
                 .taskId(taskId)
                 .imageToken(uploadData.get("imageToken"))
                 .originalFilename(uploadData.get("originalFilename"))
                 .fileExtension(uploadData.get("fileExtension"))
                 .minioImagePath(uploadData.get("minioImagePath"))
-                .status(TripoModel.ModelStatus.PENDING)
+                .status(TripoEntity.ModelStatus.PENDING)
                 .build();
         
         tripoModelRepository.save(tripoModel);
