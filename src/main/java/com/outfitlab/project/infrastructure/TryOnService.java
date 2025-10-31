@@ -215,7 +215,7 @@ public class TryOnService {
 
     public String getCombinationUrl(String nombreCombinacion) {
         System.out.println("Requested combination ****************************************** : " + nombreCombinacion);
-        return "https://outfitlab-bucket.s3.sa-east-1.amazonaws.com/expo/combinaciones/" + nombreCombinacion + ".png";
+        return  "http://localhost:8080/combinaciones/" + nombreCombinacion + ".png";
         // return "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Model_Posing_On_Typical_Studio_Set.jpg/250px-Model_Posing_On_Typical_Studio_Set.jpg";
     }
 }
