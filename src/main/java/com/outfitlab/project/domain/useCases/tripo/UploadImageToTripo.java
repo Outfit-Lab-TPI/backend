@@ -1,6 +1,5 @@
 package com.outfitlab.project.domain.useCases.tripo;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.outfitlab.project.domain.exceptions.ErroBytesException;
 import com.outfitlab.project.domain.exceptions.ErrorReadJsonException;
 import com.outfitlab.project.domain.exceptions.ErrorUploadImageToTripo;

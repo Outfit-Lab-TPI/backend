@@ -3,7 +3,6 @@ package com.outfitlab.project.domain.useCases.marca;
 import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.IMarcaRepository;
 import com.outfitlab.project.domain.model.MarcaModel;
-import com.outfitlab.project.infrastructure.model.MarcaEntity;
 
 public class GetMarcaByCodigoMarca {
 
