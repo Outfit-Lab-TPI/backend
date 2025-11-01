@@ -30,7 +30,19 @@ public class TripoModel {
         this.errorMessage = errorMessage;
     }
 
+    public TripoModel() {}
+
     public TripoModel(String taskId, String imageToken, String originalFilename, String fileExtension, String minioImagePath, ModelStatus modelStatus) {
+        this.taskId = taskId;
+        this.imageToken = imageToken;
+        this.originalFilename = originalFilename;
+        this.fileExtension = fileExtension;
+        this.status = modelStatus;
+        this.minioImagePath = minioImagePath;
+        this.minioModelPath = minioModelPath;
+        this.tripoModelUrl = tripoModelUrl;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public enum ModelStatus {

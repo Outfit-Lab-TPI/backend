@@ -53,6 +53,7 @@ public class TrippoService {
         String glbUrlGenerated = this.checkTaskStatus.execute(taskId);
 
         tripoModel.setStatus(TripoModel.ModelStatus.COMPLETED);
+        tripoModel.setTripoModelUrl(glbUrlGenerated);
 
         return this.updateTripoModel.execute(tripoModel);
     }
