@@ -1,8 +1,10 @@
 package com.outfitlab.project.domain.model;
 
-import lombok.Getter;
+import com.outfitlab.project.infrastructure.model.PrendaEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MarcaModel {
 
@@ -11,15 +13,17 @@ public class MarcaModel {
     private String logoUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<PrendaModel> prendas;
 
     public MarcaModel(){}
 
-    public MarcaModel(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public MarcaModel(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt, List<PrendaModel> prendas) {
         this.codigoMarca = codigoMarca;
         this.nombre = nombre;
         this.logoUrl = logoUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.prendas = prendas;
     }
 
     public String getCodigoMarca() {
@@ -60,5 +64,13 @@ public class MarcaModel {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<PrendaModel> getPrendas() {
+        return prendas;
+    }
+
+    public void setPrendas(List<PrendaModel> prendas) {
+        this.prendas = prendas;
     }
 }

@@ -2,6 +2,7 @@ package com.outfitlab.project.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.outfitlab.project.domain.model.MarcaModel;
+import com.outfitlab.project.domain.model.PrendaModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -63,24 +64,47 @@ public class MarcaEntity {
 
 
     // ------------- acá hacemos los dos convert ------------
-    public static MarcaModel convertToModel(MarcaEntity marcaEntity) {
+    public static MarcaModel convertToModel(MarcaEntity entity) {
+        if (entity == null) return null;
+
+        List<PrendaModel> prendasModel = new ArrayList<>();
+        if (entity.getPrendas() != null) {
+            for (PrendaEntity prendaEntity : entity.getPrendas()) {
+                prendasModel.add(PrendaEntity.convertToModel(prendaEntity));
+            }
+        }
+
         return new MarcaModel(
-                marcaEntity.getCodigoMarca(),
-                marcaEntity.getNombre(),
-                marcaEntity.getLogoUrl(),
-                marcaEntity.getCreatedAt(),
-                marcaEntity.getUpdatedAt()
+                entity.getCodigoMarca(),
+                entity.getNombre(),
+                entity.getLogoUrl(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                prendasModel
         );
     }
 
-    public static MarcaEntity convertToEntity(MarcaModel marcaModel) {
-        return new MarcaEntity(
-                marcaModel.getCodigoMarca(),
-                marcaModel.getNombre(),
-                marcaModel.getLogoUrl(),
-                marcaModel.getCreatedAt(),
-                marcaModel.getUpdatedAt()
-        );
+    public static MarcaEntity convertToEntity(MarcaModel model) {
+        if (model == null) return null;
+
+        MarcaEntity entity = new MarcaEntity();
+        entity.setCodigoMarca(model.getCodigoMarca());
+        entity.setNombre(model.getNombre());
+        entity.setLogoUrl(model.getLogoUrl());
+        entity.setCreatedAt(model.getCreatedAt());
+        entity.setUpdatedAt(model.getUpdatedAt());
+
+        List<PrendaEntity> prendasEntity = new ArrayList<>();
+        if (model.getPrendas() != null) {
+            for (PrendaModel prendaModel : model.getPrendas()) {
+                PrendaEntity prendaEntity = PrendaEntity.convertToEntity(prendaModel);
+                prendaEntity.setMarca(entity);
+                prendasEntity.add(prendaEntity);
+            }
+        }
+
+        entity.setPrendas(prendasEntity);
+        return entity;
     }
     //--------------------------------------------------------
 }
