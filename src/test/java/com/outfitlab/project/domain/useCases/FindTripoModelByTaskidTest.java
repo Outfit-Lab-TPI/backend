@@ -2,11 +2,11 @@ package com.outfitlab.project.domain.useCases;
 
 import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
 import com.outfitlab.project.domain.model.TripoModel;
-import com.outfitlab.project.domain.useCases.tripo.*;
-import org.junit.Before;
-import org.junit.Test;
+import com.outfitlab.project.domain.useCases.tripo.FindTripoModelByTaskid;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class FindTripoModelByTaskidTest {
@@ -14,7 +14,7 @@ public class FindTripoModelByTaskidTest {
     private ITripoRepository tripoRepositoryMock;
     private FindTripoModelByTaskid findTripoModelByTaskid;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tripoRepositoryMock = mock(ITripoRepository.class);
         findTripoModelByTaskid = new FindTripoModelByTaskid(tripoRepositoryMock);
@@ -49,4 +49,3 @@ public class FindTripoModelByTaskidTest {
         verify(tripoRepositoryMock, times(1)).buscarPorTaskId(taskId);
     }
 }
-

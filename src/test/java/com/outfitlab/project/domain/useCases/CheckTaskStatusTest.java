@@ -3,12 +3,12 @@ package com.outfitlab.project.domain.useCases;
 import com.outfitlab.project.domain.exceptions.ErrorGlbGenerateTimeExpiredException;
 import com.outfitlab.project.domain.exceptions.ErrorReadJsonException;
 import com.outfitlab.project.domain.exceptions.ErrorWhenSleepException;
-import com.outfitlab.project.domain.useCases.tripo.*;
 import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
-import org.junit.Before;
-import org.junit.Test;
+import com.outfitlab.project.domain.useCases.tripo.CheckTaskStatus;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CheckTaskStatusTest {
@@ -16,7 +16,7 @@ public class CheckTaskStatusTest {
     private ITripoRepository tripoRepositoryMock;
     private CheckTaskStatus checkTaskStatus;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tripoRepositoryMock = mock(ITripoRepository.class);
         checkTaskStatus = new CheckTaskStatus(tripoRepositoryMock);
@@ -37,31 +37,39 @@ public class CheckTaskStatusTest {
         verify(tripoRepositoryMock, times(1)).peticionStatusGlbTripo(taskId);
     }
 
-    @Test(expected = ErrorGlbGenerateTimeExpiredException.class)
+    @Test
     public void ejecutarDeberiaLanzarErrorGlbGenerateTimeExpiredException_cuandoRepositorioLanzaErrorGlbGenerateTimeExpiredException() throws ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException {
         String taskId = "TASK123";
 
-        when(tripoRepositoryMock.peticionStatusGlbTripo(taskId)).thenThrow(new ErrorGlbGenerateTimeExpiredException(""));
+        when(tripoRepositoryMock.peticionStatusGlbTripo(taskId))
+                .thenThrow(new ErrorGlbGenerateTimeExpiredException(""));
 
-        checkTaskStatus.execute(taskId);
+        assertThrows(ErrorGlbGenerateTimeExpiredException.class, () -> {
+            checkTaskStatus.execute(taskId);
+        });
     }
 
-    @Test(expected = ErrorWhenSleepException.class)
+    @Test
     public void ejecutarDeberiaLanzarErrorWhenSleepException_cuandoRepositorioLanzaErrorWhenSleepException() throws ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException {
         String taskId = "TASK123";
 
-        when(tripoRepositoryMock.peticionStatusGlbTripo(taskId)).thenThrow(new ErrorWhenSleepException(""));
+        when(tripoRepositoryMock.peticionStatusGlbTripo(taskId))
+                .thenThrow(new ErrorWhenSleepException(""));
 
-        checkTaskStatus.execute(taskId);
+        assertThrows(ErrorWhenSleepException.class, () -> {
+            checkTaskStatus.execute(taskId);
+        });
     }
 
-    @Test(expected = ErrorReadJsonException.class)
+    @Test
     public void ejecutarDeberiaLanzarErrorReadJsonException_cuandoRepositorioLanzaErrorReadJsonException() throws ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException {
         String taskId = "TASK123";
 
-        when(tripoRepositoryMock.peticionStatusGlbTripo(taskId)).thenThrow(new ErrorReadJsonException(""));
+        when(tripoRepositoryMock.peticionStatusGlbTripo(taskId))
+                .thenThrow(new ErrorReadJsonException(""));
 
-        checkTaskStatus.execute(taskId);
+        assertThrows(ErrorReadJsonException.class, () -> {
+            checkTaskStatus.execute(taskId);
+        });
     }
 }
-

@@ -4,13 +4,13 @@ import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
 import com.outfitlab.project.domain.model.MarcaModel;
 import com.outfitlab.project.domain.useCases.marca.GetAllMarcas;
 import com.outfitlab.project.domain.useCases.marca.GetMarcaByCodigoMarca;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class MarcaServiceTest {
@@ -19,7 +19,7 @@ public class MarcaServiceTest {
     private GetMarcaByCodigoMarca getMarcaByCodigoMarcaMock;
     private MarcaService marcaService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         getAllMarcasMock = mock(GetAllMarcas.class);
         getMarcaByCodigoMarcaMock = mock(GetMarcaByCodigoMarca.class);
@@ -35,12 +35,7 @@ public class MarcaServiceTest {
 
         when(getAllMarcasMock.execute()).thenReturn(Arrays.asList(marca1, marca2));
 
-        List<MarcaModel> resultado = null;
-        try {
-            resultado = marcaService.getAllMarcas();
-        } catch (MarcasNotFoundException e) {
-            fail("No se esperaba excepción");
-        }
+        List<MarcaModel> resultado = marcaService.getAllMarcas();
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
@@ -51,24 +46,20 @@ public class MarcaServiceTest {
     public void getAllMarcasDeberiaLanzarMarcasNotFoundException_cuandoUseCaseLanzaExcepcion() throws Exception, MarcasNotFoundException {
         when(getAllMarcasMock.execute()).thenThrow(new MarcasNotFoundException("No marcas"));
 
-        try {
-            marcaService.getAllMarcas();
-            fail("Se esperaba MarcasNotFoundException");
-        } catch (MarcasNotFoundException e) {
-            assertEquals("No marcas", e.getMessage());
-        }
+        MarcasNotFoundException ex = assertThrows(MarcasNotFoundException.class,
+                () -> marcaService.getAllMarcas());
+
+        assertEquals("No marcas", ex.getMessage());
     }
 
     @Test
     public void getAllMarcasDeberiaLanzarMarcasNotFoundException_cuandoUseCaseLanzaExceptionGenerica() throws Exception, MarcasNotFoundException {
         when(getAllMarcasMock.execute()).thenThrow(new RuntimeException("Error genérico"));
 
-        try {
-            marcaService.getAllMarcas();
-            fail("Se esperaba MarcasNotFoundException");
-        } catch (MarcasNotFoundException e) {
-            assertEquals("Error genérico", e.getMessage());
-        }
+        MarcasNotFoundException ex = assertThrows(MarcasNotFoundException.class,
+                () -> marcaService.getAllMarcas());
+
+        assertEquals("Error genérico", ex.getMessage());
     }
 
     @Test
@@ -79,12 +70,7 @@ public class MarcaServiceTest {
 
         when(getMarcaByCodigoMarcaMock.execute(codigo)).thenReturn(marca);
 
-        MarcaModel resultado = null;
-        try {
-            resultado = marcaService.getMarcaByCodigoMarca(codigo);
-        } catch (MarcasNotFoundException e) {
-            fail("No se esperaba excepción");
-        }
+        MarcaModel resultado = marcaService.getMarcaByCodigoMarca(codigo);
 
         assertNotNull(resultado);
         assertEquals("Marca1", resultado.getNombre());
@@ -94,14 +80,13 @@ public class MarcaServiceTest {
     @Test
     public void getMarcaByCodigoMarcaDeberiaLanzarMarcasNotFoundException_cuandoUseCaseLanzaExcepcion() throws Exception, MarcasNotFoundException {
         String codigo = "MAR002";
-        when(getMarcaByCodigoMarcaMock.execute(codigo)).thenThrow(new MarcasNotFoundException("No encontramos la marca: MAR002"));
+        when(getMarcaByCodigoMarcaMock.execute(codigo))
+                .thenThrow(new MarcasNotFoundException("No encontramos la marca: MAR002"));
 
-        try {
-            marcaService.getMarcaByCodigoMarca(codigo);
-            fail("Se esperaba MarcasNotFoundException");
-        } catch (MarcasNotFoundException e) {
-            assertEquals("No encontramos la marca: " + codigo, e.getMessage());
-        }
+        MarcasNotFoundException ex = assertThrows(MarcasNotFoundException.class,
+                () -> marcaService.getMarcaByCodigoMarca(codigo));
+
+        assertEquals("No encontramos la marca: " + codigo, ex.getMessage());
     }
 
     @Test
@@ -109,12 +94,9 @@ public class MarcaServiceTest {
         String codigo = "MAR003";
         when(getMarcaByCodigoMarcaMock.execute(codigo)).thenThrow(new RuntimeException("Error genérico"));
 
-        try {
-            marcaService.getMarcaByCodigoMarca(codigo);
-            fail("Se esperaba MarcasNotFoundException");
-        } catch (MarcasNotFoundException e) {
-            assertEquals("No encontramos la marca: " + codigo, e.getMessage());
-        }
+        MarcasNotFoundException ex = assertThrows(MarcasNotFoundException.class,
+                () -> marcaService.getMarcaByCodigoMarca(codigo));
+
+        assertEquals("No encontramos la marca: " + codigo, ex.getMessage());
     }
 }
-

@@ -4,10 +4,10 @@ import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
 import com.outfitlab.project.domain.useCases.marca.GetMarcaByCodigoMarca;
 import com.outfitlab.project.domain.interfaces.repositories.IMarcaRepository;
 import com.outfitlab.project.domain.model.MarcaModel;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class GetMarcaByCodigoMarcaTest {
@@ -15,7 +15,7 @@ public class GetMarcaByCodigoMarcaTest {
     private IMarcaRepository marcaRepositoryMock;
     private GetMarcaByCodigoMarca getMarcaByCodigoMarca;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         marcaRepositoryMock = mock(IMarcaRepository.class);
         getMarcaByCodigoMarca = new GetMarcaByCodigoMarca(marcaRepositoryMock);
@@ -37,12 +37,14 @@ public class GetMarcaByCodigoMarcaTest {
         verify(marcaRepositoryMock, times(1)).buscarPorCodigoMarca(codigo);
     }
 
-    @Test(expected = MarcasNotFoundException.class)
-    public void ejecutarDeberiaLanzarExcepcion_cuandoRepositorioNoDevuelveMarca() throws MarcasNotFoundException {
+    @Test
+    public void ejecutarDeberiaLanzarExcepcion_cuandoRepositorioNoDevuelveMarca() {
         String codigo = "COD999";
 
         when(marcaRepositoryMock.buscarPorCodigoMarca(codigo)).thenReturn(null);
 
-        getMarcaByCodigoMarca.execute(codigo);
+        assertThrows(MarcasNotFoundException.class, () -> {
+            getMarcaByCodigoMarca.execute(codigo);
+        });
     }
 }

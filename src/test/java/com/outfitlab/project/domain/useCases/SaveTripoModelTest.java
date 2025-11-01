@@ -3,10 +3,10 @@ package com.outfitlab.project.domain.useCases;
 import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
 import com.outfitlab.project.domain.model.TripoModel;
 import com.outfitlab.project.domain.useCases.tripo.SaveTripoModel;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class SaveTripoModelTest {
@@ -14,7 +14,7 @@ public class SaveTripoModelTest {
     private ITripoRepository tripoRepositoryMock;
     private SaveTripoModel saveTripoModel;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tripoRepositoryMock = mock(ITripoRepository.class);
         saveTripoModel = new SaveTripoModel(tripoRepositoryMock);
@@ -47,4 +47,3 @@ public class SaveTripoModelTest {
         verify(tripoRepositoryMock, times(1)).save(modelo);
     }
 }
-

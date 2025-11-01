@@ -1,60 +1,52 @@
 package com.outfitlab.project.domain.useCases;
 
 import com.outfitlab.project.domain.useCases.tripo.ValidateExtension;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidateExtensionTest {
 
     private ValidateExtension validateExtension;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         validateExtension = new ValidateExtension();
     }
 
     @Test
     public void ejecutarDeberiaDevolverTrue_cuandoExtensionEsJpg() {
-        boolean resultado = validateExtension.execute("jpg");
-        assertTrue(resultado);
+        assertTrue(validateExtension.execute("jpg"));
     }
 
     @Test
     public void ejecutarDeberiaDevolverTrue_cuandoExtensionEsJpeg() {
-        boolean resultado = validateExtension.execute("jpeg");
-        assertTrue(resultado);
+        assertTrue(validateExtension.execute("jpeg"));
     }
 
     @Test
     public void ejecutarDeberiaDevolverTrue_cuandoExtensionEsPng() {
-        boolean resultado = validateExtension.execute("png");
-        assertTrue(resultado);
+        assertTrue(validateExtension.execute("png"));
     }
 
     @Test
     public void ejecutarDeberiaDevolverTrue_cuandoExtensionEsWebp() {
-        boolean resultado = validateExtension.execute("webp");
-        assertTrue(resultado);
+        assertTrue(validateExtension.execute("webp"));
     }
 
     @Test
     public void ejecutarDeberiaDevolverFalse_cuandoExtensionNoEsValida() {
-        boolean resultado = validateExtension.execute("bmp");
-        assertFalse(resultado);
+        assertFalse(validateExtension.execute("bmp"));
     }
 
     @Test
     public void ejecutarDeberiaDevolverFalse_cuandoExtensionEsVacia() {
-        boolean resultado = validateExtension.execute("");
-        assertFalse(resultado);
+        assertFalse(validateExtension.execute(""));
     }
 
     @Test
     public void ejecutarDeberiaDevolverFalse_cuandoExtensionEsNull() {
-        boolean resultado = validateExtension.execute(null);
-        assertFalse(resultado);
+        assertFalse(validateExtension.execute(null));
     }
 }
-

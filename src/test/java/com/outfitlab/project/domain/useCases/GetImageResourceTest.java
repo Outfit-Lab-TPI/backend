@@ -1,21 +1,21 @@
 package com.outfitlab.project.domain.useCases;
 
 import com.outfitlab.project.domain.useCases.tripo.GetImageResource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GetImageResourceTest {
 
     private GetImageResource getImageResource;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         getImageResource = new GetImageResource();
     }
@@ -46,4 +46,3 @@ public class GetImageResourceTest {
         assertEquals(nombreArchivo, resource.getFilename());
     }
 }
-

@@ -1,16 +1,16 @@
 package com.outfitlab.project.domain.useCases;
 
 import com.outfitlab.project.domain.useCases.tripo.GetFileExtension;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetFileExtensionTest {
 
     private GetFileExtension getFileExtension;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         getFileExtension = new GetFileExtension();
     }

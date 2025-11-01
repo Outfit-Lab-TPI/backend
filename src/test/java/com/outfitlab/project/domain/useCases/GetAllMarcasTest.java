@@ -1,29 +1,26 @@
 package com.outfitlab.project.domain.useCases;
 
-
 import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.IMarcaRepository;
 import com.outfitlab.project.domain.model.MarcaModel;
 import com.outfitlab.project.domain.useCases.marca.GetAllMarcas;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GetAllMarcasTest {
 
-
     private IMarcaRepository marcaRepositoryMock;
     private GetAllMarcas getAllMarcas;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         marcaRepositoryMock = mock(IMarcaRepository.class);
         getAllMarcas = new GetAllMarcas(marcaRepositoryMock);
@@ -48,9 +45,12 @@ public class GetAllMarcasTest {
         assertEquals("Marca 2", resultado.get(1).getNombre());
     }
 
-    @Test(expected = MarcasNotFoundException.class)
-    public void ejecutar_deberiaLanzarExcepcion_cuandoElRepositorioNoTieneMarcas() throws MarcasNotFoundException {
+    @Test
+    public void ejecutar_deberiaLanzarExcepcion_cuandoElRepositorioNoTieneMarcas() {
         when(marcaRepositoryMock.obtenerTodas()).thenReturn(Collections.emptyList());
-        getAllMarcas.execute();
+
+        assertThrows(MarcasNotFoundException.class, () -> {
+            getAllMarcas.execute();
+        });
     }
 }

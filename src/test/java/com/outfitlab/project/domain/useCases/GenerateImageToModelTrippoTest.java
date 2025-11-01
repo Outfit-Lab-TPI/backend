@@ -3,14 +3,14 @@ package com.outfitlab.project.domain.useCases;
 import com.outfitlab.project.domain.exceptions.ErrorGenerateGlbException;
 import com.outfitlab.project.domain.exceptions.ErrorReadJsonException;
 import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
-import com.outfitlab.project.domain.useCases.tripo.*;
-import org.junit.Before;
-import org.junit.Test;
+import com.outfitlab.project.domain.useCases.tripo.GenerateImageToModelTrippo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class GenerateImageToModelTrippoTest {
@@ -18,7 +18,7 @@ public class GenerateImageToModelTrippoTest {
     private ITripoRepository tripoRepositoryMock;
     private GenerateImageToModelTrippo generateImageToModelTrippo;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tripoRepositoryMock = mock(ITripoRepository.class);
         generateImageToModelTrippo = new GenerateImageToModelTrippo(tripoRepositoryMock);
@@ -40,24 +40,29 @@ public class GenerateImageToModelTrippoTest {
         verify(tripoRepositoryMock, times(1)).peticionGenerateGlbToTripo(uploadData);
     }
 
-    @Test(expected = ErrorGenerateGlbException.class)
+    @Test
     public void ejecutarDeberiaLanzarErrorGenerateGlbException_cuandoRepositorioLanzaErrorGenerateGlbException() throws ErrorGenerateGlbException, ErrorReadJsonException {
         Map<String, String> uploadData = new HashMap<>();
         uploadData.put("fileName", "modelo.glb");
 
-        when(tripoRepositoryMock.peticionGenerateGlbToTripo(uploadData)).thenThrow(new ErrorGenerateGlbException("Error generando GLB"));
+        when(tripoRepositoryMock.peticionGenerateGlbToTripo(uploadData))
+                .thenThrow(new ErrorGenerateGlbException("Error generando GLB"));
 
-        generateImageToModelTrippo.execute(uploadData);
+        assertThrows(ErrorGenerateGlbException.class, () -> {
+            generateImageToModelTrippo.execute(uploadData);
+        });
     }
 
-    @Test(expected = ErrorReadJsonException.class)
+    @Test
     public void ejecutarDeberiaLanzarErrorReadJsonException_cuandoRepositorioLanzaErrorReadJsonException() throws ErrorGenerateGlbException, ErrorReadJsonException {
         Map<String, String> uploadData = new HashMap<>();
         uploadData.put("fileName", "modelo.glb");
 
-        when(tripoRepositoryMock.peticionGenerateGlbToTripo(uploadData)).thenThrow(new ErrorReadJsonException("Error leyendo JSON"));
+        when(tripoRepositoryMock.peticionGenerateGlbToTripo(uploadData))
+                .thenThrow(new ErrorReadJsonException("Error leyendo JSON"));
 
-        generateImageToModelTrippo.execute(uploadData);
+        assertThrows(ErrorReadJsonException.class, () -> {
+            generateImageToModelTrippo.execute(uploadData);
+        });
     }
 }
-
