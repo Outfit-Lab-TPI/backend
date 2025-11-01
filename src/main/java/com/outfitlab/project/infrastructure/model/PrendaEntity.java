@@ -44,19 +44,23 @@ public class PrendaEntity {
     }
 
     // ------------- acá hacemos los dos convert ------------
+
+
     public static PrendaModel convertToModel(PrendaEntity prendaEntity) {
+        MarcaModel marcaModel = MarcaEntity.convertToModelWithoutPrendas(prendaEntity.getMarca());
         return new PrendaModel(
                 prendaEntity.getNombre(),
-                prendaEntity.getMarca(),
+                marcaModel,
                 prendaEntity.getTipo(),
                 prendaEntity.getImagenUrl()
         );
     }
 
     public static PrendaEntity convertToEntity(PrendaModel prendaModel) {
+        MarcaEntity entityMarca = MarcaEntity.convertToEntityWithoutPrendas(prendaModel.getMarca());
         return new PrendaEntity(
                 prendaModel.getNombre(),
-                prendaModel.getMarca(),
+                entityMarca,
                 prendaModel.getTipo(),
                 prendaModel.getImagenUrl()
         );

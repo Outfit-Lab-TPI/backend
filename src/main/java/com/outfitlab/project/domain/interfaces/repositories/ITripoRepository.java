@@ -3,7 +3,6 @@ package com.outfitlab.project.domain.interfaces.repositories;
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.TripoModel;
 import org.springframework.core.io.ByteArrayResource;
-
 import java.util.Map;
 
 

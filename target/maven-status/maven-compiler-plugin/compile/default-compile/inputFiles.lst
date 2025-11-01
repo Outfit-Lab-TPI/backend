@@ -27,6 +27,7 @@ C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\i
 C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\exceptions\fashion\PredictionFailedException.java
 C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\useCases\tripo\GetImageResource.java
 C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\useCases\tripo\GetFileExtension.java
+C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\model\UserModel.java
 C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\presentation\dto\GeneratedResponse.java
 C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\useCases\tripo\ValidateExtension.java
 C:\Users\germa\OneDrive\Escritorio\backend\src\main\java\com\outfitlab\project\domain\exceptions\fashion\FashnApiException.java

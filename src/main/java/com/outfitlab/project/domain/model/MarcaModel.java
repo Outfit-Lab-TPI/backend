@@ -1,9 +1,6 @@
 package com.outfitlab.project.domain.model;
 
-import com.outfitlab.project.infrastructure.model.PrendaEntity;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MarcaModel {
@@ -24,6 +21,14 @@ public class MarcaModel {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.prendas = prendas;
+    }
+
+    public MarcaModel(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.codigoMarca = codigoMarca;
+        this.nombre = nombre;
+        this.logoUrl = logoUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public String getCodigoMarca() {

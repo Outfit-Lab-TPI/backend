@@ -66,6 +66,26 @@ public class MarcaEntity {
 
 
     // ------------- acá hacemos los dos convert ------------
+    public static MarcaEntity convertToEntityWithoutPrendas(MarcaModel entity) {
+        return new MarcaEntity(
+                entity.getCodigoMarca(),
+                entity.getNombre(),
+                entity.getLogoUrl(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt()
+        );
+    }
+
+    public static MarcaModel convertToModelWithoutPrendas(MarcaEntity model) {
+        return new MarcaModel(
+                model.getCodigoMarca(),
+                model.getNombre(),
+                model.getLogoUrl(),
+                model.getCreatedAt(),
+                model.getUpdatedAt()
+        );
+    }
+
     public static MarcaModel convertToModel(MarcaEntity entity) {
         if (entity == null) return null;
 

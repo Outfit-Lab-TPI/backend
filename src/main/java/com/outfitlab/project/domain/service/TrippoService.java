@@ -3,7 +3,6 @@ package com.outfitlab.project.domain.service;
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.TripoModel;
 import com.outfitlab.project.domain.useCases.tripo.*;
-import org.hibernate.annotations.processing.Find;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 

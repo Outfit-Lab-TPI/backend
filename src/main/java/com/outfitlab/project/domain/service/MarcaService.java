@@ -1,7 +1,6 @@
 package com.outfitlab.project.domain.service;
 
 import com.outfitlab.project.domain.model.MarcaModel;
-import com.outfitlab.project.infrastructure.model.MarcaEntity;
 import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
 import com.outfitlab.project.domain.useCases.marca.GetAllMarcas;
 import com.outfitlab.project.domain.useCases.marca.GetMarcaByCodigoMarca;

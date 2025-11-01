@@ -46,6 +46,7 @@ com\outfitlab\project\presentation\TrippoController.class
 com\outfitlab\project\domain\exceptions\fashion\PredictionFailedException.class
 com\outfitlab\project\infrastructure\config\s3\S3Config.class
 com\outfitlab\project\infrastructure\repositories\interfaces\IJpaTripoRepository.class
+com\outfitlab\project\domain\model\UserModel.class
 com\outfitlab\project\domain\model\TripoModel.class
 com\outfitlab\project\infrastructure\repositories\MarcaRepositoryImpl.class
 com\outfitlab\project\infrastructure\model\UserEntity.class

@@ -1,15 +1,13 @@
 package com.outfitlab.project.domain.model;
 
-import com.outfitlab.project.infrastructure.model.MarcaEntity;
-
 public class PrendaModel {
 
     private String nombre;
-    private MarcaEntity marca;
+    private MarcaModel marca;
     private String tipo;
     private String imagenUrl;
 
-    public PrendaModel(String nombre, MarcaEntity marca, String tipo, String imagenUrl) {
+    public PrendaModel(String nombre, MarcaModel marca, String tipo, String imagenUrl) {
         this.nombre = nombre;
         this.marca = marca;
         this.tipo = tipo;
@@ -24,11 +22,11 @@ public class PrendaModel {
         this.nombre = nombre;
     }
 
-    public MarcaEntity getMarca() {
+    public MarcaModel getMarca() {
         return marca;
     }
 
-    public void setMarca(MarcaEntity marca) {
+    public void setMarca(MarcaModel marca) {
         this.marca = marca;
     }
 

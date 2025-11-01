@@ -1,5 +1,6 @@
 package com.outfitlab.project.presentation;
 
+import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.infrastructure.model.UserEntity;
 import com.outfitlab.project.domain.exceptions.UserNotFound;
 import com.outfitlab.project.domain.service.UserService;
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserEntity getUser(@PathVariable int id) throws UserNotFound {
+    public UserModel getUser(@PathVariable int id) throws UserNotFound {
         return this.userService.findUserById(id);
     }
 
