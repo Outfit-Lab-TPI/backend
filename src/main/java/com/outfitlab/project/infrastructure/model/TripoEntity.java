@@ -1,5 +1,7 @@
 package com.outfitlab.project.infrastructure.model;
 
+import com.outfitlab.project.domain.model.TripoModel;
+import com.outfitlab.project.domain.model.TripoModel.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +14,6 @@ import java.time.LocalDateTime;
 @Table(name = "tripo_models")
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class TripoEntity {
 
@@ -21,29 +22,29 @@ public class TripoEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String taskId;              // ID de la tarea en Tripo3D
+    private String taskId;
 
     @Column(nullable = false)
-    private String imageToken;          // Token de imagen de Tripo3D
+    private String imageToken;
 
     @Column(nullable = false)
-    private String originalFilename;    // Nombre original del archivo
+    private String originalFilename;
 
     @Column(nullable = false)
-    private String fileExtension;       // jpg, png, webp, etc.
+    private String fileExtension;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ModelStatus status;         // Estado del modelo
+    private ModelStatus status;
 
     @Column(length = 500)
-    private String minioImagePath;      // Ruta en MinIO de la imagen original
+    private String minioImagePath;
 
     @Column(length = 500)
-    private String minioModelPath;      // Ruta en MinIO del modelo 3D
+    private String minioModelPath;
 
     @Column(length = 1000)
-    private String tripoModelUrl;       // URL del modelo en Tripo3D (cuando esté listo)
+    private String tripoModelUrl;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -52,7 +53,23 @@ public class TripoEntity {
     private LocalDateTime updatedAt;
 
     @Column(length = 500)
-    private String errorMessage;        // Mensaje de error si falla
+    private String errorMessage;
+
+    public TripoEntity(){}
+
+    public TripoEntity(String taskId, String imageToken, String originalFilename, String fileExtension, ModelStatus status, String minioImagePath, String minioModelPath, String tripoModelUrl, LocalDateTime createdAt, LocalDateTime updatedAt, String errorMessage) {
+        this.taskId = taskId;
+        this.imageToken = imageToken;
+        this.originalFilename = originalFilename;
+        this.fileExtension = fileExtension;
+        this.status = status;
+        this.minioImagePath = minioImagePath;
+        this.minioModelPath = minioModelPath;
+        this.tripoModelUrl = tripoModelUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.errorMessage = errorMessage;
+    }
 
     // TODO: Relación con User cuando esté implementada
     // @ManyToOne
@@ -70,11 +87,37 @@ public class TripoEntity {
         updatedAt = LocalDateTime.now();
     }
 
-    public enum ModelStatus {
-        PENDING,        // Imagen subida, esperando procesamiento
-        PROCESSING,     // Tripo3D está generando el modelo
-        COMPLETED,      // Modelo 3D generado exitosamente
-        FAILED,         // Falló la generación
-        DOWNLOADED      // Modelo descargado y guardado en MinIO
+// ------------------- los dos convert ----------------------------
+    public static TripoEntity convertToEntity(TripoModel model){
+        return new TripoEntity(
+                model.getTaskId(),
+                model.getImageToken(),
+                model.getOriginalFilename(),
+                model.getFileExtension(),
+                model.getStatus(),
+                model.getMinioImagePath(),
+                model.getMinioModelPath(),
+                model.getTripoModelUrl(),
+                model.getCreatedAt(),
+                model.getUpdatedAt(),
+                model.getErrorMessage()
+        );
     }
+
+    public static TripoModel convertToModel(TripoEntity entity){
+        return new TripoModel(
+                entity.getTaskId(),
+                entity.getImageToken(),
+                entity.getOriginalFilename(),
+                entity.getFileExtension(),
+                entity.getStatus(),
+                entity.getMinioImagePath(),
+                entity.getMinioModelPath(),
+                entity.getTripoModelUrl(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                entity.getErrorMessage()
+        );
+    }
+    // ---------------------------------------------------------
 }

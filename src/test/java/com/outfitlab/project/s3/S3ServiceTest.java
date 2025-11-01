@@ -1,6 +1,6 @@
 package com.outfitlab.project.s3;
 
-import com.outfitlab.project.infrastructure.config.s3.S3Service;
+import com.outfitlab.project.infrastructure.repositories.AwsRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -21,7 +21,7 @@ class S3ServiceTest {
     private S3Client s3ClientMock;
 
     @InjectMocks
-    private S3Service s3Service;
+    private AwsRepositoryImpl s3Service;
 
     @BeforeEach
     void setup() {

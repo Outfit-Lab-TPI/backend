@@ -16,7 +16,7 @@ public class GetAllMarcas {
 
     public List<MarcaModel> execute() throws MarcasNotFoundException {
         List<MarcaModel> marcas = iMarcaRepository.obtenerTodas();
-        System.out.println(marcas);
+        System.out.println(" -------------------------------" + marcas);
         if (!marcas.isEmpty()) {
             return marcas;
         }

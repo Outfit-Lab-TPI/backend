@@ -1,17 +1,23 @@
 package com.outfitlab.project.domain.interfaces.repositories;
 
-import com.outfitlab.project.infrastructure.model.TripoEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.outfitlab.project.domain.exceptions.*;
+import com.outfitlab.project.domain.model.TripoModel;
+import org.springframework.core.io.ByteArrayResource;
 
-import java.util.Optional;
+import java.util.Map;
 
-@Repository
-public interface ITripoRepository extends JpaRepository<TripoEntity, Long> {
 
-    Optional<TripoEntity> findByTaskId(String taskId);
+public interface ITripoRepository {
 
-    // Métodos útiles para consultas futuras
-    // List<TripoModel> findByStatus(TripoModel.ModelStatus status);
-    // List<TripoModel> findByUserId(Long userId);
+    TripoModel buscarPorTaskId(String taskId);
+
+    String peticionUploadImagenToTripo(ByteArrayResource imageResource) throws ErrorReadJsonException, ErrorUploadImageToTripo;
+
+    String peticionGenerateGlbToTripo(Map<String, String> uploadData) throws ErrorReadJsonException, ErrorGenerateGlbException;
+
+    String peticionStatusGlbTripo(String taskId) throws ErrorReadJsonException, ErrorWhenSleepException, ErrorGlbGenerateTimeExpiredException;
+
+    TripoModel save(TripoModel tripoModel);
+
+    TripoModel update(TripoModel model) throws ErrorTripoEntityNotFound;
 }

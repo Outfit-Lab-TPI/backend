@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripoModelResponse {
-    private Long id;
     private String taskId;
     private String status;
     private String originalFilename;
     private String fileExtension;
     private String minioImagePath;
+    private String tripoModelUrl;
     private String imageUrl;
     private String message;
 }

@@ -12,8 +12,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "prenda")
 public class PrendaEntity {
 
     @Id
@@ -33,6 +33,8 @@ public class PrendaEntity {
     @JoinColumn(name = "marca_id", nullable = false)
     @JsonBackReference
     private MarcaEntity marca;
+
+    public PrendaEntity(){}
 
     public PrendaEntity(String nombre, MarcaEntity marca, String tipo, String imagenUrl) {
         this.nombre = nombre;

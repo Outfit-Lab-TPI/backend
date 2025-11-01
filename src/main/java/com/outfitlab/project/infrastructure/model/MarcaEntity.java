@@ -16,8 +16,8 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "marca")
 public class MarcaEntity {
 
     @Id
@@ -37,6 +37,8 @@ public class MarcaEntity {
     @OneToMany(mappedBy = "marca", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<PrendaEntity> prendas = new ArrayList<>();
+
+    public MarcaEntity(){}
 
     public MarcaEntity(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.codigoMarca = codigoMarca;

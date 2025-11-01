@@ -1,7 +1,8 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.infrastructure.model.TripoEntity;
-import com.outfitlab.project.domain.service.TrippoControllerService;
+import com.outfitlab.project.domain.exceptions.*;
+import com.outfitlab.project.domain.model.TripoModel;
+import com.outfitlab.project.domain.service.TrippoService;
 import com.outfitlab.project.presentation.dto.TripoModelResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,18 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class TrippoController {
 
-    private final TrippoControllerService trippoControllerService;
+    private final TrippoService trippoService;
 
     @PostMapping("/upload/image")
     public ResponseEntity<TripoModelResponse> uploadImage(@RequestParam("image") MultipartFile imageFile) {
         try {
-            TripoEntity model = trippoControllerService.uploadAndProcessImage(imageFile);
+            TripoModel model = this.trippoService.procesarYEnviarATripo(imageFile);
             return ResponseEntity.ok(buildResponse(model));
-        } catch (IllegalArgumentException e) {
+
+        } catch (FileEmptyException | ErroBytesException | ErrorReadJsonException | ErrorUploadImageToTripo |
+                 ErrorGenerateGlbException | ErrorGlbGenerateTimeExpiredException | ErrorWhenSleepException |
+                 ErrorTripoEntityNotFound e) {
+
             return ResponseEntity.badRequest()
                     .body(TripoModelResponse.builder().message(e.getMessage()).build());
         } catch (Exception e) {
@@ -33,7 +38,7 @@ public class TrippoController {
     @GetMapping("/models/{taskId}")
     public ResponseEntity<TripoModelResponse> getModelStatus(@PathVariable String taskId) {
         try {
-            TripoEntity model = trippoControllerService.getModelByTaskId(taskId);
+            TripoModel model = this.trippoService.buscarPorTaskid(taskId);
             return ResponseEntity.ok(buildResponse(model));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -41,15 +46,15 @@ public class TrippoController {
         }
     }
 
-    private TripoModelResponse buildResponse(TripoEntity model) {
+    private TripoModelResponse buildResponse(TripoModel model) {
         return TripoModelResponse.builder()
-                .id(model.getId())
                 .taskId(model.getTaskId())
                 .status(model.getStatus().name())
                 .originalFilename(model.getOriginalFilename())
                 .fileExtension(model.getFileExtension())
                 .minioImagePath(model.getMinioImagePath())
                 .imageUrl(model.getMinioImagePath())
+                .tripoModelUrl(model.getTripoModelUrl())
                 .message("Imagen subida exitosamente. El modelo 3D se está generando.")
                 .build();
     }
