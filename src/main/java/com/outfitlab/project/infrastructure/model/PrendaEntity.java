@@ -29,6 +29,9 @@ public class PrendaEntity {
     @Column(nullable = false)
     private String imagenUrl;
 
+    @Column(nullable = false, unique = true)
+    private String garmentCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marca_id", nullable = false)
     @JsonBackReference
@@ -36,11 +39,12 @@ public class PrendaEntity {
 
     public PrendaEntity(){}
 
-    public PrendaEntity(String nombre, MarcaEntity marca, String tipo, String imagenUrl) {
+    public PrendaEntity(String nombre, MarcaEntity marca, String tipo, String imagenUrl, String garmentCode) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.imagenUrl = imagenUrl;
         this.marca = marca;
+        this.garmentCode = garmentCode;
     }
 
     // ------------- acá hacemos los dos convert ------------
@@ -52,7 +56,8 @@ public class PrendaEntity {
                 prendaEntity.getNombre(),
                 marcaModel,
                 prendaEntity.getTipo(),
-                prendaEntity.getImagenUrl()
+                prendaEntity.getImagenUrl(),
+                prendaEntity.getGarmentCode()
         );
     }
 
@@ -62,7 +67,8 @@ public class PrendaEntity {
                 prendaModel.getNombre(),
                 entityMarca,
                 prendaModel.getTipo(),
-                prendaModel.getImagenUrl()
+                prendaModel.getImagenUrl(),
+                prendaModel.getGarmentCode()
         );
     }
     //--------------------------------------------------------

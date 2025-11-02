@@ -6,12 +6,22 @@ public class PrendaModel {
     private MarcaModel marca;
     private String tipo;
     private String imagenUrl;
+    private String garmentCode;
 
-    public PrendaModel(String nombre, MarcaModel marca, String tipo, String imagenUrl) {
+    public PrendaModel(String nombre, MarcaModel marca, String tipo, String imagenUrl, String garmentCode) {
         this.nombre = nombre;
         this.marca = marca;
         this.tipo = tipo;
         this.imagenUrl = imagenUrl;
+        this.garmentCode = garmentCode;
+    }
+
+    public String getGarmentCode() {
+        return garmentCode;
+    }
+
+    public void setGarmentCode(String garmentCode) {
+        this.garmentCode = garmentCode;
     }
 
     public String getNombre() {
