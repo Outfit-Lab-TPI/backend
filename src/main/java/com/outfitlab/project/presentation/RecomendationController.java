@@ -1,8 +1,6 @@
 package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.useCases.garment.GetGarmentRecomendation;
-import com.outfitlab.project.infrastructure.repositories.RecomendationRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

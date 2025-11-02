@@ -1,3 +1,4 @@
+com\outfitlab\project\domain\interfaces\repositories\GarmentRepository.class
 com\outfitlab\project\domain\useCases\tripo\GetImageResource.class
 com\outfitlab\project\domain\interfaces\repositories\TripoRepository.class
 com\outfitlab\project\presentation\dto\StatusResponse.class
@@ -5,6 +6,7 @@ com\outfitlab\project\domain\exceptions\ImageInvalidFormatException.class
 com\outfitlab\project\domain\useCases\tripo\GetFileExtension.class
 com\outfitlab\project\presentation\dto\TripoModelResponse$TripoModelResponseBuilder.class
 com\outfitlab\project\infrastructure\repositories\FashnRepositoryImpl.class
+com\outfitlab\project\infrastructure\model\GarmentRecomendationEntity.class
 com\outfitlab\project\domain\service\TrippoService.class
 com\outfitlab\project\presentation\dto\FashnResponse.class
 com\outfitlab\project\presentation\dto\TripoModelResponse.class
@@ -21,12 +23,15 @@ com\outfitlab\project\ProjectApplication.class
 com\outfitlab\project\infrastructure\config\FashnConfig.class
 com\outfitlab\project\infrastructure\config\security\HttpConfig.class
 com\outfitlab\project\domain\exceptions\ErrorUploadImageToTripo.class
+com\outfitlab\project\domain\useCases\garment\GetGarmentRecomendation.class
 com\outfitlab\project\infrastructure\model\TripoEntity$TripoEntityBuilder.class
 com\outfitlab\project\domain\model\TripoModel$ModelStatus.class
 com\outfitlab\project\domain\model\MarcaModel.class
 com\outfitlab\project\domain\useCases\tripo\CheckTaskStatus.class
+com\outfitlab\project\domain\exceptions\GarmentNotFoundException.class
 com\outfitlab\project\domain\interfaces\repositories\MarcaRepository.class
 com\outfitlab\project\domain\useCases\tripo\GenerateImageToModelTrippo.class
+com\outfitlab\project\domain\interfaces\repositories\GarmentRecomendationRepository.class
 com\outfitlab\project\domain\useCases\marca\GetMarcaByCodigoMarca.class
 com\outfitlab\project\domain\useCases\tripo\UploadImageToTripo.class
 com\outfitlab\project\domain\service\UserService.class
@@ -37,6 +42,7 @@ com\outfitlab\project\domain\useCases\tripo\UpdateTripoModel.class
 com\outfitlab\project\infrastructure\config\security\SecurityConfig.class
 com\outfitlab\project\infrastructure\config\RestTemplateConfig.class
 com\outfitlab\project\infrastructure\repositories\UploadImageRepository.class
+com\outfitlab\project\domain\model\GarmentRecomendationModel.class
 com\outfitlab\project\domain\model\dto\CombineRequestModel.class
 com\outfitlab\project\infrastructure\repositories\interfaces\TripoJpaRepository.class
 com\outfitlab\project\domain\exceptions\ErroBytesException.class
@@ -46,11 +52,15 @@ com\outfitlab\project\domain\useCases\tripo\ValidateExtension.class
 com\outfitlab\project\presentation\FashnController.class
 com\outfitlab\project\presentation\dto\CombineRequest.class
 com\outfitlab\project\domain\exceptions\FileEmptyException.class
+com\outfitlab\project\infrastructure\repositories\RecomendationRepository.class
 com\outfitlab\project\presentation\UserController.class
 com\outfitlab\project\domain\useCases\tripo\UploadImageToTripo$1.class
 com\outfitlab\project\presentation\TrippoController.class
+com\outfitlab\project\infrastructure\config\RecomendationConfig.class
 com\outfitlab\project\infrastructure\config\s3\S3Config.class
+com\outfitlab\project\presentation\RecomendationController.class
 com\outfitlab\project\domain\interfaces\repositories\FashnRepository.class
+com\outfitlab\project\infrastructure\repositories\interfaces\RecomendationJpaRepository.class
 com\outfitlab\project\domain\model\UserModel.class
 com\outfitlab\project\domain\exceptions\PredictionTimeoutException.class
 com\outfitlab\project\domain\model\TripoModel.class
@@ -71,3 +81,4 @@ com\outfitlab\project\domain\useCases\tripo\SaveTripoModel.class
 com\outfitlab\project\domain\exceptions\ErrorTripoEntityNotFound.class
 com\outfitlab\project\infrastructure\config\TripoConfig.class
 com\outfitlab\project\presentation\MarcaController.class
+com\outfitlab\project\infrastructure\repositories\interfaces\GarmentJpaRepository.class

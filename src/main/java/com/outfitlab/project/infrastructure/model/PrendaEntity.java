@@ -29,7 +29,7 @@ public class PrendaEntity {
     @Column(nullable = false)
     private String imagenUrl;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String garmentCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
