@@ -4,7 +4,7 @@ import com.outfitlab.project.domain.exceptions.ErroBytesException;
 import com.outfitlab.project.domain.exceptions.ErrorReadJsonException;
 import com.outfitlab.project.domain.exceptions.ErrorUploadImageToTripo;
 import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
-import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
+import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,9 +16,9 @@ public class UploadImageToTripo {
 
     private final ValidateExtension validateExtension;
     private final GetFileExtension getFileExtension;
-    private final ITripoRepository iTripoRepository;
+    private final TripoRepository iTripoRepository;
 
-    public UploadImageToTripo(ValidateExtension validateExtension, GetFileExtension getFileExtension, ITripoRepository iTripoRepository) {
+    public UploadImageToTripo(ValidateExtension validateExtension, GetFileExtension getFileExtension, TripoRepository iTripoRepository) {
         this.validateExtension = validateExtension;
         this.getFileExtension = getFileExtension;
         this.iTripoRepository = iTripoRepository;

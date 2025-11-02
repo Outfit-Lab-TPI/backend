@@ -1,13 +1,13 @@
 package com.outfitlab.project.domain.useCases.tripo;
 
-import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
+import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.domain.model.TripoModel;
 
 public class SaveTripoModel {
 
-    private final ITripoRepository iTripoRepository;
+    private final TripoRepository iTripoRepository;
 
-    public SaveTripoModel(ITripoRepository repository) {
+    public SaveTripoModel(TripoRepository repository) {
         this.iTripoRepository = repository;
     }
 

@@ -1,7 +1,7 @@
 package com.outfitlab.project.domain.useCases;
 
 import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
-import com.outfitlab.project.domain.interfaces.repositories.IMarcaRepository;
+import com.outfitlab.project.domain.interfaces.repositories.MarcaRepository;
 import com.outfitlab.project.domain.model.MarcaModel;
 import com.outfitlab.project.domain.useCases.marca.GetAllMarcas;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,12 +17,12 @@ import static org.mockito.Mockito.when;
 
 public class GetAllMarcasTest {
 
-    private IMarcaRepository marcaRepositoryMock;
+    private MarcaRepository marcaRepositoryMock;
     private GetAllMarcas getAllMarcas;
 
     @BeforeEach
     public void setUp() {
-        marcaRepositoryMock = mock(IMarcaRepository.class);
+        marcaRepositoryMock = mock(MarcaRepository.class);
         getAllMarcas = new GetAllMarcas(marcaRepositoryMock);
     }
 

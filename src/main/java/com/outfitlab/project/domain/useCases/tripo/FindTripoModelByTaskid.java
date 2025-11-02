@@ -1,12 +1,12 @@
 package com.outfitlab.project.domain.useCases.tripo;
 
-import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
+import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.domain.model.TripoModel;
 
 public class FindTripoModelByTaskid {
-    private final ITripoRepository tripoRepository;
+    private final TripoRepository tripoRepository;
 
-    public FindTripoModelByTaskid(ITripoRepository tripoRepository) {
+    public FindTripoModelByTaskid(TripoRepository tripoRepository) {
         this.tripoRepository = tripoRepository;
     }
 

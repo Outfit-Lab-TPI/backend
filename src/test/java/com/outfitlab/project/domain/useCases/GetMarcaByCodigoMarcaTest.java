@@ -2,7 +2,7 @@ package com.outfitlab.project.domain.useCases;
 
 import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
 import com.outfitlab.project.domain.useCases.marca.GetMarcaByCodigoMarca;
-import com.outfitlab.project.domain.interfaces.repositories.IMarcaRepository;
+import com.outfitlab.project.domain.interfaces.repositories.MarcaRepository;
 import com.outfitlab.project.domain.model.MarcaModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,12 +12,12 @@ import static org.mockito.Mockito.*;
 
 public class GetMarcaByCodigoMarcaTest {
 
-    private IMarcaRepository marcaRepositoryMock;
+    private MarcaRepository marcaRepositoryMock;
     private GetMarcaByCodigoMarca getMarcaByCodigoMarca;
 
     @BeforeEach
     public void setUp() {
-        marcaRepositoryMock = mock(IMarcaRepository.class);
+        marcaRepositoryMock = mock(MarcaRepository.class);
         getMarcaByCodigoMarca = new GetMarcaByCodigoMarca(marcaRepositoryMock);
     }
 

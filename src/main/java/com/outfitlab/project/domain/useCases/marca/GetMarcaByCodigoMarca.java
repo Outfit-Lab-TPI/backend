@@ -1,14 +1,14 @@
 package com.outfitlab.project.domain.useCases.marca;
 
 import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
-import com.outfitlab.project.domain.interfaces.repositories.IMarcaRepository;
+import com.outfitlab.project.domain.interfaces.repositories.MarcaRepository;
 import com.outfitlab.project.domain.model.MarcaModel;
 
 public class GetMarcaByCodigoMarca {
 
-    private IMarcaRepository marcaRepository;
+    private MarcaRepository marcaRepository;
 
-    public GetMarcaByCodigoMarca(IMarcaRepository marcaRepository) {
+    public GetMarcaByCodigoMarca(MarcaRepository marcaRepository) {
         this.marcaRepository = marcaRepository;
     }
 

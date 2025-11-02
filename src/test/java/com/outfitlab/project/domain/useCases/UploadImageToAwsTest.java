@@ -1,7 +1,7 @@
 package com.outfitlab.project.domain.useCases;
 
-import com.outfitlab.project.domain.interfaces.repositories.IAwsRepository;
-import com.outfitlab.project.domain.useCases.tripo.UploadImageToAws;
+import com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository;
+import com.outfitlab.project.domain.useCases.tripo.SaveImage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
@@ -12,13 +12,13 @@ import static org.mockito.Mockito.*;
 
 public class UploadImageToAwsTest {
 
-    private IAwsRepository awsRepositoryMock;
-    private UploadImageToAws uploadImageToAws;
+    private UploadImageRepository awsRepositoryMock;
+    private SaveImage uploadImageToAws;
 
     @BeforeEach
     public void setUp() {
-        awsRepositoryMock = mock(IAwsRepository.class);
-        uploadImageToAws = new UploadImageToAws(awsRepositoryMock);
+        awsRepositoryMock = mock(UploadImageRepository.class);
+        uploadImageToAws = new SaveImage(awsRepositoryMock);
     }
 
     @Test

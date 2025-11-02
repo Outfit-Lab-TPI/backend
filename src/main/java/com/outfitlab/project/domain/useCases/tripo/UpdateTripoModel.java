@@ -1,14 +1,14 @@
 package com.outfitlab.project.domain.useCases.tripo;
 
 import com.outfitlab.project.domain.exceptions.ErrorTripoEntityNotFound;
-import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
+import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.domain.model.TripoModel;
 
 public class UpdateTripoModel {
 
-    private ITripoRepository iTripoRepository;
+    private TripoRepository iTripoRepository;
 
-    public UpdateTripoModel(ITripoRepository iTripoRepository) {
+    public UpdateTripoModel(TripoRepository iTripoRepository) {
         this.iTripoRepository = iTripoRepository;
     }
 

@@ -12,6 +12,11 @@ public class GeneratedResponse {
         this.errorMessage = errorMessage;
     }
 
+    public GeneratedResponse(String status, String imageUrl) {
+        this.status = status;
+        this.imageUrl = imageUrl;
+    }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     public String getImageUrl() { return imageUrl; }

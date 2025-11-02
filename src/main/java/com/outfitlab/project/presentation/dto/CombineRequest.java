@@ -1,14 +1,27 @@
 package com.outfitlab.project.presentation.dto;
 
-public class CombineRequest {
-    private String superior;
-    private String inferior;
-    private Boolean esHombre;
+import com.outfitlab.project.domain.model.dto.CombineRequestModel;
 
-    public String getSuperior() { return superior; }
-    public void setSuperior(String superior) { this.superior = superior; }
-    public String getInferior() { return inferior; }
-    public void setInferior(String inferior) { this.inferior = inferior; }
-    public Boolean getEsHombre() {return esHombre;}
-    public void setEsHombre(Boolean esHombre) {this.esHombre = esHombre;}
+public class CombineRequest {
+    private String top;
+    private String bottom;
+    private Boolean isMan;
+    private String avatarType;
+
+    public String getAvatarType() {return avatarType;}
+    public void setAvatarType(String avatarType) {this.avatarType = avatarType;}
+    public String getTop() { return top; }
+    public void setTop(String top) { this.top = top; }
+    public String getBottom() { return bottom; }
+    public void setBottom(String bottom) { this.bottom = bottom; }
+    public Boolean getIsMan() {return isMan;}
+    public void setIsMan(Boolean isMan) {this.isMan = isMan;}
+
+    public static CombineRequestModel convertToDomainModel(CombineRequest request){
+        return new CombineRequestModel(
+                request.getTop(),
+                request.getBottom(),
+                request.getIsMan(),
+                request.getAvatarType());
+    }
 }

@@ -3,48 +3,43 @@ package com.outfitlab.project.presentation;
 import com.outfitlab.project.domain.exceptions.FashnApiException;
 import com.outfitlab.project.domain.exceptions.PredictionFailedException;
 import com.outfitlab.project.domain.exceptions.PredictionTimeoutException;
-import com.outfitlab.project.domain.service.FashnService;
+import com.outfitlab.project.domain.useCases.fashn.CombinePrendas;
 import com.outfitlab.project.presentation.dto.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/fashion")
 public class FashnController {
 
-    private final FashnService fashnService;
+    private final CombinePrendas combinePrendas;
 
-    public FashnController(FashnService tryOnService) {
-        this.fashnService = tryOnService;
-    }
+    public FashnController(CombinePrendas combinePrendas) {this.combinePrendas = combinePrendas;}
 
     @PostMapping("/combinar-prendas")
-    public ResponseEntity<GeneratedResponse> combine(@RequestBody CombineRequest req) {
-        System.out.println(req.toString());
+    public ResponseEntity<GeneratedResponse> combine(@RequestBody CombineRequest request) {
+        System.out.println(request.toString());
 
         try {
-
-            GeneratedResponse resp = new GeneratedResponse("OK", fashnService.combine(req), null);
-
-            return ResponseEntity.ok(resp);
+            return ResponseEntity.ok(new GeneratedResponse("OK", this.combinePrendas.execute(CombineRequest.convertToDomainModel(request))));
         } catch (PredictionFailedException e) {
-            System.out.println(e.getMessage());
-            GeneratedResponse resp = new GeneratedResponse("FAILED", null, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(resp);
+            return buildHttpResponse(e.getMessage(), "FAILED", BAD_GATEWAY);
         } catch (PredictionTimeoutException e) {
-            System.out.println(e.getMessage());
-            GeneratedResponse resp = new GeneratedResponse("TIMEOUT", null, e.getMessage());
-            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(resp);
+            return buildHttpResponse(e.getMessage(), "TIMEOUT", GATEWAY_TIMEOUT);
         } catch (FashnApiException e) {
-            System.out.println(e.getMessage());
-            GeneratedResponse resp = new GeneratedResponse("ERROR", null, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(resp);
+            return buildHttpResponse(e.getMessage(), "ERROR",  BAD_GATEWAY);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            GeneratedResponse resp = new GeneratedResponse("ERROR", null, "Error inesperado: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp);
+            return buildHttpResponse("Error inesperado: " + e.getMessage(), "ERROR", INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @NotNull
+    private static ResponseEntity<GeneratedResponse> buildHttpResponse(String message, String status, HttpStatus badGateway) {
+        return ResponseEntity.status(badGateway).body(new GeneratedResponse(status, null, message));
     }
 }
 

@@ -1,13 +1,13 @@
 package com.outfitlab.project.domain.useCases.tripo;
 
-import com.outfitlab.project.domain.interfaces.repositories.IAwsRepository;
+import com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository;
 import org.springframework.web.multipart.MultipartFile;
 
-public class UploadImageToAws {
+public class SaveImage {
 
-    private final IAwsRepository iAwsRepository;
+    private final UploadImageRepository iAwsRepository;
 
-    public UploadImageToAws(IAwsRepository awsRepository) {
+    public SaveImage(UploadImageRepository awsRepository) {
         this.iAwsRepository = awsRepository;
     }
 

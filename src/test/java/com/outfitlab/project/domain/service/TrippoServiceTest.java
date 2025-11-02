@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 public class TrippoServiceTest {
 
     private UploadImageToTripo uploadImageToTripoMock;
-    private UploadImageToAws uploadImageToAwsMock;
+    private SaveImage uploadImageToAwsMock;
     private GenerateImageToModelTrippo generateImageToModelTrippoMock;
     private SaveTripoModel saveTripoModelMock;
     private CheckTaskStatus checkTaskStatusMock;
@@ -28,7 +28,7 @@ public class TrippoServiceTest {
     @BeforeEach
     public void setUp() {
         uploadImageToTripoMock = mock(UploadImageToTripo.class);
-        uploadImageToAwsMock = mock(UploadImageToAws.class);
+        uploadImageToAwsMock = mock(SaveImage.class);
         generateImageToModelTrippoMock = mock(GenerateImageToModelTrippo.class);
         saveTripoModelMock = mock(SaveTripoModel.class);
         checkTaskStatusMock = mock(CheckTaskStatus.class);

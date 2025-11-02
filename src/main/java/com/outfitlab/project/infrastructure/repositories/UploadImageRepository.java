@@ -1,6 +1,5 @@
 package com.outfitlab.project.infrastructure.repositories;
 
-import com.outfitlab.project.domain.interfaces.repositories.IAwsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +14,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Slf4j
-public class AwsRepositoryImpl implements IAwsRepository {
+public class UploadImageRepository implements com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository {
 
     private final S3Client s3Client;
 

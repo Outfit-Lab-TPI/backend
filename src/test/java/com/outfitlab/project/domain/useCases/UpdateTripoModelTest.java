@@ -1,7 +1,7 @@
 package com.outfitlab.project.domain.useCases;
 
 import com.outfitlab.project.domain.exceptions.ErrorTripoEntityNotFound;
-import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
+import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.domain.model.TripoModel;
 import com.outfitlab.project.domain.useCases.tripo.UpdateTripoModel;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,12 +12,12 @@ import static org.mockito.Mockito.*;
 
 public class UpdateTripoModelTest {
 
-    private ITripoRepository tripoRepositoryMock;
+    private TripoRepository tripoRepositoryMock;
     private UpdateTripoModel updateTripoModel;
 
     @BeforeEach
     public void setUp() {
-        tripoRepositoryMock = mock(ITripoRepository.class);
+        tripoRepositoryMock = mock(TripoRepository.class);
         updateTripoModel = new UpdateTripoModel(tripoRepositoryMock);
     }
 

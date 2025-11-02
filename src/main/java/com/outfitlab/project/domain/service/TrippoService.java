@@ -9,14 +9,14 @@ import java.util.Map;
 public class TrippoService {
 
     private final UploadImageToTripo uploadImageToTripo;
-    private final UploadImageToAws uploadImageToAws;
+    private final SaveImage uploadImageToAws;
     private final GenerateImageToModelTrippo generateImageToModelTrippo;
     private final SaveTripoModel saveTripoModel;
     private final CheckTaskStatus checkTaskStatus;
     private final UpdateTripoModel updateTripoModel;
     private final FindTripoModelByTaskid findTripoModelByTaskid;
 
-    public TrippoService(UploadImageToTripo uploadImageToTripo, UploadImageToAws uploadImageToAws, GenerateImageToModelTrippo generateImageToModelTrippo,
+    public TrippoService(UploadImageToTripo uploadImageToTripo, SaveImage uploadImageToAws, GenerateImageToModelTrippo generateImageToModelTrippo,
                          SaveTripoModel saveTripoModel, CheckTaskStatus checkTaskStatus, UpdateTripoModel updateTripoModel, FindTripoModelByTaskid findTripoModelByTaskid) {
         this.uploadImageToTripo = uploadImageToTripo;
         this.uploadImageToAws = uploadImageToAws;

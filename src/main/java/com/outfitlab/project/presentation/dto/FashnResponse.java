@@ -1,6 +1,6 @@
 package com.outfitlab.project.presentation.dto;
 
-public class RunResponse {
+public class FashnResponse {
     private String id;
     private Object error;
 

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outfitlab.project.domain.exceptions.*;
-import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
+import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.domain.model.TripoModel;
 import com.outfitlab.project.infrastructure.model.TripoEntity;
-import com.outfitlab.project.infrastructure.repositories.interfaces.IJpaTripoRepository;
+import com.outfitlab.project.infrastructure.repositories.interfaces.TripoJpaRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TripoRepositoryImpl implements ITripoRepository {
+public class TripoRepositoryImpl implements TripoRepository {
 
     @Value("${tripo.api.key}")
     private String tripoApiKey;
@@ -27,9 +27,9 @@ public class TripoRepositoryImpl implements ITripoRepository {
 
     private final ObjectMapper mapper;
     private final RestTemplate restTemplate;
-    private final IJpaTripoRepository iJpatripoRepository;
+    private final TripoJpaRepository iJpatripoRepository;
 
-    public TripoRepositoryImpl(RestTemplate restTemplate, IJpaTripoRepository iJpatripoRepository) {
+    public TripoRepositoryImpl(RestTemplate restTemplate, TripoJpaRepository iJpatripoRepository) {
         this.restTemplate = restTemplate;
         this.mapper = new ObjectMapper();
         this.iJpatripoRepository = iJpatripoRepository;

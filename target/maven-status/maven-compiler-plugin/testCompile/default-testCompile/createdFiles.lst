@@ -1,4 +1,3 @@
-com\outfitlab\project\infrastructure\TrippoControllerServiceTest.class
 com\outfitlab\project\domain\useCases\ValidateExtensionTest.class
 com\outfitlab\project\domain\useCases\GenerateImageToModelTrippoTest.class
 com\outfitlab\project\domain\useCases\UploadImageToTripoTest.class
@@ -15,5 +14,4 @@ com\outfitlab\project\domain\useCases\CheckTaskStatusTest.class
 com\outfitlab\project\domain\useCases\SaveTripoModelTest.class
 com\outfitlab\project\domain\useCases\UpdateTripoModelTest.class
 com\outfitlab\project\domain\useCases\GetAllMarcasTest.class
-com\outfitlab\project\infrastructure\TrippoServiceTest.class
 com\outfitlab\project\domain\service\TrippoServiceTest.class

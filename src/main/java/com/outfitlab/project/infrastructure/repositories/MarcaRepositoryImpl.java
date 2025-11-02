@@ -1,18 +1,18 @@
 package com.outfitlab.project.infrastructure.repositories;
 
-import com.outfitlab.project.domain.interfaces.repositories.IMarcaRepository;
+import com.outfitlab.project.domain.interfaces.repositories.MarcaRepository;
 import com.outfitlab.project.domain.model.MarcaModel;
 import com.outfitlab.project.infrastructure.model.MarcaEntity;
-import com.outfitlab.project.infrastructure.repositories.interfaces.IJpaMarcaRepository;
+import com.outfitlab.project.infrastructure.repositories.interfaces.MarcaJpaRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MarcaRepositoryImpl implements IMarcaRepository  {
+public class MarcaRepositoryImpl implements MarcaRepository {
 
-    private final IJpaMarcaRepository jpaMarcaRepository;
+    private final MarcaJpaRepository jpaMarcaRepository;
 
-    public MarcaRepositoryImpl(IJpaMarcaRepository marcaRepository) {
+    public MarcaRepositoryImpl(MarcaJpaRepository marcaRepository) {
         this.jpaMarcaRepository = marcaRepository;
     }
 

@@ -6,7 +6,7 @@ import org.springframework.core.io.ByteArrayResource;
 import java.util.Map;
 
 
-public interface ITripoRepository {
+public interface TripoRepository {
 
     TripoModel buscarPorTaskId(String taskId);
 

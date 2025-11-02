@@ -2,7 +2,7 @@ package com.outfitlab.project.domain.useCases;
 
 import com.outfitlab.project.domain.exceptions.ErrorGenerateGlbException;
 import com.outfitlab.project.domain.exceptions.ErrorReadJsonException;
-import com.outfitlab.project.domain.interfaces.repositories.ITripoRepository;
+import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.domain.useCases.tripo.GenerateImageToModelTrippo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +15,12 @@ import static org.mockito.Mockito.*;
 
 public class GenerateImageToModelTrippoTest {
 
-    private ITripoRepository tripoRepositoryMock;
+    private TripoRepository tripoRepositoryMock;
     private GenerateImageToModelTrippo generateImageToModelTrippo;
 
     @BeforeEach
     public void setUp() {
-        tripoRepositoryMock = mock(ITripoRepository.class);
+        tripoRepositoryMock = mock(TripoRepository.class);
         generateImageToModelTrippo = new GenerateImageToModelTrippo(tripoRepositoryMock);
     }
 
