@@ -1,3 +1,4 @@
+com\outfitlab\project\presentation\SubscriptionController.class
 com\outfitlab\project\domain\interfaces\repositories\GarmentRepository.class
 com\outfitlab\project\domain\useCases\tripo\GetImageResource.class
 com\outfitlab\project\domain\interfaces\repositories\TripoRepository.class
@@ -16,6 +17,7 @@ com\outfitlab\project\infrastructure\repositories\interfaces\MarcaJpaRepository.
 com\outfitlab\project\domain\exceptions\FashnApiException.class
 com\outfitlab\project\infrastructure\model\PrendaEntity.class
 com\outfitlab\project\infrastructure\model\TripoEntity.class
+com\outfitlab\project\domain\service\SubscriptionService.class
 com\outfitlab\project\infrastructure\config\security\CorsConfig.class
 com\outfitlab\project\presentation\dto\GeneratedResponse.class
 com\outfitlab\project\domain\service\MarcaService.class
@@ -62,6 +64,7 @@ com\outfitlab\project\presentation\RecomendationController.class
 com\outfitlab\project\domain\interfaces\repositories\FashnRepository.class
 com\outfitlab\project\infrastructure\repositories\interfaces\RecomendationJpaRepository.class
 com\outfitlab\project\domain\model\UserModel.class
+com\outfitlab\project\presentation\SubscriptionRequest.class
 com\outfitlab\project\domain\exceptions\PredictionTimeoutException.class
 com\outfitlab\project\domain\model\TripoModel.class
 com\outfitlab\project\infrastructure\repositories\MarcaRepositoryImpl.class
