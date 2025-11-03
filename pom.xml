@@ -73,6 +73,12 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.mercadopago</groupId>
+			<artifactId>sdk-java</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+
 		<!-- TESTS -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
