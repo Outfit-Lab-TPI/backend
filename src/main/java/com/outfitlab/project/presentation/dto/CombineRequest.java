@@ -1,6 +1,6 @@
 package com.outfitlab.project.presentation.dto;
 
-import com.outfitlab.project.domain.model.dto.CombineRequestModel;
+import com.outfitlab.project.domain.model.dto.CombineRequestDTO;
 
 public class CombineRequest {
     private String top;
@@ -17,8 +17,8 @@ public class CombineRequest {
     public Boolean getIsMan() {return isMan;}
     public void setIsMan(Boolean isMan) {this.isMan = isMan;}
 
-    public static CombineRequestModel convertToDomainModel(CombineRequest request){
-        return new CombineRequestModel(
+    public static CombineRequestDTO convertToDomainModel(CombineRequest request){
+        return new CombineRequestDTO(
                 request.getTop(),
                 request.getBottom(),
                 request.getIsMan(),

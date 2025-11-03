@@ -1,7 +1,7 @@
 package com.outfitlab.project.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.outfitlab.project.domain.model.MarcaModel;
+import com.outfitlab.project.domain.model.BrandModel;
 import com.outfitlab.project.domain.model.PrendaModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -65,7 +65,7 @@ public class MarcaEntity {
 
 
     // ------------- acá hacemos los dos convert ------------
-    public static MarcaEntity convertToEntityWithoutPrendas(MarcaModel entity) {
+    public static MarcaEntity convertToEntityWithoutPrendas(BrandModel entity) {
         return new MarcaEntity(
                 entity.getCodigoMarca(),
                 entity.getNombre(),
@@ -75,8 +75,8 @@ public class MarcaEntity {
         );
     }
 
-    public static MarcaModel convertToModelWithoutPrendas(MarcaEntity model) {
-        return new MarcaModel(
+    public static BrandModel convertToModelWithoutPrendas(MarcaEntity model) {
+        return new BrandModel(
                 model.getCodigoMarca(),
                 model.getNombre(),
                 model.getLogoUrl(),
@@ -85,7 +85,7 @@ public class MarcaEntity {
         );
     }
 
-    public static MarcaModel convertToModel(MarcaEntity entity) {
+    public static BrandModel convertToModel(MarcaEntity entity) {
         if (entity == null) return null;
 
         List<PrendaModel> prendasModel = new ArrayList<>();
@@ -95,7 +95,7 @@ public class MarcaEntity {
             }
         }
 
-        return new MarcaModel(
+        return new BrandModel(
                 entity.getCodigoMarca(),
                 entity.getNombre(),
                 entity.getLogoUrl(),
@@ -105,7 +105,7 @@ public class MarcaEntity {
         );
     }
 
-    public static MarcaEntity convertToEntity(MarcaModel model) {
+    public static MarcaEntity convertToEntity(BrandModel model) {
         if (model == null) return null;
 
         MarcaEntity entity = new MarcaEntity();

@@ -3,7 +3,7 @@ package com.outfitlab.project.domain.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class MarcaModel {
+public class BrandModel {
 
     private String codigoMarca;
     private String nombre;
@@ -12,9 +12,9 @@ public class MarcaModel {
     private LocalDateTime updatedAt;
     private List<PrendaModel> prendas;
 
-    public MarcaModel(){}
+    public BrandModel(){}
 
-    public MarcaModel(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt, List<PrendaModel> prendas) {
+    public BrandModel(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt, List<PrendaModel> prendas) {
         this.codigoMarca = codigoMarca;
         this.nombre = nombre;
         this.logoUrl = logoUrl;
@@ -23,7 +23,7 @@ public class MarcaModel {
         this.prendas = prendas;
     }
 
-    public MarcaModel(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public BrandModel(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.codigoMarca = codigoMarca;
         this.nombre = nombre;
         this.logoUrl = logoUrl;

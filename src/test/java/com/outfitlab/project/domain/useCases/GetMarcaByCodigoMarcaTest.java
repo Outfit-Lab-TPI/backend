@@ -1,9 +1,12 @@
 package com.outfitlab.project.domain.useCases;
 
-import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
-import com.outfitlab.project.domain.useCases.marca.GetMarcaByCodigoMarca;
-import com.outfitlab.project.domain.interfaces.repositories.MarcaRepository;
-import com.outfitlab.project.domain.model.MarcaModel;
+import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
+import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
+import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
+import com.outfitlab.project.domain.model.dto.BrandAndGarmentsDTO;
+import com.outfitlab.project.domain.useCases.marca.GetBrandAndGarmentsByBrandCode;
+import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
+import com.outfitlab.project.domain.model.BrandModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,39 +15,40 @@ import static org.mockito.Mockito.*;
 
 public class GetMarcaByCodigoMarcaTest {
 
-    private MarcaRepository marcaRepositoryMock;
-    private GetMarcaByCodigoMarca getMarcaByCodigoMarca;
+    private BrandRepository marcaRepositoryMock;
+    private GetBrandAndGarmentsByBrandCode getMarcaByCodigoMarca;
+    private GarmentRepository garmentRepository;
 
     @BeforeEach
     public void setUp() {
-        marcaRepositoryMock = mock(MarcaRepository.class);
-        getMarcaByCodigoMarca = new GetMarcaByCodigoMarca(marcaRepositoryMock);
+        marcaRepositoryMock = mock(BrandRepository.class);
+        getMarcaByCodigoMarca = new GetBrandAndGarmentsByBrandCode(marcaRepositoryMock, garmentRepository);
     }
 
     @Test
-    public void ejecutarDeberiaDevolverMarca_cuandoRepositorioDevuelveMarca() throws MarcasNotFoundException {
-        MarcaModel marca = new MarcaModel();
+    public void ejecutarDeberiaDevolverMarca_cuandoRepositorioDevuelveMarca() throws BrandsNotFoundException, PageLessThanZeroException {
+        BrandModel marca = new BrandModel();
         marca.setNombre("MarcaTest");
         String codigo = "COD123";
 
-        when(marcaRepositoryMock.buscarPorCodigoMarca(codigo)).thenReturn(marca);
+        when(marcaRepositoryMock.findByBrandCode(codigo)).thenReturn(marca);
 
-        MarcaModel resultado = getMarcaByCodigoMarca.execute(codigo);
+        BrandAndGarmentsDTO resultado = getMarcaByCodigoMarca.execute(codigo, 1);
 
         assertNotNull(resultado);
-        assertEquals("MarcaTest", resultado.getNombre());
+        assertEquals("MarcaTest", resultado.getBrandDTO().getNombre());
 
-        verify(marcaRepositoryMock, times(1)).buscarPorCodigoMarca(codigo);
+        verify(marcaRepositoryMock, times(1)).findByBrandCode(codigo);
     }
 
     @Test
     public void ejecutarDeberiaLanzarExcepcion_cuandoRepositorioNoDevuelveMarca() {
         String codigo = "COD999";
 
-        when(marcaRepositoryMock.buscarPorCodigoMarca(codigo)).thenReturn(null);
+        when(marcaRepositoryMock.findByBrandCode(codigo)).thenReturn(null);
 
-        assertThrows(MarcasNotFoundException.class, () -> {
-            getMarcaByCodigoMarca.execute(codigo);
+        assertThrows(BrandsNotFoundException.class, () -> {
+            getMarcaByCodigoMarca.execute(codigo, 1);
         });
     }
 }

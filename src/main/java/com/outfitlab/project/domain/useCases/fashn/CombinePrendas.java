@@ -3,7 +3,7 @@ package com.outfitlab.project.domain.useCases.fashn;
 import com.outfitlab.project.domain.exceptions.FashnApiException;
 import com.outfitlab.project.domain.exceptions.PredictionFailedException;
 import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
-import com.outfitlab.project.domain.model.dto.CombineRequestModel;
+import com.outfitlab.project.domain.model.dto.CombineRequestDTO;
 
 public class CombinePrendas {
 
@@ -15,7 +15,7 @@ public class CombinePrendas {
         this.iFashnRepository = iFashnRepository;
     }
 
-    public String execute(CombineRequestModel request) throws FashnApiException, PredictionFailedException {
+    public String execute(CombineRequestDTO request) throws FashnApiException, PredictionFailedException {
         System.out.println(request.toString());
         checkRequestCombine(request.getTop(), request.getBottom());
 

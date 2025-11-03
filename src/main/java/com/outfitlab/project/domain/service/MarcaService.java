@@ -1,34 +1,31 @@
 package com.outfitlab.project.domain.service;
 
-import com.outfitlab.project.domain.model.MarcaModel;
-import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
-import com.outfitlab.project.domain.useCases.marca.GetAllMarcas;
-import com.outfitlab.project.domain.useCases.marca.GetMarcaByCodigoMarca;
+import com.outfitlab.project.domain.model.BrandModel;
+import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
+import com.outfitlab.project.domain.useCases.marca.GetAllBrands;
+import com.outfitlab.project.domain.useCases.marca.GetBrandAndGarmentsByBrandCode;
 import java.util.List;
 
 public class MarcaService {
 
-    private final GetAllMarcas getAllMarcas;
-    private final GetMarcaByCodigoMarca getMarcaByCodigoMarca;
+    private final GetAllBrands getAllMarcas;
+    private final GetBrandAndGarmentsByBrandCode getMarcaByCodigoMarca;
 
-    public MarcaService(GetAllMarcas getAllMarcas, GetMarcaByCodigoMarca getMarcaAtributesByCodigoMarca){
+    public MarcaService(GetAllBrands getAllMarcas, GetBrandAndGarmentsByBrandCode getMarcaAtributesByCodigoMarca){
         this.getAllMarcas = getAllMarcas;
         this.getMarcaByCodigoMarca = getMarcaAtributesByCodigoMarca;
     }
 
-    public List<MarcaModel> getAllMarcas() throws MarcasNotFoundException {
+    public List<BrandModel> getAllMarcas() throws BrandsNotFoundException {
         try {
-            return this.getAllMarcas.execute();
+            //return this.getAllMarcas.execute(1);
+            return  null;
         }catch (Exception e){
-            throw new MarcasNotFoundException(e.getMessage());
+            throw new BrandsNotFoundException(e.getMessage());
         }
     }
 
-    public MarcaModel getMarcaByCodigoMarca(String codigoMarca) throws MarcasNotFoundException {
-        try{
-            return this.getMarcaByCodigoMarca.execute(codigoMarca);
-        }catch (Exception e){
-            throw new MarcasNotFoundException("No encontramos la marca: " + codigoMarca);
-        }
+    public BrandModel getMarcaByCodigoMarca(String codigoMarca) throws BrandsNotFoundException {
+       return null;
     }
 }

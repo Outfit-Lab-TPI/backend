@@ -3,12 +3,12 @@ package com.outfitlab.project.domain.model;
 public class PrendaModel {
 
     private String nombre;
-    private MarcaModel marca;
+    private BrandModel marca;
     private String tipo;
     private String imagenUrl;
     private String garmentCode;
 
-    public PrendaModel(String nombre, MarcaModel marca, String tipo, String imagenUrl, String garmentCode) {
+    public PrendaModel(String nombre, BrandModel marca, String tipo, String imagenUrl, String garmentCode) {
         this.nombre = nombre;
         this.marca = marca;
         this.tipo = tipo;
@@ -32,11 +32,11 @@ public class PrendaModel {
         this.nombre = nombre;
     }
 
-    public MarcaModel getMarca() {
+    public BrandModel getMarca() {
         return marca;
     }
 
-    public void setMarca(MarcaModel marca) {
+    public void setMarca(BrandModel marca) {
         this.marca = marca;
     }
 

@@ -1,13 +1,14 @@
 package com.outfitlab.project.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.outfitlab.project.domain.model.MarcaModel;
+import com.outfitlab.project.domain.model.BrandModel;
 import com.outfitlab.project.domain.model.PrendaModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -51,7 +52,7 @@ public class PrendaEntity {
 
 
     public static PrendaModel convertToModel(PrendaEntity prendaEntity) {
-        MarcaModel marcaModel = MarcaEntity.convertToModelWithoutPrendas(prendaEntity.getMarca());
+        BrandModel marcaModel = MarcaEntity.convertToModelWithoutPrendas(prendaEntity.getMarca());
         return new PrendaModel(
                 prendaEntity.getNombre(),
                 marcaModel,
@@ -70,6 +71,11 @@ public class PrendaEntity {
                 prendaModel.getImagenUrl(),
                 prendaModel.getGarmentCode()
         );
+    }
+
+    public static List<PrendaModel> convertToListModel(List<PrendaEntity> garments) {
+        return  garments.stream().map(PrendaEntity::convertToModel)
+                .toList();
     }
     //--------------------------------------------------------
 }

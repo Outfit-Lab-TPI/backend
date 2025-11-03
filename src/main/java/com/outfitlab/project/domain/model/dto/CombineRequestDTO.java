@@ -1,13 +1,13 @@
 package com.outfitlab.project.domain.model.dto;
 
-public class CombineRequestModel {
+public class CombineRequestDTO {
     private String top;
     private String bottom;
     private Boolean isMan;
     private String avatarType;
 
-    public CombineRequestModel() {}
-    public CombineRequestModel(String top, String bottom, Boolean isMan, String avatarType) {
+    public CombineRequestDTO() {}
+    public CombineRequestDTO(String top, String bottom, Boolean isMan, String avatarType) {
         this.top = top;
         this.bottom = bottom;
         this.isMan = isMan;

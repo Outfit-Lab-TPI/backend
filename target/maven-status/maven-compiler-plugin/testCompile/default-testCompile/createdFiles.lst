@@ -1,7 +1,6 @@
 com\outfitlab\project\domain\useCases\ValidateExtensionTest.class
 com\outfitlab\project\domain\useCases\GenerateImageToModelTrippoTest.class
 com\outfitlab\project\domain\useCases\UploadImageToTripoTest.class
-com\outfitlab\project\domain\service\MarcaServiceTest.class
 com\outfitlab\project\domain\useCases\FindTripoModelByTaskidTest.class
 com\outfitlab\project\presentation\TrippoControllerTest.class
 com\outfitlab\project\ProjectApplicationTests.class

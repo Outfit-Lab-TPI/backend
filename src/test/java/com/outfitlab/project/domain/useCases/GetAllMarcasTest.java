@@ -1,9 +1,11 @@
 package com.outfitlab.project.domain.useCases;
 
-import com.outfitlab.project.domain.exceptions.MarcasNotFoundException;
-import com.outfitlab.project.domain.interfaces.repositories.MarcaRepository;
-import com.outfitlab.project.domain.model.MarcaModel;
-import com.outfitlab.project.domain.useCases.marca.GetAllMarcas;
+import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
+import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
+import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
+import com.outfitlab.project.domain.model.BrandModel;
+import com.outfitlab.project.domain.model.dto.BrandDTO;
+import com.outfitlab.project.domain.useCases.marca.GetAllBrands;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,27 +19,27 @@ import static org.mockito.Mockito.when;
 
 public class GetAllMarcasTest {
 
-    private MarcaRepository marcaRepositoryMock;
-    private GetAllMarcas getAllMarcas;
+    private BrandRepository marcaRepositoryMock;
+    private GetAllBrands getAllMarcas;
 
     @BeforeEach
     public void setUp() {
-        marcaRepositoryMock = mock(MarcaRepository.class);
-        getAllMarcas = new GetAllMarcas(marcaRepositoryMock);
+        marcaRepositoryMock = mock(BrandRepository.class);
+        getAllMarcas = new GetAllBrands(marcaRepositoryMock);
     }
 
     @Test
-    public void ejecutar_deberiaDevolverListaDeMarcas_cuandoElRepositorioTieneMarcas() throws MarcasNotFoundException {
-        MarcaModel marca1 = new MarcaModel();
+    public void ejecutar_deberiaDevolverListaDeMarcas_cuandoElRepositorioTieneMarcas() throws BrandsNotFoundException, PageLessThanZeroException {
+        BrandModel marca1 = new BrandModel();
         marca1.setNombre("Marca 1");
 
-        MarcaModel marca2 = new MarcaModel();
+        BrandModel marca2 = new BrandModel();
         marca2.setNombre("Marca 2");
 
-        List<MarcaModel> marcasMock = Arrays.asList(marca1, marca2);
+        List<BrandModel> marcasMock = Arrays.asList(marca1, marca2);
 
-        when(marcaRepositoryMock.obtenerTodas()).thenReturn(marcasMock);
-        List<MarcaModel> resultado = getAllMarcas.execute();
+        when(marcaRepositoryMock.getAllBrands(1)).thenReturn(marcasMock);
+        List<BrandDTO> resultado = getAllMarcas.execute(1);
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
@@ -47,10 +49,10 @@ public class GetAllMarcasTest {
 
     @Test
     public void ejecutar_deberiaLanzarExcepcion_cuandoElRepositorioNoTieneMarcas() {
-        when(marcaRepositoryMock.obtenerTodas()).thenReturn(Collections.emptyList());
+        when(marcaRepositoryMock.getAllBrands(1)).thenReturn(Collections.emptyList());
 
-        assertThrows(MarcasNotFoundException.class, () -> {
-            getAllMarcas.execute();
+        assertThrows(BrandsNotFoundException.class, () -> {
+            getAllMarcas.execute(1);
         });
     }
 }
