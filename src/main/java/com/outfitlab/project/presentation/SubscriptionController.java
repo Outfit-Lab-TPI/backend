@@ -1,96 +1,89 @@
-package com.outfitlab.project.domain.service;
+package com.outfitlab.project.presentation;
 
-import com.mercadopago.MercadoPagoConfig;
-import com.mercadopago.client.payment.PaymentClient;
-import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferencePayerRequest;
-import com.mercadopago.client.preference.PreferenceRequest;
 import com.mercadopago.exceptions.MPApiException;
-import com.mercadopago.resources.payment.Payment;
-import com.mercadopago.resources.preference.Preference;
 import com.mercadopago.exceptions.MPException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import com.outfitlab.project.domain.service.SubscriptionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.Map;
+import java.util.HashMap;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
-@Service
-public class SubscriptionService {
+class SubscriptionRequest {
+    private String planId;
+    private String userEmail;
+    private BigDecimal price;
+    private String currency;
 
-    /**
-     * Constructor para inicializar el SDK con el Access Token.
-     * Se ejecuta al iniciar Spring Boot.
-     */
-    public SubscriptionService(@Value("${mercadopago.access.token}") String accessToken) {
-        if (accessToken == null || accessToken.trim().isEmpty() || accessToken.equals("${mercadopago.access.token}")) {
-            throw new IllegalArgumentException("ERROR: El Access Token de Mercado Pago no está configurado. Revisa la variable de entorno MP_ACCESS_TOKEN.");
+    public String getPlanId() { return planId; }
+    public void setPlanId(String planId) { this.planId = planId; }
+    public String getUserEmail() { return userEmail; }
+    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
+}
+
+@RestController
+@RequestMapping("/api/mp")
+public class SubscriptionController {
+
+    @Autowired
+    private SubscriptionService subscriptionService;
+
+    @PostMapping("/crear-suscripcion")
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<Map<String, String>> createPreference(@RequestBody SubscriptionRequest request) {
+
+        if (request.getPlanId() == null || request.getUserEmail() == null || request.getPrice() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Faltan planId, userEmail o price."));
         }
-        MercadoPagoConfig.setAccessToken(accessToken);
-        System.out.println("Mercado Pago SDK de Java inicializado (desde SubscriptionService).");
+
+        try {
+            String initPointUrl = subscriptionService.createMercadoPagoPreference(
+                    request.getPlanId(),
+                    request.getUserEmail(),
+                    request.getPrice(),
+                    request.getCurrency() != null ? request.getCurrency() : "ARS"
+            );
+
+            Map<String, String> response = new HashMap<>();
+            response.put("initPoint", initPointUrl);
+            return ResponseEntity.ok(response);
+
+        } catch (MPException | MPApiException e) {
+            e.printStackTrace();
+            System.err.println("Error de API de Mercado Pago: " + e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "Error al crear la preferencia en Mercado Pago."));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", "Error interno del servidor."));
+        }
     }
 
-    /**
-     * Crea una Preferencia de Pago Único (para la demo).
-     */
-    public String createMercadoPagoPreference(String planId, String userEmail, BigDecimal price, String currency) throws MPException, MPApiException {
+    @PostMapping("/webhooks")
+    public ResponseEntity<String> handleMercadoPagoWebhook(
+            @RequestParam(name = "id", required = false) String id,
+            @RequestParam(name = "topic", required = false) String topic)
+    {
+        if ("payment".equals(topic) && id != null) {
+            try {
+                Long paymentId = Long.parseLong(id);
 
-        // 1. Definir el ítem
-        PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
-                .id(planId)
-                .title("Demo Premium Outfit Lab")
-                .description("Acceso único a funciones premium")
-                .quantity(1)
-                .unitPrice(price)
-                .currencyId(currency)
-                .build();
+                subscriptionService.processPaymentNotification(paymentId);
 
-        List<PreferenceItemRequest> items = new ArrayList<>();
-        items.add(itemRequest);
-
-        // 2. Definir el pagador (con el email de prueba)
-        PreferencePayerRequest payer = PreferencePayerRequest.builder()
-                .email(userEmail)
-                .build();
-
-        // 3. Crear la solicitud de Preferencia
-        PreferenceRequest request = PreferenceRequest.builder()
-                .items(items)
-                .payer(payer)
-                // --- SE ELIMINAN backUrls y autoReturn ---
-                // Esto evita el error 500 (MPApiException) al validar localhost.
-                // Mercado Pago usará las URLs configuradas en el dashboard
-                // o mostrará un botón simple de "Volver al sitio".
-                .externalReference(planId)
-                .build();
-
-        // 4. Ejecutar la API
-        PreferenceClient client = new PreferenceClient();
-        Preference preference = client.create(request);
-
-        // 5. Devolver la URL de pago
-        return preference.getInitPoint();
-    }
-
-    /**
-     * Procesa el Webhook para un Pago Único.
-     */
-    public void processPaymentNotification(Long paymentId) throws MPException, MPApiException {
-        PaymentClient client = new PaymentClient();
-        Payment payment = client.get(paymentId);
-
-        String status = payment.getStatus();
-        String externalReference = payment.getExternalReference();
-
-        System.out.printf("Procesando Webhook de PAGO. ID Pago MP: %s, ID Plan Interno: %s, Status: %s%n",
-                paymentId, externalReference, status);
-
-        if ("approved".equals(status)) {
-            System.out.println("Pago AUTHORIZED. Activando Premium (Demo) para: " + externalReference);
-            // TODO: Aquí iría tu lógica de base de datos para activar el servicio
-        } else if ("rejected".equals(status) || "cancelled".equals(status)) {
-            System.out.println("Pago REJECTED/CANCELLED para: " + externalReference);
+                return ResponseEntity.ok("Notification processed successfully.");
+            } catch (NumberFormatException e) {
+                System.err.println("Error: El ID del Webhook no es un número (Long). ID: " + id);
+                return ResponseEntity.badRequest().body("ID inválido.");
+            } catch (MPException | MPApiException e) {
+                System.err.println("Error procesando Webhook de Pago: " + e.getMessage());
+                return ResponseEntity.status(500).body("Error processing notification.");
+            }
         }
+
+        return ResponseEntity.ok("Notification received, not a relevant topic.");
     }
 }
