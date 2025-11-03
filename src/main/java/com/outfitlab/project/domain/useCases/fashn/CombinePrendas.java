@@ -16,6 +16,7 @@ public class CombinePrendas {
     }
 
     public String execute(CombineRequestModel request) throws FashnApiException, PredictionFailedException {
+        System.out.println(request.toString());
         checkRequestCombine(request.getTop(), request.getBottom());
 
         if (isOnlyTop(request.getTop(), request.getBottom())) return combine(request.getTop(), TOPS, request.getAvatarType());

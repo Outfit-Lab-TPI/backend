@@ -24,4 +24,14 @@ public class CombineRequest {
                 request.getIsMan(),
                 request.getAvatarType());
     }
+
+    @Override
+    public String toString() {
+        return "CombineRequest{" +
+                "top='" + top + '\'' +
+                ", bottom='" + bottom + '\'' +
+                ", isMan=" + isMan +
+                ", avatarType='" + avatarType + '\'' +
+                '}';
+    }
 }

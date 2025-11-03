@@ -6,6 +6,8 @@ import com.outfitlab.project.domain.exceptions.PredictionTimeoutException;
 import com.outfitlab.project.domain.useCases.fashn.CombinePrendas;
 import com.outfitlab.project.presentation.dto.*;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import static org.springframework.http.HttpStatus.*;
 public class FashnController {
 
     private final CombinePrendas combinePrendas;
+    private static final Logger log = LoggerFactory.getLogger(FashnController.class);
 
     public FashnController(CombinePrendas combinePrendas) {this.combinePrendas = combinePrendas;}
 
@@ -39,6 +42,7 @@ public class FashnController {
 
     @NotNull
     private static ResponseEntity<GeneratedResponse> buildHttpResponse(String message, String status, HttpStatus badGateway) {
+        log.info(message);
         return ResponseEntity.status(badGateway).body(new GeneratedResponse(status, null, message));
     }
 }

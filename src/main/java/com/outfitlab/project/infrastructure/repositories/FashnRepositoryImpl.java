@@ -6,6 +6,7 @@ import com.outfitlab.project.domain.exceptions.PredictionTimeoutException;
 import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
 import com.outfitlab.project.presentation.dto.FashnResponse;
 import com.outfitlab.project.presentation.dto.StatusResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class FashnRepositoryImpl implements FashnRepository {
 
     @Value("${FASHION_IA_SECRET_KEY}")
@@ -49,6 +51,41 @@ public class FashnRepositoryImpl implements FashnRepository {
         if (isNullBody(response.getBody())) throw new FashnApiException("Respuesta /run no contiene el id o el body es nulo: " + response);
 
         return response.getBody().getId();
+    }
+
+    @Override
+    public String pollStatus(String id) throws FashnApiException, PredictionFailedException {
+        String urlTemplate = BASE_URL + "/status/{id}";
+        HttpEntity<Void> httpEntity = new HttpEntity<>(buildHttpHeaders());
+
+        System.out.println("---------------- Iniciando polling de status para Task ID: " + id);
+
+        for (int attempt = 1; attempt <= MAX_ATTEMPS; attempt++) {
+            waitDelay(attempt);
+
+            ResponseEntity<StatusResponse> responseResult = pollFashnResult(id, urlTemplate, httpEntity);;
+            checkIsNotOkStatus(responseResult);
+            StatusResponse statusResponseBody = responseResult.getBody();
+            checkIfIsNullStatus(statusResponseBody);
+
+            System.out.println("---------------------- Poll intento - Estado actual: {}" + attempt + "  ..Status: " + statusResponseBody.getStatus());
+
+            if (isCompleted(statusResponseBody)) return getUrlGarmentCombined(statusResponseBody);
+            else if (isFailed(statusResponseBody)) throw new PredictionFailedException("Predicción falló: " + statusResponseBody.getError());
+        }
+
+        System.out.println("---------------- Se agotaron los intentos de polling para la predicción: " + id);
+        throw new PredictionTimeoutException("Se agotaron los intentos de polling para la predicción " + id);
+    }
+
+    @Override
+    public String combineTopAndBottom(String top, String bottom, String avatarType) throws PredictionFailedException, FashnApiException {
+        return pollStatus(combineSecondGarment(bottom, "bottoms", pollStatus(combine(top, "tops", avatarType))));
+    }
+
+    @Override
+    public String combineSecondGarment(String garmentUrl, String category, String avatarCombinedUrl) throws FashnApiException {
+        return getFashnCombineId(new HttpEntity<>(buildHttpBodySecondGarment(garmentUrl, category, avatarCombinedUrl), buildHttpHeaders()));
     }
 
     @NotNull
@@ -116,74 +153,58 @@ public class FashnRepositoryImpl implements FashnRepository {
         return headers;
     }
 
-    @Override
-    public String pollStatus(String id) throws FashnApiException, PredictionFailedException {
-        int maxIntentos = 20;
-        int delay = 3000;
-        String urlTemplate = BASE_URL + "/status/{id}";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(FASH_API_KEY);
-        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
-
-        System.out.println("---------------- Iniciando polling de status para Task ID: " + id);
-
-        for (int attempt = 1; attempt <= maxIntentos; attempt++) {
-            try {
-                if (attempt > 1) {
-                    Thread.sleep(delay);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new FashnApiException("Polling interrumpido, falló la espera del Sleep", e);
-            }
-
-            ResponseEntity<StatusResponse> resp;
-            try {
-                resp = restTemplate.exchange(urlTemplate, HttpMethod.GET, httpEntity, StatusResponse.class, id);
-            } catch (HttpClientErrorException | HttpServerErrorException ex) {
-                String msg = "Error al consultar /status de FASHN: " + ex.getStatusCode() + " - " + ex.getResponseBodyAsString();
-                throw new FashnApiException(msg, ex);
-            } catch (ResourceAccessException ex) {
-                throw new FashnApiException("Error de conexión al consultar status", ex);
-            }
-
-            if (resp.getStatusCode() != HttpStatus.OK) {
-                throw new FashnApiException("Respuesta inesperada de /status: " + resp.getStatusCode());
-            }
-
-            StatusResponse statusResp = resp.getBody();
-            if (statusResp == null) {
-                throw new FashnApiException("Respuesta /status vacía");
-            }
-
-            String status = statusResp.getStatus();
-            System.out.println("---------------------- Poll intento - Estado actual: {}" + attempt + "  ..Status: " + status);
-
-            if ("completed".equalsIgnoreCase(status)) {
-                List<String> outputs = statusResp.getOutput();
-                if (outputs != null && !outputs.isEmpty()) {
-                    return outputs.get(0);
-                } else {
-                    throw new PredictionFailedException("Estado completed pero no hay output: " + statusResp.getError());
-                }
-            } else if ("failed".equalsIgnoreCase(status)) {
-                throw new PredictionFailedException("Predicción falló: " + statusResp.getError());
-            }
+    @NotNull
+    private ResponseEntity<StatusResponse> pollFashnResult(String id, String urlTemplate, HttpEntity<Void> httpEntity) throws FashnApiException {
+        ResponseEntity<StatusResponse> resp;
+        try {
+            resp = restTemplate.exchange(urlTemplate, HttpMethod.GET, httpEntity, StatusResponse.class, id);
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            String msg = "Error al consultar /status de FASHN: " + ex.getStatusCode() + " - " + ex.getResponseBodyAsString();
+            throw new FashnApiException(msg, ex);
+        } catch (ResourceAccessException ex) {
+            throw new FashnApiException("Error de conexión al consultar status", ex);
         }
-
-        System.out.println("---------------- Se agotaron los intentos de polling para la predicción: " + id);
-        throw new PredictionTimeoutException("Se agotaron los intentos de polling para la predicción " + id);
+        return resp;
     }
 
-    @Override
-    public String combineTopAndBottom(String top, String bottom, String avatarType) throws PredictionFailedException, FashnApiException {
-        return pollStatus(combineSecondGarment(top, "bottoms", pollStatus(combine(top, "tops", avatarType))));
+    private boolean isFailed(StatusResponse statusResponseBody) {
+        return "failed".equalsIgnoreCase(statusResponseBody.getStatus());
     }
 
-    @Override
-    public String combineSecondGarment(String garmentUrl, String category, String avatarCombinedUrl) throws FashnApiException {
-        return getFashnCombineId(new HttpEntity<>(buildHttpBodySecondGarment(garmentUrl, category, avatarCombinedUrl), buildHttpHeaders()));
+    private boolean isCompleted(StatusResponse statusResponseBody) {
+        return "completed".equalsIgnoreCase(statusResponseBody.getStatus());
+    }
+
+    private String getUrlGarmentCombined(StatusResponse statusResponseBody) throws PredictionFailedException {
+        List<String> outputs = statusResponseBody.getOutput();
+        if (outputs != null && !outputs.isEmpty()) {
+            return outputs.get(0);
+        } else {
+            throw new PredictionFailedException("Estado completed pero no hay output: " + statusResponseBody.getError());
+        }
+    }
+
+    private void checkIfIsNullStatus(StatusResponse statusResp) throws FashnApiException {
+        if (statusResp == null) {
+            throw new FashnApiException("Respuesta /status vacía");
+        }
+    }
+
+    private void checkIsNotOkStatus(ResponseEntity<StatusResponse> responseResult) throws FashnApiException {
+        if (responseResult.getStatusCode() != HttpStatus.OK) {
+            throw new FashnApiException("Respuesta inesperada de /status: " + responseResult.getStatusCode());
+        }
+    }
+
+    private void waitDelay(int attempt) throws FashnApiException {
+        try {
+            if (attempt > 1) {
+                Thread.sleep(DELAY);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new FashnApiException("Polling interrumpido, falló la espera del Sleep", e);
+        }
     }
 
     private String getAvatarUrl(String avatarType) {
