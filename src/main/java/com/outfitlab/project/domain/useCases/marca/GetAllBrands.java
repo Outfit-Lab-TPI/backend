@@ -5,8 +5,8 @@ import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
 import com.outfitlab.project.domain.model.BrandModel;
 import com.outfitlab.project.domain.model.dto.BrandDTO;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 
 public class GetAllBrands {
 
@@ -16,14 +16,15 @@ public class GetAllBrands {
         this.iBrandRepository = marcaRepository;
     }
 
-    public List<BrandDTO> execute(int page) throws BrandsNotFoundException, PageLessThanZeroException {
+    public Page<BrandDTO> execute(int page) throws BrandsNotFoundException, PageLessThanZeroException {
         checkPageNumber(page);
         return getAllBrands(page);
     }
 
-    private List<BrandDTO> getAllBrands(int page) throws BrandsNotFoundException {
-        List<BrandModel> brands = iBrandRepository.getAllBrands(page);
-        if (!brands.isEmpty()) return BrandDTO.convertListModelToListDTO(brands);
+    private Page<BrandDTO> getAllBrands(int page) throws BrandsNotFoundException {
+        Page<BrandModel> brands = iBrandRepository.getAllBrands(page);
+
+        if (!brands.isEmpty()) return brands.map(BrandDTO::convertModelToDTO);
 
         throw new BrandsNotFoundException("No encontramos marcas");
     }

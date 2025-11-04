@@ -87,3 +87,4 @@ public class SubscriptionController {
         return ResponseEntity.ok("Notification received, not a relevant topic.");
     }
 }
+

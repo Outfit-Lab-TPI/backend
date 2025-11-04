@@ -13,7 +13,7 @@ import java.util.List;
 
 public class GarmentRepositoryImpl implements GarmentRepository {
 
-    private final int PAGE_SIZE = 10;
+    private final int PAGE_SIZE = 2;
     private final GarmentJpaRepository garmentJpaRepository;
 
     public GarmentRepositoryImpl(GarmentJpaRepository garmentJpaRepository) {
@@ -51,5 +51,11 @@ public class GarmentRepositoryImpl implements GarmentRepository {
                 modelPage.getTotalPages(),
                 modelPage.isLast()
         );
+    }
+
+    @Override
+    public Page<PrendaModel> getGarmentsByType(String type, int page) {
+        return this.garmentJpaRepository.findByTipo(type, PageRequest.of(page, PAGE_SIZE))
+                .map(PrendaEntity::convertToModel);
     }
 }
