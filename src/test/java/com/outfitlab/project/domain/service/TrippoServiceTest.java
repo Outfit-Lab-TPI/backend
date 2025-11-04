@@ -42,7 +42,7 @@ public class TrippoServiceTest {
     }
 
     @Test
-    public void procesarYEnviarATripoDeberiaEjecutarFlujoCompleto_cuandoArchivoValido() throws Exception, ErrorGenerateGlbException, ErrorGlbGenerateTimeExpiredException, FileEmptyException, ErrorTripoEntityNotFound, ErrorWhenSleepException, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripo {
+    public void procesarYEnviarATripoDeberiaEjecutarFlujoCompleto_cuandoArchivoValido() throws Exception, ErrorGenerateGlbException, ErrorGlbGenerateTimeExpiredException, FileEmptyException, ErrorTripoEntityNotFoundException, ErrorWhenSleepException, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripoException {
         MultipartFile file = new MockMultipartFile("file", "imagen.png", "image/png", new byte[]{1,2,3});
 
         Map<String, String> uploadData = new HashMap<>();
@@ -75,7 +75,7 @@ public class TrippoServiceTest {
     }
 
     @Test
-    public void procesarYEnviarATripoDeberiaLanzarErroBytesException_cuandoUploadImageToTripoFalla() throws Exception, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripo {
+    public void procesarYEnviarATripoDeberiaLanzarErroBytesException_cuandoUploadImageToTripoFalla() throws Exception, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripoException {
         MultipartFile file = new MockMultipartFile("file", "imagen.png", "image/png", new byte[]{1});
         when(uploadImageToTripoMock.execute(file)).thenThrow(new ErroBytesException("Error en bytes"));
 
@@ -86,7 +86,7 @@ public class TrippoServiceTest {
     }
 
     @Test
-    public void procesarYEnviarATripoDeberiaLanzarErrorReadJsonException_cuandoUploadImageToTripoFalla() throws Exception, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripo {
+    public void procesarYEnviarATripoDeberiaLanzarErrorReadJsonException_cuandoUploadImageToTripoFalla() throws Exception, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripoException {
         MultipartFile file = new MockMultipartFile("file", "imagen.png", "image/png", new byte[]{1});
         when(uploadImageToTripoMock.execute(file)).thenThrow(new ErrorReadJsonException("Error leyendo JSON"));
 
@@ -97,18 +97,18 @@ public class TrippoServiceTest {
     }
 
     @Test
-    public void procesarYEnviarATripoDeberiaLanzarErrorUploadImageToTripo_cuandoUploadImageToTripoFalla() throws Exception, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripo {
+    public void procesarYEnviarATripoDeberiaLanzarErrorUploadImageToTripo_cuandoUploadImageToTripoFalla() throws Exception, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripoException {
         MultipartFile file = new MockMultipartFile("file", "imagen.png", "image/png", new byte[]{1});
-        when(uploadImageToTripoMock.execute(file)).thenThrow(new ErrorUploadImageToTripo("Error subida"));
+        when(uploadImageToTripoMock.execute(file)).thenThrow(new ErrorUploadImageToTripoException("Error subida"));
 
-        ErrorUploadImageToTripo ex = assertThrows(ErrorUploadImageToTripo.class,
+        ErrorUploadImageToTripoException ex = assertThrows(ErrorUploadImageToTripoException.class,
                 () -> trippoService.procesarYEnviarATripo(file));
 
         assertEquals("Error subida", ex.getMessage());
     }
 
     @Test
-    public void procesarYEnviarATripoDeberiaLanzarErrorGenerateGlbException_cuandoGenerateImageFalla() throws Exception, ErrorGenerateGlbException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripo {
+    public void procesarYEnviarATripoDeberiaLanzarErrorGenerateGlbException_cuandoGenerateImageFalla() throws Exception, ErrorGenerateGlbException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
         MultipartFile file = new MockMultipartFile("file", "imagen.png", "image/png", new byte[]{1});
         Map<String, String> uploadData = new HashMap<>();
         uploadData.put("originalFilename", "imagen.png");
@@ -125,7 +125,7 @@ public class TrippoServiceTest {
     }
 
     @Test
-    public void procesarYEnviarATripoDeberiaLanzarErrorGlbGenerateTimeExpiredException_cuandoCheckTaskStatusFalla() throws Exception, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException, ErrorGenerateGlbException, ErroBytesException, ErrorUploadImageToTripo {
+    public void procesarYEnviarATripoDeberiaLanzarErrorGlbGenerateTimeExpiredException_cuandoCheckTaskStatusFalla() throws Exception, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException, ErrorGenerateGlbException, ErroBytesException, ErrorUploadImageToTripoException {
         MultipartFile file = new MockMultipartFile("file", "imagen.png", "image/png", new byte[]{1});
         Map<String, String> uploadData = new HashMap<>();
         uploadData.put("originalFilename", "imagen.png");
@@ -144,7 +144,7 @@ public class TrippoServiceTest {
     }
 
     @Test
-    public void procesarYEnviarATripoDeberiaLanzarErrorWhenSleepException_cuandoCheckTaskStatusFalla() throws Exception, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException, ErrorGenerateGlbException, ErroBytesException, ErrorUploadImageToTripo {
+    public void procesarYEnviarATripoDeberiaLanzarErrorWhenSleepException_cuandoCheckTaskStatusFalla() throws Exception, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException, ErrorGenerateGlbException, ErroBytesException, ErrorUploadImageToTripoException {
         MultipartFile file = new MockMultipartFile("file", "imagen.png", "image/png", new byte[]{1});
         Map<String, String> uploadData = new HashMap<>();
         uploadData.put("originalFilename", "imagen.png");
@@ -163,7 +163,7 @@ public class TrippoServiceTest {
     }
 
     @Test
-    public void procesarYEnviarATripoDeberiaLanzarErrorTripoEntityNotFound_cuandoUpdateTripoFalla() throws Exception, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripo, ErrorGenerateGlbException, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorTripoEntityNotFound {
+    public void procesarYEnviarATripoDeberiaLanzarErrorTripoEntityNotFound_cuandoUpdateTripoFalla() throws Exception, ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripoException, ErrorGenerateGlbException, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorTripoEntityNotFoundException {
         MultipartFile file = new MockMultipartFile("file", "imagen.png", "image/png", new byte[]{1});
         Map<String, String> uploadData = new HashMap<>();
         uploadData.put("originalFilename", "imagen.png");
@@ -174,9 +174,9 @@ public class TrippoServiceTest {
         when(generateImageToModelTrippoMock.execute(anyMap())).thenReturn("task123");
         doReturn(new TripoModel()).when(saveTripoModelMock).execute(any(TripoModel.class));
         when(checkTaskStatusMock.execute("task123")).thenReturn("urlGlb");
-        when(updateTripoModelMock.execute(any(TripoModel.class))).thenThrow(new ErrorTripoEntityNotFound("No encontrado"));
+        when(updateTripoModelMock.execute(any(TripoModel.class))).thenThrow(new ErrorTripoEntityNotFoundException("No encontrado"));
 
-        ErrorTripoEntityNotFound ex = assertThrows(ErrorTripoEntityNotFound.class,
+        ErrorTripoEntityNotFoundException ex = assertThrows(ErrorTripoEntityNotFoundException.class,
                 () -> trippoService.procesarYEnviarATripo(file));
 
         assertEquals("No encontrado", ex.getMessage());

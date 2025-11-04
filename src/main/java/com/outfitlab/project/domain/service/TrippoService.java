@@ -28,7 +28,7 @@ public class TrippoService {
     }
 
     public TripoModel procesarYEnviarATripo(MultipartFile imageFile) throws FileEmptyException, ErroBytesException, ErrorReadJsonException,
-            ErrorUploadImageToTripo, ErrorGenerateGlbException, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorTripoEntityNotFound {
+            ErrorUploadImageToTripoException, ErrorGenerateGlbException, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorTripoEntityNotFoundException {
 
         if (imageFile.isEmpty()) throw new FileEmptyException("Archivo vacío");
 
