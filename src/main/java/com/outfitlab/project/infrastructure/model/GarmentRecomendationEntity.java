@@ -36,10 +36,12 @@ public class GarmentRecomendationEntity {
 
 
     public static GarmentRecomendationModel convertToModel(GarmentRecomendationEntity entity) {
-        return new GarmentRecomendationModel(
+        GarmentRecomendationModel model = new GarmentRecomendationModel(
                 PrendaEntity.convertToModel(entity.getTopGarment()),
                 PrendaEntity.convertToModel(entity.getBottomGarment())
         );
+        model.setId(entity.getId());
+        return model;
     }
 
     public static GarmentRecomendationEntity convertToEntity(GarmentRecomendationModel model) {

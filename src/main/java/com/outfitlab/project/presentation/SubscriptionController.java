@@ -1,90 +1,108 @@
 package com.outfitlab.project.presentation;
 
-import com.mercadopago.exceptions.MPApiException;
-import com.mercadopago.exceptions.MPException;
-import com.outfitlab.project.domain.service.SubscriptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.outfitlab.project.domain.exception.InvalidPlanException;
+import com.outfitlab.project.domain.exception.PaymentFailedException;
+import com.outfitlab.project.domain.useCases.subscription.CreateSubscriptionPaymentPreference;
+import com.outfitlab.project.domain.useCases.subscription.ProcessSubscriptionPayment;
+import com.outfitlab.project.presentation.dto.PurchasePlanRequest;
+import com.outfitlab.project.presentation.dto.SubscriptionStatusResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
-import java.util.HashMap;
-import java.math.BigDecimal;
-
-class SubscriptionRequest {
-    private String planId;
-    private String userEmail;
-    private BigDecimal price;
-    private String currency;
-
-    public String getPlanId() { return planId; }
-    public void setPlanId(String planId) { this.planId = planId; }
-    public String getUserEmail() { return userEmail; }
-    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
-}
 
 @RestController
 @RequestMapping("/api/mp")
 public class SubscriptionController {
 
-    @Autowired
-    private SubscriptionService subscriptionService;
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionController.class);
 
-    @PostMapping("/crear-suscripcion")
-    @CrossOrigin(origins = "http://localhost:5173")
-    public ResponseEntity<Map<String, String>> createPreference(@RequestBody SubscriptionRequest request) {
+    private final CreateSubscriptionPaymentPreference createSubscriptionPaymentPreference;
+    private final ProcessSubscriptionPayment processSubscriptionPayment;
 
-        if (request.getPlanId() == null || request.getUserEmail() == null || request.getPrice() == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Faltan planId, userEmail o price."));
-        }
+    public SubscriptionController(
+            CreateSubscriptionPaymentPreference createSubscriptionPaymentPreference,
+            ProcessSubscriptionPayment processSubscriptionPayment
+    ) {
+        this.createSubscriptionPaymentPreference = createSubscriptionPaymentPreference;
+        this.processSubscriptionPayment = processSubscriptionPayment;
+    }
 
+    /**
+     * Endpoint para crear una preferencia de pago y obtener el link de MercadoPago.
+     */
+    @PostMapping("/purchase/{planCode}")
+    public ResponseEntity<?> purchasePlan(
+            @PathVariable String planCode,
+            @RequestBody PurchasePlanRequest request
+    ) {
         try {
-            String initPointUrl = subscriptionService.createMercadoPagoPreference(
-                    request.getPlanId(),
-                    request.getUserEmail(),
-                    request.getPrice(),
-                    request.getCurrency() != null ? request.getCurrency() : "ARS"
-            );
-
-            Map<String, String> response = new HashMap<>();
-            response.put("initPoint", initPointUrl);
-            return ResponseEntity.ok(response);
-
-        } catch (MPException | MPApiException e) {
-            e.printStackTrace();
-            System.err.println("Error de API de Mercado Pago: " + e.getMessage());
-            return ResponseEntity.status(500).body(Map.of("error", "Error al crear la preferencia en Mercado Pago."));
+            String initPoint = createSubscriptionPaymentPreference.execute(planCode, request.getUserEmail());
+            return ResponseEntity.ok(initPoint);
+        } catch (InvalidPlanException e) {
+            logger.error("Plan inválido: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("error", "Error interno del servidor."));
+            logger.error("Error al crear preferencia de pago", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al procesar la solicitud: " + e.getMessage());
         }
     }
 
+    /**
+     * Endpoint para consultar el estado de suscripción de un usuario.
+     */
+    @GetMapping("/status/{userId}")
+    public ResponseEntity<SubscriptionStatusResponse> getSubscriptionStatus(@PathVariable Long userId) {
+        // TODO: Implementar GetUserSubscriptionStatus use case
+        return ResponseEntity.ok(new SubscriptionStatusResponse());
+    }
+
+    /**
+     * Webhook de MercadoPago para procesar notificaciones de pago.
+     * MercadoPago envía: ?id=<payment_id>&topic=payment
+     */
     @PostMapping("/webhooks")
     public ResponseEntity<String> handleMercadoPagoWebhook(
             @RequestParam(name = "id", required = false) String id,
-            @RequestParam(name = "topic", required = false) String topic)
-    {
-        if ("payment".equals(topic) && id != null) {
-            try {
-                Long paymentId = Long.parseLong(id);
+            @RequestParam(name = "topic", required = false) String topic
+    ) {
+        logger.info("Webhook recibido - Topic: {}, ID: {}", topic, id);
 
-                subscriptionService.processPaymentNotification(paymentId);
-
-                return ResponseEntity.ok("Notification processed successfully.");
-            } catch (NumberFormatException e) {
-                System.err.println("Error: El ID del Webhook no es un número (Long). ID: " + id);
-                return ResponseEntity.badRequest().body("ID inválido.");
-            } catch (MPException | MPApiException e) {
-                System.err.println("Error procesando Webhook de Pago: " + e.getMessage());
-                return ResponseEntity.status(500).body("Error processing notification.");
-            }
+        // Validar que sea una notificación de pago
+        if (!"payment".equals(topic)) {
+            logger.info("Topic no relevante: {}", topic);
+            return ResponseEntity.ok("Notification received, not a payment topic.");
         }
 
-        return ResponseEntity.ok("Notification received, not a relevant topic.");
+        // Validar que el ID esté presente
+        if (id == null || id.isEmpty()) {
+            logger.error("ID de pago vacío en webhook");
+            return ResponseEntity.badRequest().body("ID de pago requerido");
+        }
+
+        try {
+            // Procesar el pago usando el Use Case
+            processSubscriptionPayment.execute(id);
+            
+            logger.info("Pago procesado exitosamente: {}", id);
+            return ResponseEntity.ok("Notification processed successfully.");
+            
+        } catch (PaymentFailedException e) {
+            logger.error("Error al procesar pago {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al procesar pago: " + e.getMessage());
+                    
+        } catch (InvalidPlanException e) {
+            logger.error("Plan inválido en pago {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Plan inválido: " + e.getMessage());
+                    
+        } catch (Exception e) {
+            logger.error("Error inesperado al procesar webhook de pago {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error processing notification.");
+        }
     }
 }
-

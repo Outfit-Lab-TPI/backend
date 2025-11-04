@@ -2,12 +2,30 @@ package com.outfitlab.project.domain.model;
 
 public class GarmentRecomendationModel {
 
+    private Long id;
     private PrendaModel topGarment;
     private PrendaModel bottomGarment;
+
+    public GarmentRecomendationModel() {
+    }
 
     public GarmentRecomendationModel(PrendaModel topGarment, PrendaModel bottomGarment) {
         this.topGarment = topGarment;
         this.bottomGarment = bottomGarment;
+    }
+
+    public GarmentRecomendationModel(Long id, PrendaModel topGarment, PrendaModel bottomGarment) {
+        this.id = id;
+        this.topGarment = topGarment;
+        this.bottomGarment = bottomGarment;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public PrendaModel getTopGarment() {

@@ -8,6 +8,9 @@ public class PrendaModel {
     private String imagenUrl;
     private String garmentCode;
 
+    public PrendaModel() {
+    }
+
     public PrendaModel(String nombre, BrandModel marca, String tipo, String imagenUrl, String garmentCode) {
         this.nombre = nombre;
         this.marca = marca;

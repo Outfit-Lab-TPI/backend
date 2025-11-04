@@ -10,6 +10,7 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.Recomendatio
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RecomendationRepository implements GarmentRecomendationRepository {
@@ -20,6 +21,12 @@ public class RecomendationRepository implements GarmentRecomendationRepository {
     public RecomendationRepository(RecomendationJpaRepository recomendationJpaRepository, GarmentJpaRepository garmentJpaRepository) {
         this.recomendationJpaRepository = recomendationJpaRepository;
         this.garmentJpaRepository = garmentJpaRepository;
+    }
+
+    @Override
+    public Optional<GarmentRecomendationModel> findById(Long id) {
+        return recomendationJpaRepository.findById(id)
+                .map(GarmentRecomendationEntity::convertToModel);
     }
 
     @Override
