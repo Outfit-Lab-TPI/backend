@@ -9,4 +9,5 @@ import com.outfitlab.project.infrastructure.model.UserGarmentFavoriteEntity;
 public interface UserGarmentFavoriteRepository {
     UserGarmentFavoriteModel findByGarmentCodeAndUserEmail(String garmentCode, String userEmail) throws UserGarmentFavoriteNotFoundException;
     UserGarmentFavoriteEntity addToFavorite(String garmentCode, String userEmail) throws UserNotFoundException, GarmentNotFoundException;
+    void deleteFromFavorites(String garmentCode, String userEmail) throws UserNotFoundException, GarmentNotFoundException;
 }

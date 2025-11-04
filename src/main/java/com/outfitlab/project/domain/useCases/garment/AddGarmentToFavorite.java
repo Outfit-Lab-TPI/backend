@@ -7,19 +7,18 @@ public class AddGarmentToFavorite {
 
     private final UserGarmentFavoriteRepository userGarmentFavoriteRepository;
 
-
     public AddGarmentToFavorite(UserGarmentFavoriteRepository userGarmentFavoriteRepository) {
         this.userGarmentFavoriteRepository = userGarmentFavoriteRepository;
     }
 
-    public String execute(String garmentCode, String userEmail) throws GarmentNotFoundException, UserNotFoundException, UserGarmentFavoriteAlreadyExistsException, FailedToAddFavoritesException {
+    public String execute(String garmentCode, String userEmail) throws GarmentNotFoundException, UserNotFoundException, UserGarmentFavoriteAlreadyExistsException, FavoritesException {
         checkIfFavoriteAlreadyExists(garmentCode, userEmail);
         addToFavorites(garmentCode, userEmail);
         return "Prenda añadadida a favoritos.";
     }
 
-    private void addToFavorites(String garmentCode, String userEmail) throws FailedToAddFavoritesException, UserNotFoundException, GarmentNotFoundException {
-        if (this.userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail) == null) throw new FailedToAddFavoritesException("No se pudo agregar la prenda a favoritos.");
+    private void addToFavorites(String garmentCode, String userEmail) throws FavoritesException, UserNotFoundException, GarmentNotFoundException {
+        if (this.userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail) == null) throw new FavoritesException("No se pudo agregar la prenda a favoritos.");
     }
 
     private void checkIfFavoriteAlreadyExists(String garmentCode, String userEmail) throws UserGarmentFavoriteAlreadyExistsException {
