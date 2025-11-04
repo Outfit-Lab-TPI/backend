@@ -13,15 +13,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class MarcaConfig {
+public class BrandConfig {
 
     @Bean
     public BrandRepository marcaRepository(BrandJpaRepository jpaRepo) {
         return new BrandRepositoryImpl(jpaRepo);
     }
-
-    @Bean
-    public GarmentRepository garmentRepository(GarmentJpaRepository jpaRepo) {return new GarmentRepositoryImpl(jpaRepo);}
 
     @Bean
     public GetBrandAndGarmentsByBrandCode getMarcaByCodigoMarca(BrandRepository marcaRepository, GarmentRepository garmentRepository) {
