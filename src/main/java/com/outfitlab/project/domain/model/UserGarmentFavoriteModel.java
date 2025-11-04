@@ -4,24 +4,14 @@ import java.time.LocalDateTime;
 
 public class UserGarmentFavoriteModel {
 
-    private UserModel user;
     private PrendaModel garment;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public UserGarmentFavoriteModel(UserModel user, PrendaModel garment, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.user = user;
+    public UserGarmentFavoriteModel(PrendaModel garment, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.garment = garment;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-    }
-
-    public UserModel getUser() {
-        return user;
-    }
-
-    public void setUser(UserModel user) {
-        this.user = user;
     }
 
     public PrendaModel getGarment() {

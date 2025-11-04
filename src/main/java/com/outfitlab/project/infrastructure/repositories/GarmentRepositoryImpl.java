@@ -4,7 +4,7 @@ import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
-import com.outfitlab.project.domain.model.dto.GarmentPageDTO;
+import com.outfitlab.project.domain.model.dto.PageDTO;
 import com.outfitlab.project.infrastructure.model.PrendaEntity;
 import com.outfitlab.project.infrastructure.repositories.interfaces.GarmentJpaRepository;
 import org.springframework.data.domain.Page;
@@ -22,7 +22,7 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     }
 
     @Override
-    public GarmentPageDTO findByBrandCodeAndTipo(String brandCode, String tipo, int page) {
+    public PageDTO findByBrandCodeAndTipo(String brandCode, String tipo, int page) {
         Page<PrendaEntity> pageResult = garmentJpaRepository.findByMarca_CodigoMarcaAndTipo(
                 brandCode, tipo.toLowerCase(), PageRequest.of(page, PAGE_SIZE));
 
@@ -32,7 +32,7 @@ public class GarmentRepositoryImpl implements GarmentRepository {
                 .map(GarmentDTO::convertModelToDTO)
                 .toList();
 
-        return new GarmentPageDTO(
+        return new PageDTO(
                 dtoList,
                 modelPage.getNumber(),
                 modelPage.getSize(),

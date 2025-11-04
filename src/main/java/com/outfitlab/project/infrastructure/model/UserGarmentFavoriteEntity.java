@@ -2,7 +2,6 @@ package com.outfitlab.project.infrastructure.model;
 
 import com.outfitlab.project.domain.model.UserGarmentFavoriteModel;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,9 +36,8 @@ public class UserGarmentFavoriteEntity {
         this.garment = garment;
     }
 
-    public static UserGarmentFavoriteModel convertEntityToModel(UserGarmentFavoriteEntity entity) {
+    public static UserGarmentFavoriteModel convertEntityToModelWithoutUser(UserGarmentFavoriteEntity entity) {
         return new UserGarmentFavoriteModel(
-                UserEntity.convertEntityToModel(entity.getUser()),
                 PrendaEntity.convertToModel(entity.getGarment()),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()

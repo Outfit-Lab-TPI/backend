@@ -14,7 +14,7 @@ public class AddGarmentToFavorite {
     public String execute(String garmentCode, String userEmail) throws GarmentNotFoundException, UserNotFoundException, UserGarmentFavoriteAlreadyExistsException, FavoritesException {
         checkIfFavoriteAlreadyExists(garmentCode, userEmail);
         addToFavorites(garmentCode, userEmail);
-        return "Prenda añadadida a favoritos.";
+        return "Prenda añadida a favoritos.";
     }
 
     private void addToFavorites(String garmentCode, String userEmail) throws FavoritesException, UserNotFoundException, GarmentNotFoundException {

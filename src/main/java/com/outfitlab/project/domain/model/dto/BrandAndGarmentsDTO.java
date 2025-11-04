@@ -1,14 +1,12 @@
 package com.outfitlab.project.domain.model.dto;
 
-import java.util.List;
-
 public class BrandAndGarmentsDTO {
 
     private BrandDTO brandDTO;
-    private GarmentPageDTO garmentTop;
-    private GarmentPageDTO garmentBottom;
+    private PageDTO garmentTop;
+    private PageDTO garmentBottom;
 
-    public BrandAndGarmentsDTO(BrandDTO brandDTO, GarmentPageDTO garmentTop, GarmentPageDTO garmentBottom) {
+    public BrandAndGarmentsDTO(BrandDTO brandDTO, PageDTO garmentTop, PageDTO garmentBottom) {
         this.brandDTO = brandDTO;
         this.garmentTop = garmentTop;
         this.garmentBottom = garmentBottom;
@@ -22,19 +20,19 @@ public class BrandAndGarmentsDTO {
         this.brandDTO = brandDTO;
     }
 
-    public GarmentPageDTO getGarmentTop() {
+    public PageDTO getGarmentTop() {
         return garmentTop;
     }
 
-    public void setGarmentTop(GarmentPageDTO garmentTop) {
+    public void setGarmentTop(PageDTO garmentTop) {
         this.garmentTop = garmentTop;
     }
 
-    public GarmentPageDTO getGarmentBottom() {
+    public PageDTO getGarmentBottom() {
         return garmentBottom;
     }
 
-    public void setGarmentBottom(GarmentPageDTO garmentBottom) {
+    public void setGarmentBottom(PageDTO garmentBottom) {
         this.garmentBottom = garmentBottom;
     }
 }

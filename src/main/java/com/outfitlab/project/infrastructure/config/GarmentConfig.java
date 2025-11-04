@@ -6,6 +6,7 @@ import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.useCases.garment.AddGarmentToFavorite;
 import com.outfitlab.project.domain.useCases.garment.DeleteGarmentFromFavorite;
 import com.outfitlab.project.domain.useCases.garment.GetGarmentsByType;
+import com.outfitlab.project.domain.useCases.garment.GetGarmentsFavoritesForUserByEmail;
 import com.outfitlab.project.infrastructure.repositories.GarmentRepositoryImpl;
 import com.outfitlab.project.infrastructure.repositories.UserGarmentFavoriteRempositoryImpl;
 import com.outfitlab.project.infrastructure.repositories.UserRepositoryImpl;
@@ -36,6 +37,11 @@ public class GarmentConfig {
     @Bean
     public DeleteGarmentFromFavorite deleteGarmentFromFavorite(UserGarmentFavoriteRepository userGarmentFavoriteRepository){
         return new DeleteGarmentFromFavorite(userGarmentFavoriteRepository);
+    }
+
+    @Bean
+    public GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail(UserGarmentFavoriteRepository userGarmentFavoriteRepository){
+        return new GetGarmentsFavoritesForUserByEmail(userGarmentFavoriteRepository);
     }
 
     @Bean

@@ -2,9 +2,11 @@ package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
+import com.outfitlab.project.domain.useCases.fashn.CombinePrendas;
 import com.outfitlab.project.domain.useCases.garment.AddGarmentToFavorite;
 import com.outfitlab.project.domain.useCases.garment.DeleteGarmentFromFavorite;
 import com.outfitlab.project.domain.useCases.garment.GetGarmentsByType;
+import com.outfitlab.project.domain.useCases.garment.GetGarmentsFavoritesForUserByEmail;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +22,13 @@ public class GarmentController {
     private final GetGarmentsByType getGarmentsByType;
     private final AddGarmentToFavorite addGarmentToFavourite;
     private final DeleteGarmentFromFavorite deleteGarmentFromFavorite;
+    private final GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail;
 
-    public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite, DeleteGarmentFromFavorite deleteGarmentFromFavorite) {
+    public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite, DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail) {
         this.getGarmentsByType = getGarmentsByType;
         this.addGarmentToFavourite = addGarmentToFavourite;
         this.deleteGarmentFromFavorite = deleteGarmentFromFavorite;
+        this.getGarmentsFavoritesForUserByEmail = getGarmentsFavoritesForUserByEmail;
     }
 
     @GetMapping("/{typeOfGarment}")
@@ -34,9 +38,7 @@ public class GarmentController {
             return ResponseEntity.ok(buildResponse(this.getGarmentsByType.execute(typeOfGarment, page)
                     .map(GarmentDTO::convertModelToDTO)));
         } catch (GarmentNotFoundException e) {
-            return ResponseEntity
-                    .status(404)
-                    .body(e.getMessage());
+            return buildResponseEntityError(e.getMessage());
         }
     }
 
@@ -52,9 +54,7 @@ public class GarmentController {
                     )
             );
         } catch (GarmentNotFoundException e) {
-            return ResponseEntity
-                    .status(404)
-                    .body(e.getMessage());
+            return buildResponseEntityError(e.getMessage());
         }
     }
 
@@ -76,9 +76,7 @@ public class GarmentController {
             return ResponseEntity.ok(this.addGarmentToFavourite.execute(garmentCode, userEmail));
         } catch (GarmentNotFoundException | UserNotFoundException | UserGarmentFavoriteAlreadyExistsException |
                  FavoritesException e) {
-            return ResponseEntity
-                    .status(404)
-                    .body(e.getMessage());
+            return buildResponseEntityError(e.getMessage());
         }
     }
 
@@ -88,9 +86,23 @@ public class GarmentController {
             String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.deleteGarmentFromFavorite.execute(garmentCode, userEmail));
         } catch (UserGarmentFavoriteNotFoundException | UserNotFoundException | GarmentNotFoundException e) {
-            return ResponseEntity
-                    .status(404)
-                    .body(e.getMessage());
+            return buildResponseEntityError(e.getMessage());
         }
+    }
+
+    @GetMapping("/favorite")
+    public ResponseEntity<?> getFavorites(@RequestParam(defaultValue = "0") int page){
+        try {
+            String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
+            return ResponseEntity.ok(this.getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
+        } catch (UserNotFoundException | PageLessThanZeroException | FavoritesException e) {
+            return buildResponseEntityError(e.getMessage());
+        }
+    }
+
+    private ResponseEntity<?> buildResponseEntityError(String message){
+        return ResponseEntity
+                .status(404)
+                .body(message);
     }
 }
