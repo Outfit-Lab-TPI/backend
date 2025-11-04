@@ -7,12 +7,14 @@ public class GarmentDTO {
     private String tipo;
     private String imagenUrl;
     private String garmentCode;
+    private String marcaNombre;
 
-    public GarmentDTO(String nombre, String tipo, String imagenUrl, String garmentCode) {
+    public GarmentDTO(String nombre, String tipo, String imagenUrl, String garmentCode, String marcaNombre) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.imagenUrl = imagenUrl;
         this.garmentCode = garmentCode;
+        this.marcaNombre = marcaNombre;
     }
 
     public String getGarmentCode() {
@@ -47,12 +49,21 @@ public class GarmentDTO {
         this.imagenUrl = imagenUrl;
     }
 
+    public String getMarcaNombre() {
+        return marcaNombre;
+    }
+
+    public void setMarcaNombre(String marcaNombre) {
+        this.marcaNombre = marcaNombre;
+    }
+
     public static GarmentDTO convertModelToDTO(PrendaModel prendaModel) {
         return new GarmentDTO(
                 prendaModel.getNombre(),
                 prendaModel.getTipo(),
                 prendaModel.getImagenUrl(),
-                prendaModel.getGarmentCode()
+                prendaModel.getGarmentCode(),
+                prendaModel.getMarca().getNombre()
         );
     }
 }
