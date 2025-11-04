@@ -2,7 +2,7 @@ package com.outfitlab.project.domain.useCases.tripo;
 
 import com.outfitlab.project.domain.exceptions.ErroBytesException;
 import com.outfitlab.project.domain.exceptions.ErrorReadJsonException;
-import com.outfitlab.project.domain.exceptions.ErrorUploadImageToTripo;
+import com.outfitlab.project.domain.exceptions.ErrorUploadImageToTripoException;
 import com.outfitlab.project.domain.exceptions.ImageInvalidFormatException;
 import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import org.springframework.core.io.ByteArrayResource;
@@ -24,7 +24,7 @@ public class UploadImageToTripo {
         this.iTripoRepository = iTripoRepository;
     }
 
-    public Map<String, String> execute(MultipartFile image) throws ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripo {
+    public Map<String, String> execute(MultipartFile image) throws ErroBytesException, ErrorReadJsonException, ErrorUploadImageToTripoException {
         String originalFilename = image.getOriginalFilename();
         String extension = this.getFileExtension.execute(originalFilename);
 

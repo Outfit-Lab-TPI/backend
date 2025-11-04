@@ -23,9 +23,9 @@ public class TrippoController {
             TripoModel model = this.trippoService.procesarYEnviarATripo(imageFile);
             return ResponseEntity.ok(buildResponse(model));
 
-        } catch (FileEmptyException | ErroBytesException | ErrorReadJsonException | ErrorUploadImageToTripo |
+        } catch (FileEmptyException | ErroBytesException | ErrorReadJsonException | ErrorUploadImageToTripoException |
                  ErrorGenerateGlbException | ErrorGlbGenerateTimeExpiredException | ErrorWhenSleepException |
-                 ErrorTripoEntityNotFound e) {
+                 ErrorTripoEntityNotFoundException e) {
 
             return ResponseEntity.badRequest()
                     .body(TripoModelResponse.builder().message(e.getMessage()).build());

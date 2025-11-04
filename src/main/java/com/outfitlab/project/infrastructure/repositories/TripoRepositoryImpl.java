@@ -42,7 +42,7 @@ public class TripoRepositoryImpl implements TripoRepository {
     }
 
     @Override
-    public String peticionUploadImagenToTripo(ByteArrayResource imageResource) throws ErrorReadJsonException, ErrorUploadImageToTripo {
+    public String peticionUploadImagenToTripo(ByteArrayResource imageResource) throws ErrorReadJsonException, ErrorUploadImageToTripoException {
         String imagetoken = "";
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
@@ -56,7 +56,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         ResponseEntity<String> response = restTemplate.postForEntity(uploadUrl, requestEntity, String.class);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new ErrorUploadImageToTripo("Error al subir imagen a Trippo: " + response.getBody());
+            throw new ErrorUploadImageToTripoException("Error al subir imagen a Trippo: " + response.getBody());
         }
 
         try{
@@ -121,11 +121,11 @@ public class TripoRepositoryImpl implements TripoRepository {
     }
 
     @Override
-    public TripoModel update(TripoModel model) throws ErrorTripoEntityNotFound {
+    public TripoModel update(TripoModel model) throws ErrorTripoEntityNotFoundException {
         TripoEntity entity = this.iJpatripoRepository.findByTaskId(model.getTaskId());
 
         if (entity == null) {
-            throw new ErrorTripoEntityNotFound("No encontramos un registro Tripo con el taskId: " + model.getTaskId());
+            throw new ErrorTripoEntityNotFoundException("No encontramos un registro Tripo con el taskId: " + model.getTaskId());
         }
 
         entity.setErrorMessage(model.getErrorMessage());

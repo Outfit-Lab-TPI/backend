@@ -10,7 +10,7 @@ public interface TripoRepository {
 
     TripoModel buscarPorTaskId(String taskId);
 
-    String peticionUploadImagenToTripo(ByteArrayResource imageResource) throws ErrorReadJsonException, ErrorUploadImageToTripo;
+    String peticionUploadImagenToTripo(ByteArrayResource imageResource) throws ErrorReadJsonException, ErrorUploadImageToTripoException;
 
     String peticionGenerateGlbToTripo(Map<String, String> uploadData) throws ErrorReadJsonException, ErrorGenerateGlbException;
 
@@ -18,5 +18,5 @@ public interface TripoRepository {
 
     TripoModel save(TripoModel tripoModel);
 
-    TripoModel update(TripoModel model) throws ErrorTripoEntityNotFound;
+    TripoModel update(TripoModel model) throws ErrorTripoEntityNotFoundException;
 }

@@ -6,7 +6,7 @@ import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.dto.BrandAndGarmentsDTO;
 import com.outfitlab.project.domain.model.dto.BrandDTO;
-import com.outfitlab.project.domain.model.dto.GarmentPageDTO;
+import com.outfitlab.project.domain.model.dto.PageDTO;
 
 public class GetBrandAndGarmentsByBrandCode {
 
@@ -27,7 +27,7 @@ public class GetBrandAndGarmentsByBrandCode {
         );
     }
 
-    private GarmentPageDTO getGarmentsByBrandCodeAndType(String brandCode, String type, int page) {
+    private PageDTO getGarmentsByBrandCodeAndType(String brandCode, String type, int page) {
         return this.garmentRepository.findByBrandCodeAndTipo(brandCode, type, page);
     }
 

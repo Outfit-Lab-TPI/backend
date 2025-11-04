@@ -1,20 +1,29 @@
 package com.outfitlab.project.domain.model;
 
+import java.time.LocalDateTime;
+
 public class UserModel {
     private String satulation;
     private String name;
     private String secondName;
     private String lastName;
-    private double years;
+    private Integer years;
     private String email;
+    private String password;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public UserModel(String name, String lastName, String email, String satulation, String secondName, double years) {
+
+    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.satulation = satulation;
         this.secondName = secondName;
         this.years = years;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public String getSatulation() {
@@ -49,11 +58,11 @@ public class UserModel {
         this.lastName = lastName;
     }
 
-    public double getYears() {
+    public Integer getYears() {
         return years;
     }
 
-    public void setYears(double years) {
+    public void setYears(Integer years) {
         this.years = years;
     }
 
@@ -63,5 +72,29 @@ public class UserModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

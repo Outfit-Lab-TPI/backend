@@ -1,6 +1,6 @@
 package com.outfitlab.project.domain.useCases;
 
-import com.outfitlab.project.domain.exceptions.ErrorTripoEntityNotFound;
+import com.outfitlab.project.domain.exceptions.ErrorTripoEntityNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.domain.model.TripoModel;
 import com.outfitlab.project.domain.useCases.tripo.UpdateTripoModel;
@@ -22,7 +22,7 @@ public class UpdateTripoModelTest {
     }
 
     @Test
-    public void ejecutarDeberiaActualizarYDevolverTripoModel_cuandoModeloExiste() throws ErrorTripoEntityNotFound {
+    public void ejecutarDeberiaActualizarYDevolverTripoModel_cuandoModeloExiste() throws ErrorTripoEntityNotFoundException {
         TripoModel modelo = new TripoModel();
         modelo.setImageToken("TripoActualizado");
 
@@ -36,13 +36,13 @@ public class UpdateTripoModelTest {
     }
 
     @Test
-    public void ejecutarDeberiaLanzarErrorTripoEntityNotFound_cuandoRepositorioLanzaExcepcion() throws ErrorTripoEntityNotFound {
+    public void ejecutarDeberiaLanzarErrorTripoEntityNotFound_cuandoRepositorioLanzaExcepcion() throws ErrorTripoEntityNotFoundException {
         TripoModel modelo = new TripoModel();
 
         when(tripoRepositoryMock.update(modelo))
-                .thenThrow(new ErrorTripoEntityNotFound("Tripo no encontrado"));
+                .thenThrow(new ErrorTripoEntityNotFoundException("Tripo no encontrado"));
 
-        assertThrows(ErrorTripoEntityNotFound.class, () -> {
+        assertThrows(ErrorTripoEntityNotFoundException.class, () -> {
             updateTripoModel.execute(modelo);
         });
     }

@@ -2,18 +2,18 @@ package com.outfitlab.project.domain.model.dto;
 
 import java.util.List;
 
-public class GarmentPageDTO {
+public class PageDTO<T> {
 
-    private List<GarmentDTO> content; // la lista transformada
-    private int page;                 // número de página actual
-    private int size;                 // tamaño de página
-    private long totalElements;       // total de elementos
-    private int totalPages;           // total de páginas
-    private boolean last;             // si es la última página
+    private List<T> content;
+    private int page;
+    private int size;
+    private long totalElements;
+    private int totalPages;
+    private boolean last;
 
-    public GarmentPageDTO() {}
+    public PageDTO() {}
 
-    public GarmentPageDTO(List<GarmentDTO> dtoList, int number, int size, long totalElements, int totalPages, boolean last) {
+    public PageDTO(List<T> dtoList, int number, int size, long totalElements, int totalPages, boolean last) {
         this.content = dtoList;
         this.page = number;
         this.size = size;
@@ -22,11 +22,11 @@ public class GarmentPageDTO {
         this.last = last;
     }
 
-    public List<GarmentDTO> getContent() {
+    public List<T> getContent() {
         return content;
     }
 
-    public void setContent(List<GarmentDTO> content) {
+    public void setContent(List<T> content) {
         this.content = content;
     }
 

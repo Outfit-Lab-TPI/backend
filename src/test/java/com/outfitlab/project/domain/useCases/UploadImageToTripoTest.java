@@ -31,7 +31,7 @@ public class UploadImageToTripoTest {
     }
 
     @Test
-    public void ejecutarDeberiaSubirImagenYDevolverMapa_cuandoArchivoEsValido() throws Exception, ErrorReadJsonException, ErrorUploadImageToTripo, ErroBytesException {
+    public void ejecutarDeberiaSubirImagenYDevolverMapa_cuandoArchivoEsValido() throws Exception, ErrorReadJsonException, ErrorUploadImageToTripoException, ErroBytesException {
         String nombreArchivo = "imagen.png";
         byte[] contenido = {1, 2, 3};
         MultipartFile file = new MockMultipartFile("file", nombreArchivo, "image/png", contenido);
@@ -81,7 +81,7 @@ public class UploadImageToTripoTest {
     }
 
     @Test
-    public void ejecutarDeberiaLanzarErrorUploadImageToTripo_cuandoRepositorioLanzaExcepcion() throws Exception, ErrorReadJsonException, ErrorUploadImageToTripo {
+    public void ejecutarDeberiaLanzarErrorUploadImageToTripo_cuandoRepositorioLanzaExcepcion() throws Exception, ErrorReadJsonException, ErrorUploadImageToTripoException {
         String nombreArchivo = "imagen.png";
         byte[] contenido = {1, 2, 3};
         MultipartFile file = new MockMultipartFile("file", nombreArchivo, "image/png", contenido);
@@ -89,9 +89,9 @@ public class UploadImageToTripoTest {
         when(getFileExtensionMock.execute(nombreArchivo)).thenReturn("png");
         when(validateExtensionMock.execute("png")).thenReturn(true);
         when(tripoRepositoryMock.peticionUploadImagenToTripo(any(ByteArrayResource.class)))
-                .thenThrow(new ErrorUploadImageToTripo("Error subiendo imagen"));
+                .thenThrow(new ErrorUploadImageToTripoException("Error subiendo imagen"));
 
-        ErrorUploadImageToTripo exception = assertThrows(ErrorUploadImageToTripo.class, () -> {
+        ErrorUploadImageToTripoException exception = assertThrows(ErrorUploadImageToTripoException.class, () -> {
             uploadImageToTripo.execute(file);
         });
 
@@ -99,7 +99,7 @@ public class UploadImageToTripoTest {
     }
 
     @Test
-    public void ejecutarDeberiaLanzarErrorReadJsonException_cuandoRepositorioLanzaErrorReadJsonException() throws Exception, ErrorReadJsonException, ErrorUploadImageToTripo {
+    public void ejecutarDeberiaLanzarErrorReadJsonException_cuandoRepositorioLanzaErrorReadJsonException() throws Exception, ErrorReadJsonException, ErrorUploadImageToTripoException {
         String nombreArchivo = "imagen.png";
         byte[] contenido = {1, 2, 3};
         MultipartFile file = new MockMultipartFile("file", nombreArchivo, "image/png", contenido);
