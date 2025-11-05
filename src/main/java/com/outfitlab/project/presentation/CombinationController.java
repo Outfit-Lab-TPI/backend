@@ -22,8 +22,8 @@ public class CombinationController {
         this.getCombinationFavoritesForUserByEmail = getCombinationFavoritesForUserByEmail;
     }
 
-    @GetMapping("/favorite/add/{combinationUrl}")
-    public ResponseEntity<?> addCombinationToFavorite(@PathVariable String combinationUrl){
+    @GetMapping("/favorite/add")
+    public ResponseEntity<?> addCombinationToFavorite(@RequestParam String combinationUrl){
         ResponseEntity<?> body = validateInputs(combinationUrl);
         if (body != null) return body;
 
@@ -36,8 +36,11 @@ public class CombinationController {
     }
 
 
-    @GetMapping("/favorite/delete/{combinationUrl}")
-    public ResponseEntity<?> deleteCombinationFromFavorite(@PathVariable String combinationUrl){
+    @GetMapping("/favorite/delete")
+    public ResponseEntity<?> deleteCombinationFromFavorite(@RequestParam String combinationUrl){
+        ResponseEntity<?> body = validateInputs(combinationUrl);
+        if (body != null) return body;
+
         try {
             String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.deleteCombinationFromFavorite.execute(combinationUrl, userEmail));
