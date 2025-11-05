@@ -4,6 +4,8 @@ import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.TripoModel;
 import com.outfitlab.project.domain.useCases.tripo.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.Map;
 
 public class TrippoService {
@@ -28,12 +30,12 @@ public class TrippoService {
     }
 
     public TripoModel procesarYEnviarATripo(MultipartFile imageFile) throws FileEmptyException, ErroBytesException, ErrorReadJsonException,
-            ErrorUploadImageToTripoException, ErrorGenerateGlbException, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorTripoEntityNotFoundException {
+            ErrorUploadImageToTripoException, ErrorGenerateGlbException, ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorTripoEntityNotFoundException, IOException {
 
-        if (imageFile.isEmpty()) throw new FileEmptyException("Archivo vacío");
+        if (imageFile.isEmpty()) throw new FileEmptyException("Archivo vacío.");
 
         Map<String, String> uploadData = this.uploadImageToTripo.execute(imageFile);
-
+        System.out.println("ACÁ DEBE ESTAR EL FILE_TOKEN: ------" + uploadData.toString());
         uploadData.put("minioImagePath", this.uploadImageToAws.execute(imageFile));
 
         String taskId = this.generateImageToModelTrippo.execute(uploadData);

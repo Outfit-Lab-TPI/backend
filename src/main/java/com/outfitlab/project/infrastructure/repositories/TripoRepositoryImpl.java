@@ -43,7 +43,7 @@ public class TripoRepositoryImpl implements TripoRepository {
 
     @Override
     public String peticionUploadImagenToTripo(ByteArrayResource imageResource) throws ErrorReadJsonException, ErrorUploadImageToTripoException {
-        String imagetoken = "";
+        String imageToken = "";
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", imageResource);
@@ -61,12 +61,12 @@ public class TripoRepositoryImpl implements TripoRepository {
 
         try{
             JsonNode json = mapper.readTree(response.getBody());
-            String imageToken = json.get("data").get("image_token").asText();
+            imageToken = json.get("data").get("image_token").asText();
         }catch (JsonProcessingException e){
             throw new ErrorReadJsonException("Error al leer el Json: " + response.getBody() + "--- Error: " + e.getMessage());
         }
 
-        return imagetoken;
+        return imageToken;
     }
 
     @Override
@@ -175,7 +175,7 @@ public class TripoRepositoryImpl implements TripoRepository {
             System.out.println("EL ESTADO ACTUAL ES: " + status);
 
             if (status.equalsIgnoreCase("success")) {
-                glbUrl = statusJson.path("data").get("result").get("pbr_model").get("url").asText();
+                return statusJson.path("data").get("result").get("pbr_model").get("url").asText();
             } else if (status.equalsIgnoreCase("failed")) {
                 throw new RuntimeException("La tarea falló: " + statusResponse.getBody());
             }

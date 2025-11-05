@@ -140,4 +140,21 @@ public class TripoModel {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+    @Override
+    public String toString() {
+        return "TripoModel{" +
+                "taskId='" + taskId + '\'' +
+                ", imageToken='" + imageToken + '\'' +
+                ", originalFilename='" + originalFilename + '\'' +
+                ", fileExtension='" + fileExtension + '\'' +
+                ", status=" + status +
+                ", minioImagePath='" + minioImagePath + '\'' +
+                ", minioModelPath='" + minioModelPath + '\'' +
+                ", tripoModelUrl='" + tripoModelUrl + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", errorMessage='" + errorMessage + '\'' +
+                '}';
+    }
 }
