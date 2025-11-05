@@ -86,6 +86,11 @@ public class TripoEntity {
         updatedAt = LocalDateTime.now();
     }
 
+    // Getter manual para taskId (Lombok parece no generar esto correctamente en build)
+    public String getTaskId() {
+        return taskId;
+    }
+
 // ------------------- los dos convert ----------------------------
     public static TripoEntity convertToEntity(TripoModel model){
         return new TripoEntity(

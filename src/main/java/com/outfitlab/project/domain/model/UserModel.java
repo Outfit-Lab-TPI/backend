@@ -1,8 +1,10 @@
 package com.outfitlab.project.domain.model;
 
+import com.outfitlab.project.domain.model.enums.SubscriptionStatus;
 import java.time.LocalDateTime;
 
 public class UserModel {
+    private Long id;
     private String satulation;
     private String name;
     private String secondName;
@@ -12,7 +14,10 @@ public class UserModel {
     private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    
+    // Nuevos campos para sistema de suscripciones
+    private SubscriptionStatus subscriptionStatus;
+    private LocalDateTime subscriptionExpiresAt;
 
     public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.name = name;
@@ -24,6 +29,17 @@ public class UserModel {
         this.password = password;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.subscriptionStatus = SubscriptionStatus.FREE; // Default
+    }
+
+    // GETTERS Y SETTERS
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSatulation() {
@@ -96,5 +112,23 @@ public class UserModel {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    // NUEVOS GETTERS/SETTERS PARA SUSCRIPCIÓN
+    
+    public SubscriptionStatus getSubscriptionStatus() {
+        return subscriptionStatus;
+    }
+
+    public void setSubscriptionStatus(SubscriptionStatus subscriptionStatus) {
+        this.subscriptionStatus = subscriptionStatus;
+    }
+
+    public LocalDateTime getSubscriptionExpiresAt() {
+        return subscriptionExpiresAt;
+    }
+
+    public void setSubscriptionExpiresAt(LocalDateTime subscriptionExpiresAt) {
+        this.subscriptionExpiresAt = subscriptionExpiresAt;
     }
 }

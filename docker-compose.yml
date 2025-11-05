@@ -36,6 +36,9 @@ services:
       
       # API Keys
       - FASHION_IA_SECRET_KEY=${FASHION_IA_SECRET_KEY}
+      
+      # MercadoPago
+      - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
     
     restart: unless-stopped
     networks:
