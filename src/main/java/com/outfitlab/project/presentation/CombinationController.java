@@ -55,8 +55,10 @@ public class CombinationController {
         try {
             String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.getCombinationFavoritesForUserByEmail.execute(userEmail, page));
-        } catch (UserNotFoundException | PageLessThanZeroException | FavoritesException e) {
+        } catch (UserNotFoundException | PageLessThanZeroException e) {
             return buildResponseEntityError(e.getMessage());
+        } catch (FavoritesException e) {
+            return ResponseEntity.ok(e.getMessage());
         }
     }
 
