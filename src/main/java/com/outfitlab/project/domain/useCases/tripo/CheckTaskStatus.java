@@ -1,5 +1,6 @@
 package com.outfitlab.project.domain.useCases.tripo;
 
+import com.outfitlab.project.domain.exceptions.ErrorGenerateGlbException;
 import com.outfitlab.project.domain.exceptions.ErrorGlbGenerateTimeExpiredException;
 import com.outfitlab.project.domain.exceptions.ErrorReadJsonException;
 import com.outfitlab.project.domain.exceptions.ErrorWhenSleepException;
@@ -14,7 +15,7 @@ public class CheckTaskStatus {
         this.iTripoRepository = iTripoRepository;
     }
 
-    public String execute(String taskId) throws ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException {
-        return this.iTripoRepository.peticionStatusGlbTripo(taskId);
+    public String execute(String taskId) throws ErrorGlbGenerateTimeExpiredException, ErrorWhenSleepException, ErrorReadJsonException, ErrorGenerateGlbException {
+        return this.iTripoRepository.requestStatusGlbTripo(taskId);
     }
 }

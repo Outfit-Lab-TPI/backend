@@ -1,7 +1,6 @@
 package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
-import com.outfitlab.project.domain.service.TrippoService;
 import com.outfitlab.project.domain.useCases.tripo.*;
 import com.outfitlab.project.infrastructure.repositories.UploadImageRepository;
 import com.outfitlab.project.infrastructure.repositories.TripoRepositoryImpl;
@@ -14,8 +13,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 public class TripoConfig {
 
-
-    // ---------- repos, Impl y AWS ---------------------------------------------------------------------------------
     @Bean
     public TripoRepositoryImpl tripoRepositoryImpl(RestTemplate restTemplate, TripoJpaRepository iJpaTripoRepository) {
         return new TripoRepositoryImpl(restTemplate, iJpaTripoRepository);
@@ -35,29 +32,10 @@ public class TripoConfig {
     public SaveImage uploadImageToAws(com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository iAwsRepository) {
         return new SaveImage(iAwsRepository);
     }
-    // ---------------------------------------------------------------------------------------------------------
-
-
-
-    // ---------- USE CASES ----------------------------------------------------------------------------------
-    @Bean
-    public GetFileExtension getFileExtension() {
-        return new GetFileExtension();
-    }
 
     @Bean
-    public GetImageResource getImageResource() {
-        return new GetImageResource();
-    }
-
-    @Bean
-    public ValidateExtension validateExtension() {
-        return new ValidateExtension();
-    }
-
-    @Bean
-    public UploadImageToTripo uploadImageToTripo(ValidateExtension validateExtension, GetFileExtension getFileExtension, TripoRepository iTripoRepository) {
-        return new UploadImageToTripo(validateExtension, getFileExtension, iTripoRepository);
+    public UploadImageToTripo uploadImageToTripo(TripoRepository iTripoRepository) {
+        return new UploadImageToTripo(iTripoRepository);
     }
 
     @Bean
@@ -84,21 +62,4 @@ public class TripoConfig {
     public FindTripoModelByTaskid findTripoModelByTaskid(TripoRepository iTripoRepository) {
         return new FindTripoModelByTaskid(iTripoRepository);
     }
-    //---------------------------------------------------------------------------------------------------------------------------
-
-
-
-    // ---------- service con tooooodos los useCases inyectados -----------------------------------------------------------------
-    @Bean
-    public TrippoService trippoService(
-            UploadImageToTripo uploadImageToTripo, SaveImage uploadImageToAws,
-            GenerateImageToModelTrippo generateImageToModelTrippo, SaveTripoModel saveTripoModel,
-            CheckTaskStatus checkTaskStatus, UpdateTripoModel updateTripoModel, FindTripoModelByTaskid findTripoModelByTaskid
-    ) {
-        return new TrippoService(
-                uploadImageToTripo, uploadImageToAws, generateImageToModelTrippo,
-                saveTripoModel, checkTaskStatus, updateTripoModel, findTripoModelByTaskid
-        );
-    }
-    //---------------------------------------------------------------------------------------------------------------------------
 }

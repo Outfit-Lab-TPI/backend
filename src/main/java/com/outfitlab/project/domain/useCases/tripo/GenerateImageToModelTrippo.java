@@ -13,7 +13,7 @@ public class GenerateImageToModelTrippo {
         this.iTripoRepository = iTripoRepository;
     }
 
-    public String execute(Map<String, String> uploadData) throws ErrorGenerateGlbException, ErrorReadJsonException {
-        return this.iTripoRepository.peticionGenerateGlbToTripo(uploadData);
+    public String execute(Map<String, Object> uploadData) throws ErrorGenerateGlbException, ErrorReadJsonException {
+        return this.iTripoRepository.requestGenerateGlbToTripo(uploadData);
     }
 }
