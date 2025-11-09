@@ -31,6 +31,10 @@ public class GetAllBrandsTest {
     //test de use case nombrarlos con logica de negocio
 
     @Test
+    public void prueba(){
+    }
+
+    @Test
     public void shouldReturnAllBrands(){
         givenExistsBrands(10);
         Page<BrandDTO> result = whenGetBrands(10);
