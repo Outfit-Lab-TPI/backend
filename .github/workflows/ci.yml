@@ -14,13 +14,13 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: outfitlab
+          POSTGRES_USER: outfitlab
+          POSTGRES_PASSWORD: outfitlab123
         ports:
           - 5433:5432
         options: >-
-          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }}"
+          --health-cmd="pg_isready -U outfitlab -d outfitlab"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
