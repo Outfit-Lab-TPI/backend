@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres-test:5432/outfitlab
+    url: jdbc:postgresql://localhost:5433/outfitlab
     username: outfitlab
     password: outfitlab123
     driver-class-name: org.postgresql.Driver
