@@ -5,18 +5,19 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.payment.Payment;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
+import com.outfitlab.project.domain.interfaces.MercadoPagoPaymentGateway;
 
 public class ProcessPaymentNotification {
 
     private final UserRepository userRepository;
+    private final MercadoPagoPaymentGateway paymentGateway;
 
-    public ProcessPaymentNotification(UserRepository userRepository) {
+    public ProcessPaymentNotification(UserRepository userRepository, MercadoPagoPaymentGateway paymentGateway) {
         this.userRepository = userRepository;
+        this.paymentGateway = paymentGateway;
     }
-
     public void execute(Long paymentId) throws MPException, MPApiException {
-        PaymentClient client = new PaymentClient();
-        Payment payment = client.get(paymentId);
+        Payment payment = paymentGateway.getPaymentDetails(paymentId);
 
         String status = payment.getStatus();
         String externalReference = payment.getExternalReference();

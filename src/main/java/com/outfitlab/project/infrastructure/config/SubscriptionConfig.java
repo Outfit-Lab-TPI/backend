@@ -5,13 +5,14 @@ import com.outfitlab.project.domain.useCases.mercadopago.CreateMercadoPagoPrefer
 import com.outfitlab.project.domain.useCases.mercadopago.ProcessPaymentNotification;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.outfitlab.project.domain.interfaces.MercadoPagoPaymentGateway;
 
 @Configuration
 public class SubscriptionConfig {
 
     @Bean
-    public ProcessPaymentNotification processPaymentNotification(UserRepository userRepository) {
-        return new ProcessPaymentNotification(userRepository);
+    public ProcessPaymentNotification processPaymentNotification(UserRepository userRepository, MercadoPagoPaymentGateway mercadoPagoPaymentGateway) {
+        return new ProcessPaymentNotification(userRepository, mercadoPagoPaymentGateway);
     }
 
     @Bean
