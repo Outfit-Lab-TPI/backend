@@ -19,7 +19,7 @@ class GetGarmentsByTypeTest {
     private GetGarmentsByType getGarmentsByType = new GetGarmentsByType(garmentRepository);
 
     @Test
-    void givenValidTypeWithGarmentsWhenExecuteThenReturnPageSuccessfully() throws GarmentNotFoundException {
+    public void givenValidTypeWithGarmentsWhenExecuteThenReturnPageSuccessfully() throws GarmentNotFoundException {
         String type = "superior";
         int page = 0;
         Page<PrendaModel> pageResponse = new PageImpl<>(List.of(new PrendaModel(), new PrendaModel()));
@@ -34,7 +34,7 @@ class GetGarmentsByTypeTest {
     }
 
     @Test
-    void givenValidTypeWithNoGarmentsWhenExecuteThenThrowGarmentNotFoundException() {
+    public void givenValidTypeWithNoGarmentsWhenExecuteThenThrowGarmentNotFoundException() {
         String type = "inferior";
         int page = 1;
         Page<PrendaModel> emptyPage = new PageImpl<>(List.of());
@@ -48,7 +48,7 @@ class GetGarmentsByTypeTest {
     }
 
     @Test
-    void givenEmptyPageWhenExecuteThenThrowGarmentNotFoundException() {
+    public void givenEmptyPageWhenExecuteThenThrowGarmentNotFoundException() {
         String type = "accesorio";
         int page = 2;
         Page<PrendaModel> emptyPage = new PageImpl<>(List.of());

@@ -17,7 +17,7 @@ class GetGarmentRecomendationTest {
     private GetGarmentRecomendation getGarmentRecomendation = new GetGarmentRecomendation(garmentRecomendationRepository);
 
     @Test
-    void givenValidGarmentCodeWhenRecommendationsExistThenReturnListSuccessfully() throws GarmentNotFoundException {
+    public void givenValidGarmentCodeWhenRecommendationsExistThenReturnListSuccessfully() throws GarmentNotFoundException {
         String garmentCode = "G001";
         List<GarmentRecomendationModel> recomendations = List.of(new GarmentRecomendationModel(), new GarmentRecomendationModel());
 
@@ -32,7 +32,7 @@ class GetGarmentRecomendationTest {
     }
 
     @Test
-    void givenValidGarmentCodeWhenNoRecommendationsExistThenReturnEmptyList() throws GarmentNotFoundException {
+    public void givenValidGarmentCodeWhenNoRecommendationsExistThenReturnEmptyList() throws GarmentNotFoundException {
         String garmentCode = "G002";
 
         when(garmentRecomendationRepository.findRecomendationsByGarmentCode(garmentCode))
@@ -46,7 +46,7 @@ class GetGarmentRecomendationTest {
     }
 
     @Test
-    void givenInvalidGarmentCodeWhenExecuteThenThrowGarmentNotFoundException() throws GarmentNotFoundException {
+    public void givenInvalidGarmentCodeWhenExecuteThenThrowGarmentNotFoundException() throws GarmentNotFoundException {
         String garmentCode = "cualquiera";
 
         when(garmentRecomendationRepository.findRecomendationsByGarmentCode(garmentCode))

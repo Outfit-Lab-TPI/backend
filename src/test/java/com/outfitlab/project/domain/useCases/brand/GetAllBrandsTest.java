@@ -22,7 +22,7 @@ public class GetAllBrandsTest {
     private GetAllBrands getAllBrands = new GetAllBrands(brandRepository);
 
     @Test
-    void givenValidPageWhenBrandsExistThenReturnPageOfBrandDTOs() throws BrandsNotFoundException, PageLessThanZeroException {
+    public void givenValidPageWhenBrandsExistThenReturnPageOfBrandDTOs() throws BrandsNotFoundException, PageLessThanZeroException {
         int page = givenValidPage();
 
         Page<BrandDTO> result = whenBrandsExist(page);
@@ -50,7 +50,7 @@ public class GetAllBrandsTest {
     }
 
     @Test
-    void givenNegativePageWhenExecuteThenThrowPageLessThanZeroException() {
+    public void givenNegativePageWhenExecuteThenThrowPageLessThanZeroException() {
         int invalidPage = -1;
 
         assertThrows(PageLessThanZeroException.class, () -> getAllBrands.execute(invalidPage));
@@ -58,7 +58,7 @@ public class GetAllBrandsTest {
     }
 
     @Test
-    void givenValidPageWhenNoBrandsExistThenThrowBrandsNotFoundException() {
+    public void givenValidPageWhenNoBrandsExistThenThrowBrandsNotFoundException() {
         int page = 0;
         when(brandRepository.getAllBrands(page)).thenReturn(Page.empty());
 

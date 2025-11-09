@@ -18,7 +18,7 @@ public class GenerateImageToModelTrippoTest {
     private GenerateImageToModelTrippo generateImageToModelTrippo = new GenerateImageToModelTrippo(tripoRepository);
 
     @Test
-    void givenValidUploadDataWhenExecuteThenReturnSuccessResponse() throws ErrorGenerateGlbException, ErrorReadJsonException {
+    public void givenValidUploadDataWhenExecuteThenReturnSuccessResponse() throws ErrorGenerateGlbException, ErrorReadJsonException {
         Map<String, Object> uploadData = new HashMap<>();
         uploadData.put("imageUrl", "https://testeo.com/image.png");
         String idResult = "GLB_TASK_ID_14125";
@@ -33,7 +33,7 @@ public class GenerateImageToModelTrippoTest {
     }
 
     @Test
-    void givenValidDataWhenGenerateGlbThenThrowErrorGenerateGlbException() throws ErrorGenerateGlbException, ErrorReadJsonException {
+    public void givenValidDataWhenGenerateGlbThenThrowErrorGenerateGlbException() throws ErrorGenerateGlbException, ErrorReadJsonException {
         Map<String, Object> uploadData = new HashMap<>();
         uploadData.put("imageUrl", "https://testeo.com/image.png");
 
@@ -45,7 +45,7 @@ public class GenerateImageToModelTrippoTest {
     }
 
     @Test
-    void givenValidDataWhenGenerateGlbThenThrowErrorReadJsonException() throws ErrorGenerateGlbException, ErrorReadJsonException {
+    public void givenValidDataWhenGenerateGlbThenThrowErrorReadJsonException() throws ErrorGenerateGlbException, ErrorReadJsonException {
         Map<String, Object> uploadData = new HashMap<>();
         uploadData.put("imageUrl", "https://testeo.com/image.png");
 

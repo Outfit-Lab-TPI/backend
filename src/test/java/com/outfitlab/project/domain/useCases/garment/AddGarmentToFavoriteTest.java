@@ -15,15 +15,13 @@ public class AddGarmentToFavoriteTest {
     private AddGarmentToFavorite addGarmentToFavorite = new AddGarmentToFavorite(userGarmentFavoriteRepository);
 
     @Test
-    void givenValidGarmentAndUserWhenExecuteThenAddToFavoritesSuccessfully() throws Exception, UserGarmentFavoriteNotFoundException, FavoritesException {
+    public void givenValidGarmentAndUserWhenExecuteThenAddToFavoritesSuccessfully() throws Exception, UserGarmentFavoriteNotFoundException, FavoritesException {
         String garmentCode = "G001";
         String userEmail = "test@aaaa.com";
         UserGarmentFavoriteEntity fav = new UserGarmentFavoriteEntity();
 
-        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                .thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
-        when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail))
-                .thenReturn(fav);
+        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail)).thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
+        when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail)).thenReturn(fav);
 
         String result = addGarmentToFavorite.execute(garmentCode, userEmail);
 
@@ -31,50 +29,36 @@ public class AddGarmentToFavoriteTest {
         assertEquals("Prenda añadida a favoritos.", result);
     }
 
-    // 2️⃣
     @Test
-    void givenExistingFavoriteWhenExecuteThenThrowUserGarmentFavoriteAlreadyExistsException() throws UserGarmentFavoriteNotFoundException {
+    public void givenExistingFavoriteWhenExecuteThenThrowUserGarmentFavoriteAlreadyExistsException() throws UserGarmentFavoriteNotFoundException {
         String garmentCode = "G001";
         String userEmail = "test@aaaa.com";
 
-        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                .thenReturn(null);
+        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail)).thenReturn(null);
 
-        assertThrows(UserGarmentFavoriteAlreadyExistsException.class, () ->
-                addGarmentToFavorite.execute(garmentCode, userEmail)
-        );
+        assertThrows(UserGarmentFavoriteAlreadyExistsException.class, () -> addGarmentToFavorite.execute(garmentCode, userEmail));
     }
 
-    // 3️⃣
     @Test
-    void givenGarmentOrUserNotFoundWhenExecuteThenThrowCorrespondingException() throws UserNotFoundException, UserGarmentFavoriteNotFoundException, GarmentNotFoundException {
+    public void givenGarmentOrUserNotFoundWhenExecuteThenThrowCorrespondingException() throws UserNotFoundException, UserGarmentFavoriteNotFoundException, GarmentNotFoundException {
         String garmentCode = "G001";
         String userEmail = "test@aaaa.com";
 
-        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                .thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
-        when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail))
-                .thenThrow(new UserNotFoundException("Usuario no encontrado"));
+        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail)).thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
+        when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail)).thenThrow(new UserNotFoundException("Usuario no encontrado"));
 
-        assertThrows(UserNotFoundException.class, () ->
-                addGarmentToFavorite.execute(garmentCode, userEmail)
-        );
+        assertThrows(UserNotFoundException.class, () -> addGarmentToFavorite.execute(garmentCode, userEmail));
     }
 
-    // 4️⃣
     @Test
-    void givenFavoriteAdditionFailsWhenExecuteThenThrowFavoritesException() throws Exception, UserGarmentFavoriteNotFoundException {
+    public void givenFavoriteAdditionFailsWhenExecuteThenThrowFavoritesException() throws Exception, UserGarmentFavoriteNotFoundException {
         String garmentCode = "G001";
         String userEmail = "test@aaa.com";
 
-        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                .thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
-        when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail))
-                .thenReturn(null);
+        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail)).thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
+        when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail)).thenReturn(null);
 
-        assertThrows(FavoritesException.class, () ->
-                addGarmentToFavorite.execute(garmentCode, userEmail)
-        );
+        assertThrows(FavoritesException.class, () -> addGarmentToFavorite.execute(garmentCode, userEmail));
     }
 }
 

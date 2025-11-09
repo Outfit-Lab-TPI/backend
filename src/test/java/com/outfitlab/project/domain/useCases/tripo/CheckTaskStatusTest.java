@@ -14,7 +14,7 @@ public class CheckTaskStatusTest {
     private CheckTaskStatus checkTaskStatus = new CheckTaskStatus(tripoRepository);
 
     @Test
-    void givenValidTaskIdWhenExecuteThenReturnStatus() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
+    public void givenValidTaskIdWhenExecuteThenReturnStatus() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
         String taskId = "12345";
         String expectedStatus = "COMPLETED";
 
@@ -26,7 +26,7 @@ public class CheckTaskStatusTest {
     }
 
     @Test
-    void givenRepositoryThrowTimeExpiredExceptionWhenExecuteThenPropagate() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
+    public void givenRepositoryThrowTimeExpiredExceptionWhenExecuteThenPropagate() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
         String taskId = "12345";
 
         when(tripoRepository.requestStatusGlbTripo(taskId))
@@ -37,7 +37,7 @@ public class CheckTaskStatusTest {
     }
 
     @Test
-    void givenRepositoryWhenExecuteThenThrowSleepException() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
+    public void givenRepositoryWhenExecuteThenThrowSleepException() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
         String taskId = "12345";
 
         when(tripoRepository.requestStatusGlbTripo(taskId)).thenThrow(new ErrorWhenSleepException("Error al esperar el hilo"));
@@ -47,7 +47,7 @@ public class CheckTaskStatusTest {
     }
 
     @Test
-    void givenRepositoryThrowReadJsonExceptionWhenExecuteThenPropagate() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
+    public void givenRepositoryThrowReadJsonExceptionWhenExecuteThenPropagate() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
         String taskId = "12345";
 
         when(tripoRepository.requestStatusGlbTripo(taskId)).thenThrow(new ErrorReadJsonException("Error leyendo JSON"));
@@ -57,7 +57,7 @@ public class CheckTaskStatusTest {
     }
 
     @Test
-    void givenRepositoryThrowGenerateGlbExceptionWhenExecuteThenPropagate() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
+    public void givenRepositoryThrowGenerateGlbExceptionWhenExecuteThenPropagate() throws ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException, ErrorWhenSleepException, ErrorReadJsonException {
         String taskId = "12345";
 
         when(tripoRepository.requestStatusGlbTripo(taskId)).thenThrow(new ErrorGenerateGlbException("Error generando GLB"));

@@ -15,7 +15,7 @@ class UpdateTripoModelTest {
     private UpdateTripoModel updateTripoModel = new UpdateTripoModel(tripoRepository);
 
     @Test
-    void givenValidModelWhenExecuteThenReturnUpdatedModel() throws ErrorTripoEntityNotFoundException {
+    public void givenValidModelWhenExecuteThenReturnUpdatedModel() throws ErrorTripoEntityNotFoundException {
         TripoModel model = new TripoModel();
         TripoModel updatedModel = new TripoModel();
 
@@ -29,7 +29,7 @@ class UpdateTripoModelTest {
     }
 
     @Test
-    void givenInvalidTripoEntityWhenUpdateTripoModelThenThrowErrorTripoEntityNotFoundException() throws ErrorTripoEntityNotFoundException {
+    public void givenInvalidTripoEntityWhenUpdateTripoModelThenThrowErrorTripoEntityNotFoundException() throws ErrorTripoEntityNotFoundException {
         TripoModel model = new TripoModel();
 
         when(tripoRepository.update(model)).thenThrow(new ErrorTripoEntityNotFoundException("No se encontró la entidad"));

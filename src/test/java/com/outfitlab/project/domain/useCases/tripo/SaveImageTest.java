@@ -14,7 +14,7 @@ class SaveImageTest {
     private SaveImage saveImage = new SaveImage(uploadImageRepository);
 
     @Test
-    void givenValidImageFileWhenExecuteThenReturnUrl() {
+    public void givenValidImageFileWhenExecuteThenReturnUrl() {
         MultipartFile mockFile = mock(MultipartFile.class);
         String expectedUrl = "https://aws-bucket.s3.amazonaws.com/models_images/img123.png";
 

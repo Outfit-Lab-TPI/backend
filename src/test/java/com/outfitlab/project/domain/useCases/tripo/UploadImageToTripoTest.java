@@ -16,7 +16,7 @@ public class UploadImageToTripoTest {
     private UploadImageToTripo uploadImageToTripo = new UploadImageToTripo(tripoRepository);
 
     @Test
-    void givenValidUrlWhenExecuteThenReturnResultMap() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
+    public void givenValidUrlWhenExecuteThenReturnResultMap() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
         String url = "https://image.com/fotoOk.jpg";
         Map<String, Object> expectedResponse = Map.of("status", "ok");
 
@@ -29,28 +29,28 @@ public class UploadImageToTripoTest {
     }
 
     @Test
-    void givenWrongImageWhenUploadImageToTripoThenThrowErroBytesException() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
+    public void givenWrongImageWhenUploadImageToTripoThenThrowErroBytesException() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
         String url = "https://image.com/cualquieraErrorBytes.jpg";
         when(tripoRepository.requestUploadImagenToTripo(url)).thenThrow(new ErroBytesException("Error de bytes"));
         assertThrows(ErroBytesException.class, () -> uploadImageToTripo.execute(url));
     }
 
     @Test
-    void givenValidResponseWhenUploadImageToTrippoAndReadTheJsomThenThrowErrorReadJsonException() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
+    public void givenValidResponseWhenUploadImageToTrippoAndReadTheJsomThenThrowErrorReadJsonException() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
         String url = "https://image.com/cualquieraErrorJson.jpg";
         when(tripoRepository.requestUploadImagenToTripo(url)).thenThrow(new ErrorReadJsonException("Error al leer JSON"));
         assertThrows(ErrorReadJsonException.class, () -> uploadImageToTripo.execute(url));
     }
 
     @Test
-    void givenValidImageWhenUploadImageToTripoThenThrowsErrorUploadImageToTripoException() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
+    public void givenValidImageWhenUploadImageToTripoThenThrowsErrorUploadImageToTripoException() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
         String url = "https://image.com/errorAlsubirla.jpg";
         when(tripoRepository.requestUploadImagenToTripo(url)).thenThrow(new ErrorUploadImageToTripoException("Error al subir imagen a Tripo"));
         assertThrows(ErrorUploadImageToTripoException.class, () -> uploadImageToTripo.execute(url));
     }
 
     @Test
-    void givenEmptyImageeWhenUploadImageToTripoThenThrowFileEmptyException() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
+    public void givenEmptyImageeWhenUploadImageToTripoThenThrowFileEmptyException() throws FileEmptyException, ErrorReadJsonException, ErroBytesException, ErrorUploadImageToTripoException {
         String url = "https://image.com/errorArchivoVacio.jpg";
         when(tripoRepository.requestUploadImagenToTripo(url)).thenThrow(new FileEmptyException("Archivo vacío"));
         assertThrows(FileEmptyException.class, () -> uploadImageToTripo.execute(url));

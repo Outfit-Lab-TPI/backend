@@ -15,7 +15,7 @@ public class DeleteGarmentFromFavoriteTest {
     private DeleteGarmentFromFavorite deleteGarmentFromFavorite = new DeleteGarmentFromFavorite(userGarmentFavoriteRepository);
 
     @Test
-    void givenExistingFavoriteWhenExecuteThenDeleteSuccessfully() throws Exception, UserGarmentFavoriteNotFoundException {
+    public void givenExistingFavoriteWhenExecuteThenDeleteSuccessfully() throws Exception, UserGarmentFavoriteNotFoundException {
         String garmentCode = "G001";
         String userEmail = "user@sasas.com";
         UserGarmentFavoriteModel fav = new UserGarmentFavoriteModel();
@@ -32,7 +32,7 @@ public class DeleteGarmentFromFavoriteTest {
     }
 
     @Test
-    void givenNonexistentFavoriteWhenExecuteThenThrowUserGarmentFavoriteNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
+    public void givenNonexistentFavoriteWhenExecuteThenThrowUserGarmentFavoriteNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
         String garmentCode = "G001";
         String userEmail = "user@asasa.com";
 
@@ -45,7 +45,7 @@ public class DeleteGarmentFromFavoriteTest {
     }
 
     @Test
-    void givenUserNotFoundWhenExecuteThenThrowUserNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
+    public void givenUserNotFoundWhenExecuteThenThrowUserNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
         String garmentCode = "G001";
         String userEmail = "user@asas.com";
         UserGarmentFavoriteModel fav = new UserGarmentFavoriteModel();
@@ -61,7 +61,7 @@ public class DeleteGarmentFromFavoriteTest {
     }
 
     @Test
-    void givenGarmentNotFoundWhenExecuteThenThrowGarmentNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
+    public void givenGarmentNotFoundWhenExecuteThenThrowGarmentNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
         String garmentCode = "G001";
         String userEmail = "user@asasa.com";
         UserGarmentFavoriteModel fav = new UserGarmentFavoriteModel();

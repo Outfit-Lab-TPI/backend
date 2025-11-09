@@ -19,13 +19,13 @@ class FashnControllerTest {
     private FashnController fashnController;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         combinePrendas = mock(CombinePrendas.class);
         fashnController = new FashnController(combinePrendas);
     }
 
     @Test
-    void givenValidRequestWhenCombineThenReturnsOk() throws Exception {
+    public void givenValidRequestWhenCombineThenReturnsOk() throws Exception {
         CombineRequest request = new CombineRequest();
         request.setTop("top_url");
         request.setBottom("bottom_url");
@@ -44,7 +44,7 @@ class FashnControllerTest {
     }
 
     @Test
-    void givenPredictionFailedExceptionWhenCombineThenReturnsFailed() throws Exception {
+    public void givenPredictionFailedExceptionWhenCombineThenReturnsFailed() throws Exception {
         CombineRequest request = new CombineRequest();
         request.setTop("top_url");
         request.setAvatarType("fullbody");
@@ -60,7 +60,7 @@ class FashnControllerTest {
     }
 
     @Test
-    void givenPredictionTimeoutExceptionWhenCombineThenReturnsTimeout() throws Exception {
+    public void givenPredictionTimeoutExceptionWhenCombineThenReturnsTimeout() throws Exception {
         CombineRequest request = new CombineRequest();
         request.setBottom("bottom_url");
         request.setAvatarType("fullbody");
@@ -76,7 +76,7 @@ class FashnControllerTest {
     }
 
     @Test
-    void givenFashnApiExceptionWhenCombineThenReturnsError() throws Exception {
+    public void givenFashnApiExceptionWhenCombineThenReturnsError() throws Exception {
         CombineRequest request = new CombineRequest();
         request.setTop("top_url");
         request.setAvatarType("fullbody");
