@@ -2,7 +2,7 @@ package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.domain.useCases.tripo.*;
-import com.outfitlab.project.infrastructure.repositories.UploadImageRepository;
+import com.outfitlab.project.infrastructure.repositories.UploadImageRepositoryImpl;
 import com.outfitlab.project.infrastructure.repositories.TripoRepositoryImpl;
 import com.outfitlab.project.infrastructure.repositories.interfaces.TripoJpaRepository;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ public class TripoConfig {
 
     @Bean
     public com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository iAwsRepository(S3Client s3Client) {
-        return new UploadImageRepository(s3Client);
+        return new UploadImageRepositoryImpl(s3Client);
     }
 
     @Bean

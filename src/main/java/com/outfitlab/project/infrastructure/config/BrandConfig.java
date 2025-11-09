@@ -2,8 +2,8 @@ package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
-import com.outfitlab.project.domain.useCases.marca.GetAllBrands;
-import com.outfitlab.project.domain.useCases.marca.GetBrandAndGarmentsByBrandCode;
+import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
+import com.outfitlab.project.domain.useCases.brand.GetBrandAndGarmentsByBrandCode;
 import com.outfitlab.project.infrastructure.repositories.BrandRepositoryImpl;
 import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepository;
 import org.springframework.context.annotation.Bean;

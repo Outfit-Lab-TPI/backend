@@ -8,6 +8,8 @@ public class UserGarmentFavoriteModel {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public UserGarmentFavoriteModel() {}
+
     public UserGarmentFavoriteModel(PrendaModel garment, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.garment = garment;
         this.createdAt = createdAt;

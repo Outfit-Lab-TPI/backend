@@ -5,6 +5,8 @@ public class GarmentRecomendationModel {
     private PrendaModel topGarment;
     private PrendaModel bottomGarment;
 
+    public GarmentRecomendationModel() {}
+
     public GarmentRecomendationModel(PrendaModel topGarment, PrendaModel bottomGarment) {
         this.topGarment = topGarment;
         this.bottomGarment = bottomGarment;

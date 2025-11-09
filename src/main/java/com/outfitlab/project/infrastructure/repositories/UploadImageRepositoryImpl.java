@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Slf4j
-public class UploadImageRepository implements com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository {
+public class UploadImageRepositoryImpl implements com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository {
 
     private final S3Client s3Client;
 
