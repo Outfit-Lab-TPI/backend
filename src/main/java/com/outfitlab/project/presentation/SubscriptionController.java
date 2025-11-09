@@ -2,8 +2,8 @@ package com.outfitlab.project.presentation;
 
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
-import com.outfitlab.project.domain.service.SubscriptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.outfitlab.project.domain.useCases.mercadopago.CreateMercadoPagoPreference;
+import com.outfitlab.project.domain.useCases.mercadopago.ProcessPaymentNotification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
@@ -30,8 +30,15 @@ class SubscriptionRequest {
 @RequestMapping("/api/mp")
 public class SubscriptionController {
 
-    @Autowired
-    private SubscriptionService subscriptionService;
+    private final CreateMercadoPagoPreference createPreferenceUseCase;
+    private final ProcessPaymentNotification processNotificationUseCase;
+
+    public SubscriptionController(
+            CreateMercadoPagoPreference createPreferenceUseCase,
+            ProcessPaymentNotification processNotificationUseCase) {
+        this.createPreferenceUseCase = createPreferenceUseCase;
+        this.processNotificationUseCase = processNotificationUseCase;
+    }
 
     @PostMapping("/crear-suscripcion")
     @CrossOrigin(origins = "http://localhost:5173")
@@ -42,7 +49,7 @@ public class SubscriptionController {
         }
 
         try {
-            String initPointUrl = subscriptionService.createMercadoPagoPreference(
+            String initPointUrl = createPreferenceUseCase.execute(
                     request.getPlanId(),
                     request.getUserEmail(),
                     request.getPrice(),
@@ -72,7 +79,7 @@ public class SubscriptionController {
             try {
                 Long paymentId = Long.parseLong(id);
 
-                subscriptionService.processPaymentNotification(paymentId);
+                processNotificationUseCase.execute(paymentId);
 
                 return ResponseEntity.ok("Notification processed successfully.");
             } catch (NumberFormatException e) {
@@ -87,4 +94,3 @@ public class SubscriptionController {
         return ResponseEntity.ok("Notification received, not a relevant topic.");
     }
 }
-
