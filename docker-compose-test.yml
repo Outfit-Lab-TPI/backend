@@ -1,0 +1,14 @@
+services:
+  postgres-test:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: outfitlab
+      POSTGRES_USER: outfitlab
+      POSTGRES_PASSWORD: outfitlab123
+    ports:
+      - "5432:5432"
+    volumes:
+      - outfitlab-test-db-data:/var/lib/postgresql/data
+
+volumes:
+  outfitlab-test-db-data:
