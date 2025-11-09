@@ -54,6 +54,38 @@ jobs:
         run: mvn clean test -Dspring.profiles.active=test
         env:
           SPRING_PROFILES_ACTIVE: test
+          # === DATABASE CONFIG (usa el postgres del servicio) ===
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/outfitlab
+          SPRING_DATASOURCE_USERNAME: outfitlab
+          SPRING_DATASOURCE_PASSWORD: outfitlab123
+
+          # === REDIS (falso / mock) ===
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          REDIS_PASSWORD: fake
+
+          # === MINIO (mock) ===
+          MINIO_ENDPOINT: http://localhost:9000
+          MINIO_ACCESS_KEY: minio
+          MINIO_SECRET_KEY: minio123
+          MINIO_BUCKET_IMAGES: test-bucket
+          MINIO_BUCKET_MODELS: test-models
+
+          # === AWS (mock) ===
+          AWS_ACCESS_KEY_ID: FAKE_AWS_KEY
+          AWS_SECRET_ACCESS_KEY: FAKE_AWS_SECRET
+          AWS_REGION: sa-east-1
+          AWS_BUCKET_NAME: fake-bucket
+
+          # === MERCADO PAGO (mock) ===
+          MP_ACCESS_TOKEN: FAKE_MP_TOKEN
+
+          # === FASHION IA (mock) ===
+          FASHION_IA_SECRET_KEY: FAKE_FASHION_KEY
+
+          # === SPRING SECURITY (dummy) ===
+          SPRING_SECURITY_USER: testuser
+          SPRING_SECURITY_PASSWORD: testpass
 
 
 #name: ci_outfitlab
