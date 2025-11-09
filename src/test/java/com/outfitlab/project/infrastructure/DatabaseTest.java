@@ -23,7 +23,7 @@ public class DatabaseTest {
     @Test
     void databaseIsReachable() throws Exception {
         DataSource dataSource = DataSourceBuilder.create()
-                .url("jdbc:postgresql://localhost:5432/outfitlab")
+                .url("jdbc:postgresql://localhost:5433/outfitlab")
                 .username("outfitlab")
                 .password("outfitlab123")
                 .driverClassName("org.postgresql.Driver")
