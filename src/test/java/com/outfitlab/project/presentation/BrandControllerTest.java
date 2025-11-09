@@ -22,7 +22,7 @@ class BrandControllerTest {
     private BrandController brandController = new BrandController(getAllBrands, getBrandAndGarmentsByBrandCode);
 
     @Test
-    void givenValidPageWhenGetMarcasThenReturnsOkWithContent() throws Exception, BrandsNotFoundException {
+    public void givenValidPageWhenGetMarcasThenReturnsOkWithContent() throws Exception, BrandsNotFoundException {
         BrandDTO brand1 = new BrandDTO("nike", "Nike",  "https://logos.com/logaso.png");
         BrandDTO brand2 = new BrandDTO("adidas", "Adidas",  "https://logos.com/logaso.png");
 
@@ -47,7 +47,7 @@ class BrandControllerTest {
     }
 
     @Test
-    void givenNoBrandsFoundWhenGetMarcasThenReturns404() throws Exception, BrandsNotFoundException {
+    public void givenNoBrandsFoundWhenGetMarcasThenReturns404() throws Exception, BrandsNotFoundException {
         when(getAllBrands.execute(0)).thenThrow(new BrandsNotFoundException("No se encontraron marcas"));
 
         ResponseEntity<?> response = brandController.getMarcas(0);
@@ -57,7 +57,7 @@ class BrandControllerTest {
     }
 
     @Test
-    void givenNegativePageWhenGetMarcasThenReturns404() throws Exception, BrandsNotFoundException {
+    public void givenNegativePageWhenGetMarcasThenReturns404() throws Exception, BrandsNotFoundException {
         when(getAllBrands.execute(-1)).thenThrow(new PageLessThanZeroException("Página menor que cero"));
 
         ResponseEntity<?> response = brandController.getMarcas(-1);
@@ -67,7 +67,7 @@ class BrandControllerTest {
     }
 
     @Test
-    void givenNoExistingBrandWhenGetBrandAndGarmentsByBrandCodeThenReturns404() throws Exception, BrandsNotFoundException {
+    public void givenNoExistingBrandWhenGetBrandAndGarmentsByBrandCodeThenReturns404() throws Exception, BrandsNotFoundException {
         when(getBrandAndGarmentsByBrandCode.execute("puma", 0)).thenThrow(new BrandsNotFoundException("Marca no encontrada"));
 
         ResponseEntity<?> response = brandController.getBrandAndGarmentsByBrandCode("puma", 0);
@@ -77,7 +77,7 @@ class BrandControllerTest {
     }
 
     @Test
-    void givenNegativePageWhenGetBrandAndGarmentsByBrandCodeThenReturns404() throws Exception, BrandsNotFoundException {
+    public void givenNegativePageWhenGetBrandAndGarmentsByBrandCodeThenReturns404() throws Exception, BrandsNotFoundException {
         when(getBrandAndGarmentsByBrandCode.execute("nike", -1)).thenThrow(new PageLessThanZeroException("Página menor que cero"));
 
         ResponseEntity<?> response = brandController.getBrandAndGarmentsByBrandCode("nike", -1);

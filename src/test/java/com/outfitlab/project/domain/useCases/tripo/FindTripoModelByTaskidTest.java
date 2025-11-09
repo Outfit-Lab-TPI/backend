@@ -14,7 +14,7 @@ public class FindTripoModelByTaskidTest {
     private FindTripoModelByTaskid findTripoModelByTaskid = new FindTripoModelByTaskid(tripoRepository);
 
     @Test
-    void givenValidTaskIdWhenExecuteThenReturnTripoModel() {
+    public void givenValidTaskIdWhenExecuteThenReturnTripoModel() {
         String taskId = "TASK-001";
         TripoModel model = new TripoModel();
         model.setTaskId(taskId);
@@ -29,7 +29,7 @@ public class FindTripoModelByTaskidTest {
     }
 
     @Test
-    void givenInavlidTaskIdWhenExecuteThenReturnNull() {
+    public void givenInavlidTaskIdWhenExecuteThenReturnNull() {
         String taskId = "TASK-002";
 
         when(tripoRepository.buscarPorTaskId(taskId)).thenReturn(null);

@@ -21,7 +21,7 @@ public class GetBrandAndGarmentsByBrandCodeTest {
     private GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode = new GetBrandAndGarmentsByBrandCode(brandRepository, garmentRepository);
 
     @Test
-    void givenValidBrandCodeAndPageWhenExecuteThenReturnBrandAndGarmentsDTO() throws BrandsNotFoundException, PageLessThanZeroException {
+    public void givenValidBrandCodeAndPageWhenExecuteThenReturnBrandAndGarmentsDTO() throws BrandsNotFoundException, PageLessThanZeroException {
         String brandCode = "nike";
         int page = 0;
         BrandModel brandModel = new BrandModel();
@@ -47,7 +47,7 @@ public class GetBrandAndGarmentsByBrandCodeTest {
     }
 
     @Test
-    void givenNegativePageWhenExecuteThenThrowPageLessThanZeroException() {
+    public void givenNegativePageWhenExecuteThenThrowPageLessThanZeroException() {
         String brandCode = "nike";
         int invalidPage = -1;
 
@@ -57,7 +57,7 @@ public class GetBrandAndGarmentsByBrandCodeTest {
     }
 
     @Test
-    void givenNonexistentBrandCodeWhenExecuteThenThrowBrandsNotFoundException() {
+    public void givenNonexistentBrandCodeWhenExecuteThenThrowBrandsNotFoundException() {
         String brandCode = "cualquiera";
         int page = 0;
         when(brandRepository.findByBrandCode(brandCode)).thenReturn(null);

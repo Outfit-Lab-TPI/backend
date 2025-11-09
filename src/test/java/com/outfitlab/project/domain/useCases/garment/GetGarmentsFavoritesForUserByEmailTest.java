@@ -18,7 +18,7 @@ public class GetGarmentsFavoritesForUserByEmailTest {
     private GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail = new GetGarmentsFavoritesForUserByEmail(userGarmentFavoriteRepository);
 
     @Test
-    void givenValidUserAndPageWhenExecuteThenReturnFavoritesPage() throws Exception, FavoritesException {
+    public void givenValidUserAndPageWhenExecuteThenReturnFavoritesPage() throws Exception, FavoritesException {
         String userEmail = "user@example.com";
         int page = 1;
         PageDTO<PrendaModel> expectedPage = new PageDTO<>();
@@ -33,7 +33,7 @@ public class GetGarmentsFavoritesForUserByEmailTest {
     }
 
     @Test
-    void givenNegativePageNumberWhenExecuteThenThrowPageLessThanZeroException() throws UserNotFoundException, FavoritesException {
+    public void givenNegativePageNumberWhenExecuteThenThrowPageLessThanZeroException() throws UserNotFoundException, FavoritesException {
         String userEmail = "user@example.com";
         int page = -1;
 
@@ -42,7 +42,7 @@ public class GetGarmentsFavoritesForUserByEmailTest {
     }
 
     @Test
-    void givenNonexistentUserWhenExecuteThenThrowUserNotFoundException() throws Exception, FavoritesException {
+    public void givenNonexistentUserWhenExecuteThenThrowUserNotFoundException() throws Exception, FavoritesException {
         String userEmail = "notfound@example.com";
         int page = 0;
 
@@ -53,7 +53,7 @@ public class GetGarmentsFavoritesForUserByEmailTest {
     }
 
     @Test
-    void givenRepositoryFailureWhenExecuteThenThrowFavoritesException() throws Exception, FavoritesException {
+    public void givenRepositoryFailureWhenExecuteThenThrowFavoritesException() throws Exception, FavoritesException {
         String userEmail = "user@example.com";
         int page = 2;
 

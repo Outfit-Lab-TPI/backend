@@ -16,14 +16,14 @@ class CombinePrendasTest {
     private CombinePrendas combinePrendas = new CombinePrendas(fashnRepository);
 
     @Test
-    void givenNullTopAndBottomWhenExecuteThenThrowFashnApiException() {
+    public void givenNullTopAndBottomWhenExecuteThenThrowFashnApiException() {
         CombineRequestDTO request = new CombineRequestDTO(null, null, false, "male");
 
         assertThrows(FashnApiException.class, () -> combinePrendas.execute(request));
     }
 
     @Test
-    void givenOnlyTopWhenExecuteThenCallCombineWithTopsCategory() throws Exception {
+    public void givenOnlyTopWhenExecuteThenCallCombineWithTopsCategory() throws Exception {
         CombineRequestDTO request = new CombineRequestDTO("top-url", null, false, "female");
 
         when(fashnRepository.combine("top-url", "tops", "female")).thenReturn("taskId123");
@@ -36,7 +36,7 @@ class CombinePrendasTest {
     }
 
     @Test
-    void givenOnlyBottomWhenExecuteThenCallCombineWithBottomsCategory() throws Exception {
+    public void givenOnlyBottomWhenExecuteThenCallCombineWithBottomsCategory() throws Exception {
         CombineRequestDTO request = new CombineRequestDTO(null, "bottom-url",false, "female");
 
         when(fashnRepository.combine("bottom-url", "bottoms", "female")).thenReturn("taskId456");
@@ -49,7 +49,7 @@ class CombinePrendasTest {
     }
 
     @Test
-    void givenTopAndBottomWhenExecuteThenCallCombineTopAndBottom() throws Exception {
+    public void givenTopAndBottomWhenExecuteThenCallCombineTopAndBottom() throws Exception {
         CombineRequestDTO request = new CombineRequestDTO("top-url", "bottom-url", false, "male");
 
         when(fashnRepository.combineTopAndBottom("top-url", "bottom-url", "male"))
