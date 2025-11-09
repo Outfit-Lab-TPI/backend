@@ -33,7 +33,7 @@ jobs:
           cache: 'maven'
 
       - name: Compilo y ejecuto test
-        run: mvn clean test -Ptest
+        run: mvn clean test -Dspring.profiles.active=test
         env:
           SPRING_PROFILES_ACTIVE: test
 
