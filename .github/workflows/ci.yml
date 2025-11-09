@@ -1,4 +1,4 @@
-name: CI con PostgreSQL y Maven
+name: CI con PostgreSQL y Maven (OutfitLab)
 
 on:
   pull_request:
@@ -14,14 +14,13 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_DB: outfitlab
-          POSTGRES_USER: outfitlab
-          POSTGRES_PASSWORD: outfitlab123
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
           - 5433:5432
-        # 👇 Espera a que la base esté lista antes de ejecutar Maven
         options: >-
-          --health-cmd="pg_isready -U outfitlab -d outfitlab"
+          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
@@ -41,72 +40,70 @@ jobs:
         run: |
           echo "Esperando que PostgreSQL acepte conexiones..."
           for i in {1..30}; do
-            pg_isready -h localhost -p 5433 -U outfitlab -d outfitlab && echo "✅ Base lista!" && exit 0
+            pg_isready -h localhost -p 5433 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} && echo "✅ Base lista!" && exit 0
             echo "⏳ Aún no lista... (intento $i/30)"
             sleep 4
           done
           echo "❌ PostgreSQL nunca estuvo lista" && exit 1
         env:
-          PGPASSWORD: outfitlab123
-
+          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
       - name: Compilar y ejecutar tests
         run: mvn clean test -Dspring.profiles.active=test
         env:
           SPRING_PROFILES_ACTIVE: test
-          # === DATABASE CONFIG (usa el postgres del servicio) ===
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/outfitlab
-          SPRING_DATASOURCE_USERNAME: outfitlab
-          SPRING_DATASOURCE_PASSWORD: outfitlab123
 
-          # === REDIS (falso / mock) ===
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
-          REDIS_PASSWORD: fake
+          # === CONEXIÓN PRINCIPAL (Render) ===
+          SPRING_DATASOURCE_RENDER_URL: ${{ secrets.SPRING_DATASOURCE_RENDER_URL }}
+          SPRING_DATASOURCE_RENDER_USERNAME: ${{ secrets.SPRING_DATASOURCE_RENDER_USERNAME }}
+          SPRING_DATASOURCE_RENDER_PASSWORD: ${{ secrets.SPRING_DATASOURCE_RENDER_PASSWORD }}
 
-          # === MINIO (mock) ===
-          MINIO_ENDPOINT: http://localhost:9000
-          MINIO_ACCESS_KEY: minio
-          MINIO_SECRET_KEY: minio123
-          MINIO_BUCKET_IMAGES: test-bucket
-          MINIO_BUCKET_MODELS: test-models
+          # === POSTGRES LOCAL (servicio del CI) ===
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_ROOT_USER: ${{ secrets.POSTGRES_ROOT_USER }}
+          POSTGRES_ROOT_PASSWORD: ${{ secrets.POSTGRES_ROOT_PASSWORD }}
 
-          # === AWS (mock) ===
-          AWS_ACCESS_KEY_ID: FAKE_AWS_KEY
-          AWS_SECRET_ACCESS_KEY: FAKE_AWS_SECRET
-          AWS_REGION: sa-east-1
-          AWS_BUCKET_NAME: fake-bucket
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/${{ secrets.POSTGRES_DB }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.POSTGRES_USER }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
-          # === MERCADO PAGO (mock) ===
-          MP_ACCESS_TOKEN: FAKE_MP_TOKEN
+          # === REDIS ===
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
 
-          # === FASHION IA (mock) ===
-          FASHION_IA_SECRET_KEY: FAKE_FASHION_KEY
+          # === MINIO ===
+          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+          MINIO_ENDPOINT: ${{ secrets.MINIO_ENDPOINT }}
+          MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+          MINIO_BUCKET_IMAGES: ${{ secrets.MINIO_BUCKET_IMAGES }}
+          MINIO_BUCKET_MODELS: ${{ secrets.MINIO_BUCKET_MODELS }}
 
-          # === SPRING SECURITY (dummy) ===
-          SPRING_SECURITY_USER: testuser
-          SPRING_SECURITY_PASSWORD: testpass
+          # === SEGURIDAD ===
+          SPRING_SECURITY_USER: ${{ secrets.SPRING_SECURITY_USER }}
+          SPRING_SECURITY_PASSWORD: ${{ secrets.SPRING_SECURITY_PASSWORD }}
 
+          # === CONFIG GENERAL ===
+          SERVER_PORT: 8080
+          #SPRING_PROFILES_ACTIVE: docker
+          MAX_FILE_SIZE: 50MB
+          MAX_REQUEST_SIZE: 50MB
+          JAVA_OPTS: -Xmx512m -Xms256m
+          LOG_LEVEL_ROOT: INFO
+          LOG_LEVEL_OUTFITLAB: DEBUG
 
-#name: ci_outfitlab
-#run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-#on:
-#  pull_request:
-#    branches: ["**"]
-#  push:
-#    branches: ["**"]
-#jobs:
-#  Run-Test:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - run: echo "🎉 Esta tarea (job) fue lanzado automaticamente por el evento ${{ github.event_name }}"
-#      - run: echo "🐧 Esta tarea esta corriendo en un servidor ${{ runner.os }} por GitHub!"
-#      - run: echo "🔎 El nombre de la rama es ${{ github.ref }} y tu repositorio es ${{ github.repository }}."
-#      - name: Descargando el codigo
-#        uses: actions/checkout@v3
-#      - run: echo "💡 El repositorio ${{ github.repository }} ha sido clonado."
-#      - run: echo "🖥️ El workflow esta listo para testear el codigo"
-#      - name: Corriendo las pruebas
-#        run: |
-#          mvn clean test
-#      - run: echo "🍏 El estado de la tarea es ${{ job.status }}."
+          # === AWS ===
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+
+          # === FASHION IA ===
+          FASHION_IA_SECRET_KEY: ${{ secrets.FASHION_IA_SECRET_KEY }}
+
+          # === MERCADO PAGO ===
+          MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
