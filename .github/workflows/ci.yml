@@ -40,11 +40,11 @@ jobs:
         run: |
           echo "Esperando que PostgreSQL acepte conexiones..."
           for i in {1..30}; do
-            pg_isready -h localhost -p 5433 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} && echo "✅ Base lista!" && exit 0
-            echo "⏳ Aún no lista... (intento $i/30)"
+            pg_isready -h localhost -p 5433 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} && echo "BASE LISTA!!!!!!!!" && exit 0
+            echo "TODAVÍA no lista... (intento $i/30)"
             sleep 4
           done
-          echo "❌ PostgreSQL nunca estuvo lista" && exit 1
+          echo "PostgreSQL NUNCA ESTUVO :(" && exit 1
         env:
           PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
@@ -53,28 +53,20 @@ jobs:
         env:
           SPRING_PROFILES_ACTIVE: test
 
-          # === CONEXIÓN PRINCIPAL (Render) ===
-          SPRING_DATASOURCE_RENDER_URL: ${{ secrets.SPRING_DATASOURCE_RENDER_URL }}
-          SPRING_DATASOURCE_RENDER_USERNAME: ${{ secrets.SPRING_DATASOURCE_RENDER_USERNAME }}
-          SPRING_DATASOURCE_RENDER_PASSWORD: ${{ secrets.SPRING_DATASOURCE_RENDER_PASSWORD }}
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/outfitlab
+          SPRING_DATASOURCE_USERNAME: outfitlab
+          SPRING_DATASOURCE_PASSWORD: outfitlab123
 
-          # === POSTGRES LOCAL (servicio del CI) ===
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_ROOT_USER: ${{ secrets.POSTGRES_ROOT_USER }}
           POSTGRES_ROOT_PASSWORD: ${{ secrets.POSTGRES_ROOT_PASSWORD }}
 
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/${{ secrets.POSTGRES_DB }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.POSTGRES_USER }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-
-          # === REDIS ===
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
 
-          # === MINIO ===
           MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
           MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
           MINIO_ENDPOINT: ${{ secrets.MINIO_ENDPOINT }}
@@ -83,27 +75,19 @@ jobs:
           MINIO_BUCKET_IMAGES: ${{ secrets.MINIO_BUCKET_IMAGES }}
           MINIO_BUCKET_MODELS: ${{ secrets.MINIO_BUCKET_MODELS }}
 
-          # === SEGURIDAD ===
           SPRING_SECURITY_USER: ${{ secrets.SPRING_SECURITY_USER }}
           SPRING_SECURITY_PASSWORD: ${{ secrets.SPRING_SECURITY_PASSWORD }}
 
-          # === CONFIG GENERAL ===
           SERVER_PORT: 8080
-          #SPRING_PROFILES_ACTIVE: docker
           MAX_FILE_SIZE: 50MB
           MAX_REQUEST_SIZE: 50MB
           JAVA_OPTS: -Xmx512m -Xms256m
           LOG_LEVEL_ROOT: INFO
           LOG_LEVEL_OUTFITLAB: DEBUG
 
-          # === AWS ===
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-
-          # === FASHION IA ===
           FASHION_IA_SECRET_KEY: ${{ secrets.FASHION_IA_SECRET_KEY }}
-
-          # === MERCADO PAGO ===
           MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
