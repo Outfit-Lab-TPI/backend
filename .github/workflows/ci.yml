@@ -16,6 +16,7 @@ jobs:
           POSTGRES_DB: outfitlab
           POSTGRES_USER: outfitlab
           POSTGRES_PASSWORD: outfitlab123
+          MP_ACCESS_TOKEN: fake-token-for-tests
         options: >-
           --health-cmd="pg_isready -U outfitlab"
           --health-interval=10s
