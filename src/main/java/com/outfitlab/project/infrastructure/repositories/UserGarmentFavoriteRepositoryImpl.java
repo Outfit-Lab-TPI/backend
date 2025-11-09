@@ -17,16 +17,16 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepos
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-public class UserGarmentFavoriteRempositoryImpl implements UserGarmentFavoriteRepository {
+public class UserGarmentFavoriteRepositoryImpl implements UserGarmentFavoriteRepository {
 
     private final int PAGE_SIZE = 10;
     private final UserGarmentFavoriteJpaRepository userGarmentFavoriteJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final GarmentJpaRepository garmentJpaRepository;
 
-    public UserGarmentFavoriteRempositoryImpl(UserGarmentFavoriteJpaRepository userGarmentFavoriteJpaRepository,
-                                              UserJpaRepository userJpaRepository,
-                                              GarmentJpaRepository garmentJpaRepository) {
+    public UserGarmentFavoriteRepositoryImpl(UserGarmentFavoriteJpaRepository userGarmentFavoriteJpaRepository,
+                                             UserJpaRepository userJpaRepository,
+                                             GarmentJpaRepository garmentJpaRepository) {
         this.userGarmentFavoriteJpaRepository = userGarmentFavoriteJpaRepository;
         this.userJpaRepository = userJpaRepository;
         this.garmentJpaRepository = garmentJpaRepository;

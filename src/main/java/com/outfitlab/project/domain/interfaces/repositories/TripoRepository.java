@@ -2,7 +2,7 @@ package com.outfitlab.project.domain.interfaces.repositories;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.TripoModel;
-import org.springframework.core.io.ByteArrayResource;
+
 import java.util.Map;
 
 
@@ -10,11 +10,11 @@ public interface TripoRepository {
 
     TripoModel buscarPorTaskId(String taskId);
 
-    String peticionUploadImagenToTripo(ByteArrayResource imageResource) throws ErrorReadJsonException, ErrorUploadImageToTripoException;
+    Map<String, Object> requestUploadImagenToTripo(String url) throws ErrorReadJsonException, ErrorUploadImageToTripoException, ErroBytesException, FileEmptyException;
 
-    String peticionGenerateGlbToTripo(Map<String, String> uploadData) throws ErrorReadJsonException, ErrorGenerateGlbException;
+    String requestGenerateGlbToTripo(Map<String, Object> uploadData) throws ErrorReadJsonException, ErrorGenerateGlbException;
 
-    String peticionStatusGlbTripo(String taskId) throws ErrorReadJsonException, ErrorWhenSleepException, ErrorGlbGenerateTimeExpiredException;
+    String requestStatusGlbTripo(String taskId) throws ErrorReadJsonException, ErrorWhenSleepException, ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException;
 
     TripoModel save(TripoModel tripoModel);
 

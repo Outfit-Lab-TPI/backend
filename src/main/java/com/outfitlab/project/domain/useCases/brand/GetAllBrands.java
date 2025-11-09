@@ -1,4 +1,4 @@
-package com.outfitlab.project.domain.useCases.marca;
+package com.outfitlab.project.domain.useCases.brand;
 
 import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
