@@ -1,4 +1,4 @@
-name: CI con PostgreSQL y Maven (OutfitLab)
+name: CI con PostgreSQL y Maven
 
 on:
   pull_request:
