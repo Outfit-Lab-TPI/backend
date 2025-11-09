@@ -1,10 +1,10 @@
 name: CI con PostgreSQL y Maven
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: ["**"]
+  push:
+    branches: ["**"]
 
 jobs:
   test:
