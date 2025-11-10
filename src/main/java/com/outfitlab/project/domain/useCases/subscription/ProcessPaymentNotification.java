@@ -1,11 +1,11 @@
-package com.outfitlab.project.domain.useCases.mercadopago;
+package com.outfitlab.project.domain.useCases.subscription;
 
-import com.mercadopago.client.payment.PaymentClient;
+
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.payment.Payment;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
-import com.outfitlab.project.domain.interfaces.MercadoPagoPaymentGateway;
+import com.outfitlab.project.domain.interfaces.gateways.MercadoPagoPaymentGateway;
 
 public class ProcessPaymentNotification {
 

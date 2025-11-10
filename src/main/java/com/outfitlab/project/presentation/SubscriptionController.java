@@ -2,8 +2,8 @@ package com.outfitlab.project.presentation;
 
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
-import com.outfitlab.project.domain.useCases.mercadopago.CreateMercadoPagoPreference;
-import com.outfitlab.project.domain.useCases.mercadopago.ProcessPaymentNotification;
+import com.outfitlab.project.domain.useCases.subscription.CreateMercadoPagoPreference;
+import com.outfitlab.project.domain.useCases.subscription.ProcessPaymentNotification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
