@@ -1,0 +1,48 @@
+package com.outfitlab.project.infrastructure;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.test.context.ActiveProfiles;
+
+import javax.sql.DataSource;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+@ActiveProfiles("test")
+public class DatabaseTest {
+
+    @Test
+    void databaseIsReachable() throws Exception {
+        DataSource dataSource = DataSourceBuilder.create()
+                .url("jdbc:postgresql://localhost:5433/outfitlab")
+                .username("outfitlab")
+                .password("outfitlab123")
+                .driverClassName("org.postgresql.Driver")
+                .build();
+
+        boolean connected = false;
+        int retries = 10;
+        for (int i = 1; i <= retries; i++) {
+            try (Connection conn = dataSource.getConnection()) {
+                connected = conn.isValid(2);
+                if (connected) {
+                    System.out.println("ME PUDE CONECTAR A LA BDD en intento " + i);
+                    break;
+                }
+            } catch (SQLException e) {
+                System.out.println("ESPERANDO que la BDD esté lista... intento " + i);
+                TimeUnit.SECONDS.sleep(3);
+            }
+        }
+
+        assertThat(connected)
+                .as("La base de datos PostgreSQL no respondió tras varios intentos")
+                .isTrue();
+    }
+}
+

@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/outfitlab
+    username: outfitlab
+    password: outfitlab123
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+docker:
+  compose:
+    lifecycle-management: start_and_stop
+    skip:
+      in-tests: false
+    file: docker-compose-test.yml
