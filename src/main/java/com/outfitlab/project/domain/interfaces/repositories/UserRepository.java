@@ -5,4 +5,6 @@ import com.outfitlab.project.domain.model.UserModel;
 
 public interface UserRepository {
     UserModel findUserByEmail(String userEmail) throws UserNotFoundException;
+
+    UserModel saveUser(UserModel userModel);
 }
