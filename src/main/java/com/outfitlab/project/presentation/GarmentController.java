@@ -2,7 +2,6 @@ package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
-import com.outfitlab.project.domain.useCases.fashn.CombinePrendas;
 import com.outfitlab.project.domain.useCases.garment.AddGarmentToFavorite;
 import com.outfitlab.project.domain.useCases.garment.DeleteGarmentFromFavorite;
 import com.outfitlab.project.domain.useCases.garment.GetGarmentsByType;

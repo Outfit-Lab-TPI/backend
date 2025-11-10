@@ -20,4 +20,12 @@ public class UserRepositoryImpl implements UserRepository {
         if (entity == null) throw new UserNotFoundException("No encontramos el usuario con el email: " + userEmail);
         return UserEntity.convertEntityToModel(entity);
     }
+
+    @Override
+    public UserModel saveUser(UserModel userModel) {
+        UserEntity entityToSave = new UserEntity(userModel);
+        UserEntity savedEntity = userJpaRepository.save(entityToSave);
+        return UserEntity.convertEntityToModel(savedEntity);
+    }
+
 }

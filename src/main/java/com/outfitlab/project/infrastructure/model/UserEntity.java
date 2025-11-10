@@ -14,13 +14,16 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String satulation;
+    @Column(unique = true, nullable = false)
+    private String email;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
+    private String password;
+    private String satulation;
     private String secondName;
     private String lastName;
     private Integer years;
-    private String email;
-    private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -38,6 +41,13 @@ public class UserEntity {
         this.secondName = secondName;
         this.years = years;
         this.password = password;
+    }
+
+    public UserEntity(UserModel model) {
+        this.email = model.getEmail();
+        this.name = model.getName();
+        this.lastName = model.getLastName();
+        this.password = model.getHashedPassword();
     }
 
     public static UserModel convertEntityToModel(UserEntity entity) {
