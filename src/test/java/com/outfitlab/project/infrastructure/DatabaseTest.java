@@ -1,12 +1,8 @@
 package com.outfitlab.project.infrastructure;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
@@ -30,16 +26,16 @@ public class DatabaseTest {
                 .build();
 
         boolean connected = false;
-        int retries = 10; // hasta 10 intentos
+        int retries = 10;
         for (int i = 1; i <= retries; i++) {
             try (Connection conn = dataSource.getConnection()) {
                 connected = conn.isValid(2);
                 if (connected) {
-                    System.out.println("✅ Conectado a la base de datos en intento " + i);
+                    System.out.println("ME PUDE CONECTAR A LA BDD en intento " + i);
                     break;
                 }
             } catch (SQLException e) {
-                System.out.println("⏳ Esperando que la BDD esté lista... intento " + i);
+                System.out.println("ESPERANDO que la BDD esté lista... intento " + i);
                 TimeUnit.SECONDS.sleep(3);
             }
         }
