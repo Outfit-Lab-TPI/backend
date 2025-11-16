@@ -1,6 +1,7 @@
 package com.outfitlab.project.infrastructure.config.security;
 
 import lombok.RequiredArgsConstructor;
+import okhttp3.internal.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;

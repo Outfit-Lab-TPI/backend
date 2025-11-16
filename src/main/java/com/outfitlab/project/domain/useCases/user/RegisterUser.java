@@ -5,6 +5,7 @@ import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.model.UserModel;
+import com.outfitlab.project.infrastructure.config.security.Role;
 import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
 import com.outfitlab.project.infrastructure.config.security.jwt.Token;
 import com.outfitlab.project.infrastructure.model.UserEntity;
@@ -45,6 +46,8 @@ public class RegisterUser {
                 null, null, null,
                 hashedPassword
         );
+        userEntity.setRole(Role.USER);
+
         UserModel newUserModel = new UserModel(
                 request.getEmail(),
                 request.getName(),
@@ -56,7 +59,7 @@ public class RegisterUser {
         var refreshToken = jwtService.generateRefreshToken(userEntity);
         var savedUser = userJpaRepository.save(userEntity);
         saveUserToken(savedUser, accessToken);
-        return userRepository.saveUser(newUserModel);
+        return newUserModel;
     }
 
     private void saveUserToken(UserEntity user, String token){
@@ -71,10 +74,9 @@ public class RegisterUser {
     }
 
     private void checkIfUserExists(String email) throws UserAlreadyExistsException {
-        try {
-            userRepository.findUserByEmail(email);
+        var userSaved = userJpaRepository.getByEmail(email);
+        if(userSaved.isPresent()){
             throw new UserAlreadyExistsException("El email ya está registrado.");
-        } catch (UserNotFoundException e) {
         }
     }
 }

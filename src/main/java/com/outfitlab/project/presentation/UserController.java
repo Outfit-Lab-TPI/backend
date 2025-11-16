@@ -3,6 +3,8 @@ package com.outfitlab.project.presentation;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
+import com.outfitlab.project.domain.model.dto.LoginDTO;
+import com.outfitlab.project.domain.useCases.user.LoginUser;
 import com.outfitlab.project.domain.useCases.user.RegisterUser;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
 import jakarta.validation.Valid;
@@ -17,13 +19,15 @@ import java.util.Map;
 public class UserController {
 
     private final RegisterUser registerUserUseCase;
+    private final LoginUser loginUserUseCase;
 
-    public UserController(RegisterUser registerUserUseCase){
+    public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase){
         this.registerUserUseCase = registerUserUseCase;
+        this.loginUserUseCase = loginUserUseCase;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUserr(@Valid @RequestBody RegisterDTO request) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDTO request) {
 
         try {
             UserModel newUser = registerUserUseCase.execute(request);
@@ -36,6 +40,19 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
 
         } catch (UserAlreadyExistsException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("email", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginDTO loginDTO) {
+
+        try {
+            return loginUserUseCase.execute(loginDTO);
+
+        } catch (UserNotFoundException e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("email", e.getMessage());
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

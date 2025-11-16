@@ -17,7 +17,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class LoginUser {
     private final UserRepository userRepository;
     private final UserJpaRepository userJpaRepository;
@@ -37,7 +39,7 @@ public class LoginUser {
     }
     public ResponseEntity<AuthResponse> execute(LoginDTO loginDTO){
         if(loginDTO.getEmail().isBlank() || loginDTO.getPassword().isBlank()){
-            throw new NullFieldsException("Warning! Fields cannot be null. Please, complete all credentials.");
+            throw new NullFieldsException("Debe completar la totalidad de los campos para autenticarse.");
         }
         try{
             Authentication auth = authManager.authenticate(
@@ -47,10 +49,10 @@ public class LoginUser {
                     )
             );
         } catch (AuthenticationException ex) {
-            throw new UserNotFoundException("Incorrect username or password, please try again.");
+            throw new UserNotFoundException("Email o contraseña incorrecta. Vuelva a intentarlo.");
         }
 
-        var user = userJpaRepository.findByEmailIfExists(loginDTO.getEmail())
+        var user = userJpaRepository.getByEmail(loginDTO.getEmail())
                 .orElseThrow();
         var accessToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
