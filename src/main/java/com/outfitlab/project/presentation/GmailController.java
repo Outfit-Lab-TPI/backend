@@ -17,7 +17,6 @@ public class GmailController {
     }
 
     @PostMapping("/subscribe")
-    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<Map<String, String>> subscribeUser(@RequestBody GmailDTO request) {
 
         if (request.getEmail() == null || request.getEmail().isBlank()) {
