@@ -5,16 +5,31 @@ import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.model.UserModel;
+import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
+import com.outfitlab.project.infrastructure.config.security.jwt.Token;
+import com.outfitlab.project.infrastructure.model.UserEntity;
+import com.outfitlab.project.infrastructure.repositories.interfaces.TokenRepository;
+import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class RegisterUser {
 
     private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
+    private final TokenRepository tokenRepository;
+    private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authManager;
 
-    public RegisterUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public RegisterUser(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authManager,
+                        TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authManager = authManager;
+        this.tokenRepository = tokenRepository;
+        this.jwtService =jwtService;
+        this.userJpaRepository = userJpaRepository;
     }
 
     public UserModel execute(RegisterDTO request) throws UserAlreadyExistsException {
@@ -23,6 +38,13 @@ public class RegisterUser {
 
         String hashedPassword = passwordEncoder.encode(request.getPassword());
 
+        UserEntity userEntity = new UserEntity(
+                request.getName(),
+                request.getLastName(),
+                request.getEmail(),
+                null, null, null,
+                hashedPassword
+        );
         UserModel newUserModel = new UserModel(
                 request.getEmail(),
                 request.getName(),
@@ -30,7 +52,22 @@ public class RegisterUser {
                 hashedPassword
         );
 
+        var accessToken = jwtService.generateToken(userEntity);
+        var refreshToken = jwtService.generateRefreshToken(userEntity);
+        var savedUser = userJpaRepository.save(userEntity);
+        saveUserToken(savedUser, accessToken);
         return userRepository.saveUser(newUserModel);
+    }
+
+    private void saveUserToken(UserEntity user, String token){
+        var saveToken = Token.builder()
+                .token(token)
+                .user(user)
+                .revoked(false)
+                .expired(false)
+                .build();
+
+        tokenRepository.save(saveToken);
     }
 
     private void checkIfUserExists(String email) throws UserAlreadyExistsException {
