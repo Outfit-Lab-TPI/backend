@@ -1,6 +1,6 @@
 package com.outfitlab.project.domain.exceptions;
 
-public class ErrorUploadImageToTripoException extends Throwable {
+public class ErrorUploadImageToTripoException extends RuntimeException {
     public ErrorUploadImageToTripoException(String message) {
         super(message);
     }
