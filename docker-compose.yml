@@ -7,114 +7,45 @@ services:
     ports:
       - "${SERVER_PORT:-8080}:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - SPRING_SECURITY_USER_NAME=${SPRING_SECURITY_USER}
-      - SPRING_SECURITY_USER_PASSWORD=${SPRING_SECURITY_PASSWORD}
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-      - MINIO_BUCKET_IMAGES=${MINIO_BUCKET_IMAGES}
-      - MINIO_BUCKET_MODELS=${MINIO_BUCKET_MODELS}
+      # Profile para configuración cloud
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-cloud}
+      
+      # Database connection (PostgreSQL Cloud - Render)
+      - SPRING_DATASOURCE_RENDER_URL=${SPRING_DATASOURCE_RENDER_URL}
+      - SPRING_DATASOURCE_RENDER_USERNAME=${SPRING_DATASOURCE_RENDER_USERNAME}
+      - SPRING_DATASOURCE_RENDER_PASSWORD=${SPRING_DATASOURCE_RENDER_PASSWORD}
+      
+      # Security
+      - SPRING_SECURITY_USER=${SPRING_SECURITY_USER}
+      - SPRING_SECURITY_PASSWORD=${SPRING_SECURITY_PASSWORD}
+      
+      # AWS S3 Configuration
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
+      
+      # JVM and Logging
       - JAVA_OPTS=${JAVA_OPTS}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
+      - LOG_LEVEL_ROOT=${LOG_LEVEL_ROOT}
+      - LOG_LEVEL_OUTFITLAB=${LOG_LEVEL_OUTFITLAB}
+      
+      # File upload limits
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE}
+      - MAX_REQUEST_SIZE=${MAX_REQUEST_SIZE}
+      
+      # API Keys
+      - FASHION_IA_SECRET_KEY=${FASHION_IA_SECRET_KEY}
+    
     restart: unless-stopped
     networks:
       - outfitlab-network
-
-  # ===== PostgreSQL Database =====
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_ROOT_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_ROOT_PASSWORD}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./db/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_ROOT_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - outfitlab-network
-
-  # ===== Redis Cache (para queue y cache) =====
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - outfitlab-network
-
-  # ===== MinIO Object Storage (S3-compatible) =====
-  minio:
-    image: minio/minio:latest
-    ports:
-      - "9000:9000"      # API
-      - "9001:9001"      # Console Web UI
-    environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
       interval: 30s
-      timeout: 20s
+      timeout: 10s
       retries: 3
-    restart: unless-stopped
-    networks:
-      - outfitlab-network
-
-  # ===== MinIO Client (crear buckets iniciales) =====
-  minio-init:
-    image: minio/mc:latest
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
-      mc mb myminio/outfitlab-images --ignore-existing;
-      mc mb myminio/outfitlab-models --ignore-existing;
-      mc anonymous set download myminio/outfitlab-images;
-      mc anonymous set download myminio/outfitlab-models;
-      echo 'MinIO buckets created successfully';
-      "
-    networks:
-      - outfitlab-network
-
-# ===== Volumes =====
-volumes:
-  postgres_data:
-    driver: local
-  redis_data:
-    driver: local
-  minio_data:
-    driver: local
+      start_period: 40s
 
 # ===== Networks =====
 networks:
