@@ -1,6 +1,7 @@
 package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
+import com.outfitlab.project.domain.useCases.user.ActivateUser;
 import com.outfitlab.project.domain.useCases.user.DesactivateUser;
 import com.outfitlab.project.domain.useCases.user.GetAllUsers;
 import com.outfitlab.project.domain.useCases.user.RegisterUser;
@@ -27,6 +28,11 @@ public class UserConfig {
     @Bean
     public DesactivateUser desactivateUser(UserRepository userRepository) {
         return new DesactivateUser(userRepository);
+    }
+
+    @Bean
+    public ActivateUser activateUser(UserRepository userRepository) {
+        return new ActivateUser(userRepository);
     }
 
     @Bean

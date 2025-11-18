@@ -13,4 +13,6 @@ public interface UserRepository {
     List<UserModel> findAll();
 
     void desactivateUser(String email);
+
+    void activateUser(String email);
 }

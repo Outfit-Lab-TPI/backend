@@ -46,4 +46,12 @@ public class UserRepositoryImpl implements UserRepository {
         entity.setStatus(false);
         this.userJpaRepository.save(entity);
     }
+
+    @Override
+    public void activateUser(String email) {
+        UserEntity entity = userJpaRepository.findByEmail(email);
+        if (entity == null) throw new UserNotFoundException("No encontramos el usuario.");
+        entity.setStatus(true);
+        this.userJpaRepository.save(entity);
+    }
 }

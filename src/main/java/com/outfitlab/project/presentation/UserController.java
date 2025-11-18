@@ -6,6 +6,7 @@ import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
+import com.outfitlab.project.domain.useCases.user.ActivateUser;
 import com.outfitlab.project.domain.useCases.user.DesactivateUser;
 import com.outfitlab.project.domain.useCases.user.GetAllUsers;
 import com.outfitlab.project.domain.useCases.user.RegisterUser;
@@ -26,12 +27,13 @@ public class UserController {
     private final RegisterUser registerUserUseCase;
     private final GetAllUsers getAllUsers;
     private final DesactivateUser desactivateUser;
+    private final ActivateUser activateUser;
 
-
-    public UserController(RegisterUser registerUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser){
+    public UserController(RegisterUser registerUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser, ActivateUser activateUser){
         this.registerUserUseCase = registerUserUseCase;
         this.getAllUsers = getAllUsers;
         this.desactivateUser = desactivateUser;
+        this.activateUser = activateUser;
     }
 
     @PostMapping("/register")
@@ -74,6 +76,17 @@ public class UserController {
     public ResponseEntity<?> desactivateUser(@RequestParam("email") String email) {
         try {
             return ResponseEntity.ok(this.desactivateUser.execute(email));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/activate")
+    public ResponseEntity<?> activateUser(@RequestParam("email") String email) {
+        try {
+            return ResponseEntity.ok(this.activateUser.execute(email));
         } catch (UserNotFoundException e) {
             return ResponseEntity
                     .status(404)
