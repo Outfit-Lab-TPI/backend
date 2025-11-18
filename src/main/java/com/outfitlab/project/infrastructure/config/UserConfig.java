@@ -1,6 +1,7 @@
 package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
+import com.outfitlab.project.domain.useCases.user.GetAllUsers;
 import com.outfitlab.project.domain.useCases.user.RegisterUser;
 import com.outfitlab.project.infrastructure.repositories.UserRepositoryImpl;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
@@ -15,6 +16,11 @@ public class UserConfig {
     @Bean
     public UserRepository userRepository(UserJpaRepository userJpaRepository) {
         return new UserRepositoryImpl(userJpaRepository);
+    }
+
+    @Bean
+    public GetAllUsers getAllUsers(UserRepository userRepository) {
+        return new GetAllUsers(userRepository);
     }
 
     @Bean

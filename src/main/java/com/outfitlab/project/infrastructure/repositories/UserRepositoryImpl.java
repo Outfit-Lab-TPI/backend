@@ -6,6 +6,8 @@ import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.infrastructure.model.UserEntity;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 
+import java.util.List;
+
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
@@ -28,4 +30,12 @@ public class UserRepositoryImpl implements UserRepository {
         return UserEntity.convertEntityToModel(savedEntity);
     }
 
+    @Override
+    public List<UserModel> findAll() {
+        List<UserModel> users = this.userJpaRepository.findAll()
+                .stream().map(UserEntity::convertEntityToModel)
+                .toList();
+        if (users.isEmpty()) throw new UserNotFoundException("No encontramos usuarios.");
+        return users;
+    }
 }
