@@ -1,15 +1,22 @@
 package com.outfitlab.project.presentation;
 
+import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
+import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
+import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
+import com.outfitlab.project.domain.useCases.user.DesactivateUser;
+import com.outfitlab.project.domain.useCases.user.GetAllUsers;
 import com.outfitlab.project.domain.useCases.user.RegisterUser;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
+import com.outfitlab.project.presentation.dto.UserDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,9 +24,14 @@ import java.util.Map;
 public class UserController {
 
     private final RegisterUser registerUserUseCase;
+    private final GetAllUsers getAllUsers;
+    private final DesactivateUser desactivateUser;
 
-    public UserController(RegisterUser registerUserUseCase){
+
+    public UserController(RegisterUser registerUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser){
         this.registerUserUseCase = registerUserUseCase;
+        this.getAllUsers = getAllUsers;
+        this.desactivateUser = desactivateUser;
     }
 
     @PostMapping("/register")
@@ -45,6 +57,28 @@ public class UserController {
     @GetMapping("/{id}")
     public UserModel getUser(@PathVariable int id) throws UserNotFoundException {
         return null;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            return ResponseEntity.ok(this.getAllUsers.execute());
+        } catch (UserNotFoundException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/desactivate")
+    public ResponseEntity<?> desactivateUser(@RequestParam("email") String email) {
+        try {
+            return ResponseEntity.ok(this.desactivateUser.execute(email));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        }
     }
 
     @ExceptionHandler(UserNotFoundException.class)
