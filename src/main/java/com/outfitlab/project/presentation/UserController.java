@@ -5,6 +5,8 @@ import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
+import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
+import com.outfitlab.project.domain.useCases.user.DesactivateUser;
 import com.outfitlab.project.domain.useCases.user.GetAllUsers;
 import com.outfitlab.project.domain.useCases.user.RegisterUser;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
@@ -23,10 +25,13 @@ public class UserController {
 
     private final RegisterUser registerUserUseCase;
     private final GetAllUsers getAllUsers;
+    private final DesactivateUser desactivateUser;
 
-    public UserController(RegisterUser registerUserUseCase, GetAllUsers getAllUsers){
+
+    public UserController(RegisterUser registerUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser){
         this.registerUserUseCase = registerUserUseCase;
         this.getAllUsers = getAllUsers;
+        this.desactivateUser = desactivateUser;
     }
 
     @PostMapping("/register")
@@ -58,6 +63,17 @@ public class UserController {
     public ResponseEntity<?> getAllUsers() {
         try {
             return ResponseEntity.ok(this.getAllUsers.execute());
+        } catch (UserNotFoundException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/desactivate")
+    public ResponseEntity<?> desactivateUser(@RequestParam("email") String email) {
+        try {
+            return ResponseEntity.ok(this.desactivateUser.execute(email));
         } catch (UserNotFoundException e) {
             return ResponseEntity
                     .status(404)

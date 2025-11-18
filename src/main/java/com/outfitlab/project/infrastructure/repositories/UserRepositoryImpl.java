@@ -38,4 +38,12 @@ public class UserRepositoryImpl implements UserRepository {
         if (users.isEmpty()) throw new UserNotFoundException("No encontramos usuarios.");
         return users;
     }
+
+    @Override
+    public void desactivateUser(String email) {
+        UserEntity entity = userJpaRepository.findByEmail(email);
+        if (entity == null) throw new UserNotFoundException("No encontramos el usuario.");
+        entity.setStatus(false);
+        this.userJpaRepository.save(entity);
+    }
 }

@@ -25,11 +25,20 @@ public class UserEntity {
     private String lastName;
     private Integer years;
 
+    @Column(nullable = false)
+    private String role;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean status;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean verified;
 
     public UserEntity() {}
 

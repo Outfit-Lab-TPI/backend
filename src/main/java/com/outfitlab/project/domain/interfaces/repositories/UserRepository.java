@@ -11,4 +11,6 @@ public interface UserRepository {
     UserModel saveUser(UserModel userModel);
 
     List<UserModel> findAll();
+
+    void desactivateUser(String email);
 }
