@@ -222,6 +222,13 @@ public class TripoRepositoryImpl implements TripoRepository {
 
         Map<String, Object> bodyMap = new HashMap<>();
         bodyMap.put("type", "image_to_model");
+        bodyMap.put("texture", true);
+        bodyMap.put("pbr", true);
+        bodyMap.put("texture_quality", "detailed");
+        bodyMap.put("texture_alignment", "original_image");
+        bodyMap.put("face_limit", 50000);
+        bodyMap.put("auto_size", true);
+        bodyMap.put("orientation", "align_image");
         bodyMap.put("file", fileMap);
         return bodyMap;
     }
