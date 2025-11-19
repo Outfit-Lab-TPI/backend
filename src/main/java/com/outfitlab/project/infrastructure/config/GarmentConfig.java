@@ -1,5 +1,6 @@
 package com.outfitlab.project.infrastructure.config;
 
+import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.interfaces.repositories.UserGarmentFavoriteRepository;
 import com.outfitlab.project.domain.useCases.garment.*;
@@ -28,6 +29,11 @@ public class GarmentConfig {
     @Bean
     public AddGarmentToFavorite addGarmentToFavourite(UserGarmentFavoriteRepository userGarmentFavoriteRepository){
         return new AddGarmentToFavorite(userGarmentFavoriteRepository);
+    }
+
+    @Bean
+    public DeleteGarment deleteGarment(GarmentRepository garmentRepository, BrandRepository brandRepository) {
+        return new DeleteGarment(garmentRepository, brandRepository);
     }
 
     @Bean

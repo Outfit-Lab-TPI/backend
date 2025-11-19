@@ -2,6 +2,7 @@ package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
+import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.useCases.garment.*;
 import com.outfitlab.project.domain.useCases.tripo.SaveImage;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
@@ -25,14 +26,18 @@ public class GarmentController {
     private final GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail;
     private final CreateGarment createGarment;
     private final SaveImage saveImage;
+    private final DeleteGarment deleteGarment;
 
-    public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite, DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail, CreateGarment createGarment, SaveImage saveImage) {
+    public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite,
+                             DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail,
+                             CreateGarment createGarment, SaveImage saveImage, DeleteGarment deleteGarment) {
         this.getGarmentsByType = getGarmentsByType;
         this.addGarmentToFavourite = addGarmentToFavourite;
         this.deleteGarmentFromFavorite = deleteGarmentFromFavorite;
         this.getGarmentsFavoritesForUserByEmail = getGarmentsFavoritesForUserByEmail;
         this.createGarment = createGarment;
         this.saveImage = saveImage;
+        this.deleteGarment = deleteGarment;
     }
 
     @GetMapping("/{typeOfGarment}")
@@ -105,7 +110,7 @@ public class GarmentController {
     }
 
     @PostMapping(value = "/new", consumes = "multipart/form-data")
-    public ResponseEntity<?> crearPrenda(@ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
+    public ResponseEntity<?> newGarment(@ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
         System.out.println("Nombre: " + request.getNombre());
         System.out.println("Tipo: " + request.getTipo());
         System.out.println("Color: " + request.getColor());
@@ -125,6 +130,17 @@ public class GarmentController {
 
             return ResponseEntity.ok("Prenda creada correctamente.");
         }catch (BrandsNotFoundException e){
+            return buildResponseEntityError(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{garmentCode}")
+    public ResponseEntity<?> deleteGarment(@PathVariable String garmentCode, @AuthenticationPrincipal UserDetails user) {
+        String brandCode = "puma"; //user.marca.brandCode
+        try{
+            this.deleteGarment.execute(garmentCode, brandCode);
+            return ResponseEntity.ok("Prenda eliminada correctamente.");
+        }catch (BrandsNotFoundException | DeleteGarmentException e){
             return buildResponseEntityError(e.getMessage());
         }
     }

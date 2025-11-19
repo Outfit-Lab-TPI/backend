@@ -65,4 +65,9 @@ public class GarmentRepositoryImpl implements GarmentRepository {
         if (brandEntity == null) throw new GarmentNotFoundException("No encontramos la brand: " + brandCode);
         this.garmentJpaRepository.save(new PrendaEntity(name, brandEntity, type, imageUrl, garmentCode, color, event));
     }
+
+    @Override
+    public void deleteGarment(String garmentCode) {
+        this.garmentJpaRepository.deleteByGarmentCode(garmentCode);
+    }
 }
