@@ -30,6 +30,12 @@ public class PrendaEntity {
     @Column(nullable = false)
     private String imagenUrl;
 
+    @Column(nullable = false)
+    private String color;
+
+    @Column(nullable = false)
+    private String evento;
+
     @Column(unique = true)
     private String garmentCode;
 
@@ -46,6 +52,16 @@ public class PrendaEntity {
         this.imagenUrl = imagenUrl;
         this.marca = marca;
         this.garmentCode = garmentCode;
+    }
+
+    public PrendaEntity(String name, MarcaEntity brandEntity, String type, String imageUrl, String garmentCode, String color, String event) {
+        this.nombre = name;
+        this.tipo = type;
+        this.imagenUrl = imageUrl;
+        this.garmentCode = garmentCode;
+        this.color = color;
+        this.evento = event;
+        this.marca = brandEntity;
     }
 
     // ------------- acá hacemos los dos convert ------------

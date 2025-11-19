@@ -34,7 +34,7 @@ public class TrippoController {
             Map<String, Object> uploadData = this.uploadImageToTripo.execute(request.getImageUrl().getImageUrl());
             log.info("ACÁ DEBE ESTAR EL FILE_TOKEN: ------{}",uploadData.toString());
 
-            uploadData.put("minioImagePath", this.uploadImageToAws.execute( (MultipartFile) uploadData.get("imageMultipartFile")));
+            uploadData.put("minioImagePath", this.uploadImageToAws.execute( (MultipartFile) uploadData.get("imageMultipartFile"), "models_images"));
 
             String taskId = this.generateImageToModelTrippo.execute(uploadData);
 

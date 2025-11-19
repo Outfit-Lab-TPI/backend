@@ -2,13 +2,14 @@ package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
-import com.outfitlab.project.domain.useCases.garment.AddGarmentToFavorite;
-import com.outfitlab.project.domain.useCases.garment.DeleteGarmentFromFavorite;
-import com.outfitlab.project.domain.useCases.garment.GetGarmentsByType;
-import com.outfitlab.project.domain.useCases.garment.GetGarmentsFavoritesForUserByEmail;
+import com.outfitlab.project.domain.useCases.garment.*;
+import com.outfitlab.project.domain.useCases.tripo.SaveImage;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
+import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,12 +23,16 @@ public class GarmentController {
     private final AddGarmentToFavorite addGarmentToFavourite;
     private final DeleteGarmentFromFavorite deleteGarmentFromFavorite;
     private final GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail;
+    private final CreateGarment createGarment;
+    private final SaveImage saveImage;
 
-    public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite, DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail) {
+    public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite, DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail, CreateGarment createGarment, SaveImage saveImage) {
         this.getGarmentsByType = getGarmentsByType;
         this.addGarmentToFavourite = addGarmentToFavourite;
         this.deleteGarmentFromFavorite = deleteGarmentFromFavorite;
         this.getGarmentsFavoritesForUserByEmail = getGarmentsFavoritesForUserByEmail;
+        this.createGarment = createGarment;
+        this.saveImage = saveImage;
     }
 
     @GetMapping("/{typeOfGarment}")
@@ -95,6 +100,31 @@ public class GarmentController {
             String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
         } catch (UserNotFoundException | PageLessThanZeroException | FavoritesException e) {
+            return buildResponseEntityError(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/new", consumes = "multipart/form-data")
+    public ResponseEntity<?> crearPrenda(@ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
+        System.out.println("Nombre: " + request.getNombre());
+        System.out.println("Tipo: " + request.getTipo());
+        System.out.println("Color: " + request.getColor());
+        System.out.println("Evento: " + request.getEvento());
+        System.out.println("Imagen: " + request.getImagen().getOriginalFilename());
+
+        String brandCode = "puma"; //user.marca.brandCode
+        try{
+            this.createGarment.execute(
+                    request.getNombre(),
+                    request.getTipo(),
+                    request.getColor(),
+                    request.getEvento(),
+                    brandCode,
+                    this.saveImage.execute(request.getImagen(), "garment_images")
+            );
+
+            return ResponseEntity.ok("Prenda creada correctamente.");
+        }catch (BrandsNotFoundException e){
             return buildResponseEntityError(e.getMessage());
         }
     }

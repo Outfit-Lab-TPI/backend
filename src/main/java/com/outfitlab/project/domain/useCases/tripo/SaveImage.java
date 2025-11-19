@@ -11,7 +11,7 @@ public class SaveImage {
         this.iAwsRepository = awsRepository;
     }
 
-    public String execute(MultipartFile imageFile) {
-        return this.iAwsRepository.uploadFile(imageFile, "models_images");
+    public String execute(MultipartFile imageFile, String folder) {
+        return this.iAwsRepository.uploadFile(imageFile, folder); //"models_images"
     }
 }

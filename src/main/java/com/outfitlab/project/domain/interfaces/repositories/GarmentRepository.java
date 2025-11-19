@@ -9,4 +9,6 @@ public interface GarmentRepository {
     PageDTO findByBrandCodeAndTipo(String brandCode, String tipo, int page);
     Page<PrendaModel> getGarmentsByType(String type, int page);
     PrendaModel findByGarmentCode(String garmentCode) throws GarmentNotFoundException;
+
+    void createGarment(String name, String type, String color, String event, String brandCode, String imageUrl, String garmentCode);
 }
