@@ -1,4 +1,4 @@
-package com.outfitlab.project.domain.useCases.tripo;
+package com.outfitlab.project.domain.useCases.bucketImages;
 
 import com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +11,7 @@ public class SaveImage {
         this.iAwsRepository = awsRepository;
     }
 
-    public String execute(MultipartFile imageFile) {
-        return this.iAwsRepository.uploadFile(imageFile, "models_images");
+    public String execute(MultipartFile imageFile, String folder) {
+        return this.iAwsRepository.uploadFile(imageFile, folder); //"models_images"
     }
 }

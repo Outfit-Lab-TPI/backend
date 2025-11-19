@@ -7,15 +7,19 @@ public class PrendaModel {
     private String tipo;
     private String imagenUrl;
     private String garmentCode;
+    private String evento;
+    private String color;
 
     public PrendaModel() {}
 
-    public PrendaModel(String nombre, BrandModel marca, String tipo, String imagenUrl, String garmentCode) {
+    public PrendaModel(String nombre, BrandModel marca, String tipo, String imagenUrl, String garmentCode, String evento, String color) {
         this.nombre = nombre;
         this.marca = marca;
         this.tipo = tipo;
         this.imagenUrl = imagenUrl;
         this.garmentCode = garmentCode;
+        this.evento = evento;
+        this.color = color;
     }
 
     public String getGarmentCode() {
@@ -56,5 +60,18 @@ public class PrendaModel {
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
+    }
+
+    public String getEvento() {
+        return evento;
+    }
+    public void setEvento(String evento) {
+        this.evento = evento;
+    }
+    public String getColor() {
+        return color;
+    }
+    public void setColor(String color) {
+        this.color = color;
     }
 }

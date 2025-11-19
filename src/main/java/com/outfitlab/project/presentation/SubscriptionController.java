@@ -2,8 +2,12 @@ package com.outfitlab.project.presentation;
 
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
+import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
+import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.useCases.subscription.CreateMercadoPagoPreference;
+import com.outfitlab.project.domain.useCases.subscription.GetAllSubscription;
 import com.outfitlab.project.domain.useCases.subscription.ProcessPaymentNotification;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
@@ -24,6 +28,7 @@ class SubscriptionRequest {
     public void setPrice(BigDecimal price) { this.price = price; }
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
+
 }
 
 @RestController
@@ -32,12 +37,16 @@ public class SubscriptionController {
 
     private final CreateMercadoPagoPreference createPreferenceUseCase;
     private final ProcessPaymentNotification processNotificationUseCase;
+    private final GetAllSubscription getAllSubscription;
 
     public SubscriptionController(
             CreateMercadoPagoPreference createPreferenceUseCase,
-            ProcessPaymentNotification processNotificationUseCase) {
+            ProcessPaymentNotification processNotificationUseCase,
+            GetAllSubscription getAllSubscription)
+    {
         this.createPreferenceUseCase = createPreferenceUseCase;
         this.processNotificationUseCase = processNotificationUseCase;
+        this.getAllSubscription = getAllSubscription;
     }
 
     @PostMapping("/crear-suscripcion")
@@ -93,4 +102,24 @@ public class SubscriptionController {
 
         return ResponseEntity.ok("Notification received, not a relevant topic.");
     }
+
+
+    @GetMapping("/subscriptions")
+    public ResponseEntity<?> getSubscriptions() {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            response.put("data", this.getAllSubscription.execute());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        }
+    }
+
+
+
+
+
 }

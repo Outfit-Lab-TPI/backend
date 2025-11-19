@@ -10,9 +10,10 @@ import java.util.List;
 
 public interface GarmentJpaRepository extends JpaRepository<PrendaEntity, Long> {
     PrendaEntity findByGarmentCode(String garmentCode);
-    List<PrendaEntity> findAllByGarmentCode(String garmentCode, Pageable pageable);
 
     Page<PrendaEntity> findByMarca_CodigoMarcaAndTipo(String brandCode, String tipo, Pageable pageable);
 
     Page<PrendaEntity> findByTipo(String type, Pageable pageable);
+
+    void deleteByGarmentCode(String garmentCode);
 }

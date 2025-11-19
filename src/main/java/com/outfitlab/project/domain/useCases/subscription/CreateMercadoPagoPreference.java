@@ -4,6 +4,7 @@ import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
 import com.mercadopago.client.preference.PreferencePayerRequest;
 import com.mercadopago.client.preference.PreferenceRequest;
+import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.preference.Preference;
@@ -33,10 +34,18 @@ public class CreateMercadoPagoPreference {
                 .email(userEmail)
                 .build();
 
+        PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
+                .success("https://outfitlab.com.ar/suscripcion")
+                .failure("https://outfitlab.com.ar/suscripcion")
+                .pending("https://outfitlab.com.ar/suscripcion")
+                .build();
+
         PreferenceRequest request = PreferenceRequest.builder()
                 .items(items)
                 .payer(payer)
                 .externalReference(planId)
+                .backUrls(backUrls)
+                .autoReturn("approved")
                 .build();
 
         PreferenceClient client = new PreferenceClient();

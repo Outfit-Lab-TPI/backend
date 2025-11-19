@@ -6,6 +6,8 @@ import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.infrastructure.model.UserEntity;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 
+import java.util.List;
+
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
@@ -19,5 +21,37 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity entity = userJpaRepository.findByEmail(userEmail);
         if (entity == null) throw new UserNotFoundException("No encontramos el usuario con el email: " + userEmail);
         return UserEntity.convertEntityToModel(entity);
+    }
+
+    @Override
+    public UserModel saveUser(UserModel userModel) {
+        UserEntity entityToSave = new UserEntity(userModel);
+        UserEntity savedEntity = userJpaRepository.save(entityToSave);
+        return UserEntity.convertEntityToModel(savedEntity);
+    }
+
+    @Override
+    public List<UserModel> findAll() {
+        List<UserModel> users = this.userJpaRepository.findAll()
+                .stream().map(UserEntity::convertEntityToModel)
+                .toList();
+        if (users.isEmpty()) throw new UserNotFoundException("No encontramos usuarios.");
+        return users;
+    }
+
+    @Override
+    public void desactivateUser(String email) {
+        UserEntity entity = userJpaRepository.findByEmail(email);
+        if (entity == null) throw new UserNotFoundException("No encontramos el usuario.");
+        entity.setStatus(false);
+        this.userJpaRepository.save(entity);
+    }
+
+    @Override
+    public void activateUser(String email) {
+        UserEntity entity = userJpaRepository.findByEmail(email);
+        if (entity == null) throw new UserNotFoundException("No encontramos el usuario.");
+        entity.setStatus(true);
+        this.userJpaRepository.save(entity);
     }
 }
