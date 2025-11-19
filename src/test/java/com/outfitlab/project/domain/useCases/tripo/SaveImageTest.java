@@ -1,6 +1,7 @@
 package com.outfitlab.project.domain.useCases.tripo;
 
 import com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository;
+import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.infrastructure.repositories.UploadImageRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +20,7 @@ class SaveImageTest {
         String expectedUrl = "https://aws-bucket.s3.amazonaws.com/models_images/img123.png";
 
         when(uploadImageRepository.uploadFile(mockFile, "models_images")).thenReturn(expectedUrl);
-        String result = saveImage.execute(mockFile);
+        String result = saveImage.execute(mockFile, "models_images");
 
         assertNotNull(result);
         assertEquals(expectedUrl, result);

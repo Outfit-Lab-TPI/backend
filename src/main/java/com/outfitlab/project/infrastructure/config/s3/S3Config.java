@@ -1,5 +1,8 @@
 package com.outfitlab.project.infrastructure.config.s3;
 
+import com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository;
+import com.outfitlab.project.domain.useCases.bucketImages.DeleteImage;
+import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,5 +34,15 @@ public class S3Config {
                 .region(Region.of(region))
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
+    }
+
+    @Bean
+    public DeleteImage deleteImage(UploadImageRepository iAwsRepository){
+        return new DeleteImage(iAwsRepository);
+    }
+
+    @Bean
+    public SaveImage uploadImageToAws(com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository iAwsRepository) {
+        return new SaveImage(iAwsRepository);
     }
 }
