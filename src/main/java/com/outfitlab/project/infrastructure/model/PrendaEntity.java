@@ -74,7 +74,9 @@ public class PrendaEntity {
                 marcaModel,
                 prendaEntity.getTipo(),
                 prendaEntity.getImagenUrl(),
-                prendaEntity.getGarmentCode()
+                prendaEntity.getGarmentCode(),
+                prendaEntity.getEvento(),
+                prendaEntity.getColor()
         );
     }
 
