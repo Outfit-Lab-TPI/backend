@@ -2,7 +2,6 @@ package com.outfitlab.project.domain.useCases.garment;
 
 import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.exceptions.DeleteGarmentException;
-import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.PrendaModel;
@@ -17,20 +16,14 @@ public class DeleteGarment {
         this.brandRepository = brandRepository;
     }
 
-    public void execute(String garmentCode, String brandCode) {
+    public void execute(PrendaModel garment, String brandCode) {
         checkIfBrandExists(brandCode);
-        PrendaModel prenda = this.garmentRepository.findByGarmentCode(garmentCode);
-        checkIfGarmentExits(garmentCode, prenda);
-        checkIfCanDeleteGarment(garmentCode, brandCode, prenda);
-        this.garmentRepository.deleteGarment(garmentCode);
+        checkIfCanDeleteGarment(garment, brandCode);
+        this.garmentRepository.deleteGarment(garment.getGarmentCode());
     }
 
-    private static void checkIfCanDeleteGarment(String garmentCode, String brandCode, PrendaModel prenda) {
-        if (!prenda.getMarca().getCodigoMarca().equals(brandCode)) throw new DeleteGarmentException("No puedes eliminar la prenda: " + garmentCode + " porque pertenece a otra marca.");
-    }
-
-    private static void checkIfGarmentExits(String garmentCode, PrendaModel prenda) {
-        if (prenda == null) throw new GarmentNotFoundException("No encontramos la prenda:" + garmentCode);
+    private static void checkIfCanDeleteGarment(PrendaModel garment, String brandCode) {
+        if (!garment.getMarca().getCodigoMarca().equals(brandCode)) throw new DeleteGarmentException("No puedes eliminar la prenda: " + garment.getGarmentCode() + " porque pertenece a otra marca.");
     }
 
     private void checkIfBrandExists(String brandCode) {

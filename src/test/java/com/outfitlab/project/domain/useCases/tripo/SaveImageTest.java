@@ -1,6 +1,7 @@
 package com.outfitlab.project.domain.useCases.tripo;
 
 import com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository;
+import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.infrastructure.repositories.UploadImageRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;

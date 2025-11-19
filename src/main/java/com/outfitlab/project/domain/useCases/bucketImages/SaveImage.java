@@ -1,4 +1,4 @@
-package com.outfitlab.project.domain.useCases.tripo;
+package com.outfitlab.project.domain.useCases.bucketImages;
 
 import com.outfitlab.project.domain.interfaces.repositories.UploadImageRepository;
 import org.springframework.web.multipart.MultipartFile;

@@ -2,6 +2,7 @@ package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.TripoModel;
+import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.domain.useCases.tripo.*;
 import com.outfitlab.project.presentation.dto.ImageUploadRequest;
 import com.outfitlab.project.presentation.dto.TripoModelDTO;

@@ -1,10 +1,12 @@
 package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
+import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
+import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
-import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
+import com.outfitlab.project.domain.useCases.bucketImages.DeleteImage;
 import com.outfitlab.project.domain.useCases.garment.*;
-import com.outfitlab.project.domain.useCases.tripo.SaveImage;
+import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
 import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
 import org.springframework.data.domain.Page;
@@ -27,10 +29,12 @@ public class GarmentController {
     private final CreateGarment createGarment;
     private final SaveImage saveImage;
     private final DeleteGarment deleteGarment;
+    private final GarmentRepository garmentRepository;
+    private final DeleteImage deleteImage;
 
     public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite,
                              DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail,
-                             CreateGarment createGarment, SaveImage saveImage, DeleteGarment deleteGarment) {
+                             CreateGarment createGarment, SaveImage saveImage, DeleteGarment deleteGarment, GarmentRepository garmentRepository, DeleteImage deleteImage) {
         this.getGarmentsByType = getGarmentsByType;
         this.addGarmentToFavourite = addGarmentToFavourite;
         this.deleteGarmentFromFavorite = deleteGarmentFromFavorite;
@@ -38,6 +42,8 @@ public class GarmentController {
         this.createGarment = createGarment;
         this.saveImage = saveImage;
         this.deleteGarment = deleteGarment;
+        this.garmentRepository = garmentRepository;
+        this.deleteImage = deleteImage;
     }
 
     @GetMapping("/{typeOfGarment}")
@@ -138,11 +144,18 @@ public class GarmentController {
     public ResponseEntity<?> deleteGarment(@PathVariable String garmentCode, @AuthenticationPrincipal UserDetails user) {
         String brandCode = "puma"; //user.marca.brandCode
         try{
-            this.deleteGarment.execute(garmentCode, brandCode);
+            tryToDeleteGarmentAndImage(garmentCode, brandCode);
             return ResponseEntity.ok("Prenda eliminada correctamente.");
         }catch (BrandsNotFoundException | DeleteGarmentException e){
             return buildResponseEntityError(e.getMessage());
         }
+    }
+
+    private void tryToDeleteGarmentAndImage(String garmentCode, String brandCode) {
+        PrendaModel garment = garmentRepository.findByGarmentCode(garmentCode);
+
+        this.deleteImage.execute(garment.getImagenUrl());
+        this.deleteGarment.execute(garment, brandCode);
     }
 
     private ResponseEntity<?> buildResponseEntityError(String message){
