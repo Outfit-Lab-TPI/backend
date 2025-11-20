@@ -1,10 +1,7 @@
 package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
-import com.outfitlab.project.domain.useCases.user.ActivateUser;
-import com.outfitlab.project.domain.useCases.user.DesactivateUser;
-import com.outfitlab.project.domain.useCases.user.GetAllUsers;
-import com.outfitlab.project.domain.useCases.user.RegisterUser;
+import com.outfitlab.project.domain.useCases.user.*;
 import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
 import com.outfitlab.project.infrastructure.repositories.UserRepositoryImpl;
 import com.outfitlab.project.infrastructure.repositories.interfaces.TokenRepository;
@@ -32,6 +29,16 @@ public class UserConfig {
     public DesactivateUser desactivateUser(UserRepository userRepository) {
         return new DesactivateUser(userRepository);
     }
+
+    @Bean
+    public ConvertToAdmin convertToAdmin(UserRepository userRepository) {
+        return new ConvertToAdmin(userRepository);
+    }
+
+    /*@Bean
+    public ConvertToUser convertToUser(UserRepository userRepository) {
+        return new ConvertToUser(userRepository);
+    }*/
 
     @Bean
     public ActivateUser activateUser(UserRepository userRepository) {

@@ -15,4 +15,6 @@ public interface UserRepository {
     void desactivateUser(String email);
 
     void activateUser(String email);
+
+    void convertToAdmin(String email);
 }
