@@ -91,3 +91,6 @@ jobs:
           AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
           FASHION_IA_SECRET_KEY: ${{ secrets.FASHION_IA_SECRET_KEY }}
           MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          TOKEN_EXPIRATION: ${{ secrets.TOKEN_EXPIRATION }}
+          REFRESH_EXPIRATION: ${{ secrets.REFRESH_EXPIRATION }}
