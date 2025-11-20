@@ -72,7 +72,7 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     }
 
     @Override
-    public void updateGarment(String name, String type, String color, String event, String garmentCode, String imageUrl) {
+    public void updateGarment(String name, String type, String color, String event, String garmentCode, String imageUrl, String newGarmentCode) {
         PrendaEntity garmentEntity = this.garmentJpaRepository.findByGarmentCode(garmentCode);
         if (garmentEntity == null) throw new GarmentNotFoundException("No encontramos la prenda: " + garmentCode);
 
@@ -80,6 +80,7 @@ public class GarmentRepositoryImpl implements GarmentRepository {
         garmentEntity.setTipo(type);
         garmentEntity.setColor(color);
         garmentEntity.setEvento(event);
+        garmentEntity.setGarmentCode(newGarmentCode);
 
         if (!imageUrl.isEmpty()) garmentEntity.setImagenUrl(imageUrl); // la voy a actualizar solo si vino algo, si vino empty es pq no le actualizaron la img
 

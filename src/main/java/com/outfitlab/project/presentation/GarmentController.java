@@ -121,12 +121,6 @@ public class GarmentController {
 
     @PostMapping(value = "/new", consumes = "multipart/form-data")
     public ResponseEntity<?> newGarment(@ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
-        System.out.println("Nombre: " + request.getNombre());
-        System.out.println("Tipo: " + request.getTipo());
-        System.out.println("Color: " + request.getColor());
-        System.out.println("Evento: " + request.getEvento());
-        System.out.println("Imagen: " + request.getImagen().getOriginalFilename());
-
         String brandCode = "puma"; //user.marca.brandCode
         try{
             this.createGarment.execute(
@@ -146,12 +140,6 @@ public class GarmentController {
 
     @PutMapping(value = "/update/{garmentCode}", consumes = "multipart/form-data")
     public ResponseEntity<?> updateGarment(@PathVariable String garmentCode, @ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
-        System.out.println("Nombre: " + request.getNombre());
-        System.out.println("Tipo: " + request.getTipo());
-        System.out.println("Color: " + request.getColor());
-        System.out.println("Evento: " + request.getEvento());
-        System.out.println("Imagen: " + (request.getImagen() != null ? request.getImagen().getOriginalFilename() : "SIN IMAGEN"));
-
         String brandCode = "puma"; //user.marca.brandCode
         try{
             String oldImageUrl = request.getImagen() != null ? getOldImageUrlOfGarment(garmentCode) : "";
