@@ -11,6 +11,7 @@ import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
 import com.outfitlab.project.presentation.dto.UserDTO;
 import jakarta.validation.Valid;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,15 +29,17 @@ public class UserController {
     private final DesactivateUser desactivateUser;
     private final ActivateUser activateUser;
     private final ConvertToAdmin convertToAdmin;
+    private final ConvertToUser convertToUser;
 
     public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser,
-                          ActivateUser activateUser, ConvertToAdmin convertToAdmin) {
+                          ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
         this.getAllUsers = getAllUsers;
         this.desactivateUser = desactivateUser;
         this.activateUser = activateUser;
         this.convertToAdmin = convertToAdmin;
+        this.convertToUser = convertToUser;
     }
 
 
@@ -111,10 +114,21 @@ public class UserController {
         }
     }
 
-    @GetMapping("/convert-to-admin")
-    public ResponseEntity<?> convertToAdmin(@RequestParam("email") String email) {
+    @PutMapping("/convert-to-admin/{email}")
+    public ResponseEntity<?> convertToAdmin(@PathVariable String email) {
         try {
             return ResponseEntity.ok(this.convertToAdmin.execute(email));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/convert-to-user/{email}")
+    public ResponseEntity<?> convertToUser(@PathVariable String email) {
+        try {
+            return ResponseEntity.ok(this.convertToUser.execute(email));
         } catch (UserNotFoundException e) {
             return ResponseEntity
                     .status(404)

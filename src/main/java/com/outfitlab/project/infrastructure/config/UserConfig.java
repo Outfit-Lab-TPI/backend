@@ -35,10 +35,10 @@ public class UserConfig {
         return new ConvertToAdmin(userRepository);
     }
 
-    /*@Bean
+    @Bean
     public ConvertToUser convertToUser(UserRepository userRepository) {
         return new ConvertToUser(userRepository);
-    }*/
+    }
 
     @Bean
     public ActivateUser activateUser(UserRepository userRepository) {

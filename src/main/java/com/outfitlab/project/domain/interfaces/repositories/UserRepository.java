@@ -17,4 +17,6 @@ public interface UserRepository {
     void activateUser(String email);
 
     void convertToAdmin(String email);
+
+    void convertToUser(String email);
 }

@@ -6,10 +6,9 @@ import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.infrastructure.model.UserEntity;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 import static com.outfitlab.project.infrastructure.config.security.Role.ADMIN;
+import static com.outfitlab.project.infrastructure.config.security.Role.USER;
 
 import java.util.List;
-
-
 
 public class UserRepositoryImpl implements UserRepository {
 
@@ -21,7 +20,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public UserModel findUserByEmail(String userEmail) throws UserNotFoundException {
-        UserEntity entity = userJpaRepository.findByEmail(userEmail);
+        UserEntity entity = getUserByEmail(userEmail);
         if (entity == null) throw new UserNotFoundException("No encontramos el usuario con el email: " + userEmail);
         return UserEntity.convertEntityToModel(entity);
     }
@@ -44,7 +43,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void desactivateUser(String email) {
-        UserEntity entity = userJpaRepository.findByEmail(email);
+        UserEntity entity =  getUserByEmail(email);
         if (entity == null) throw userNotFoundException();
         entity.setStatus(false);
         this.userJpaRepository.save(entity);
@@ -52,7 +51,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void activateUser(String email) {
-        UserEntity entity = userJpaRepository.findByEmail(email);
+        UserEntity entity =  getUserByEmail(email);
         if (entity == null) throw userNotFoundException();
         entity.setStatus(true);
         this.userJpaRepository.save(entity);
@@ -60,13 +59,25 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void convertToAdmin(String email) {
-        UserEntity user = this.userJpaRepository.findByEmail(email);
+        UserEntity user = getUserByEmail(email);
         if (user == null) throw userNotFoundException();
         user.setRole(ADMIN);
         this.userJpaRepository.save(user);
     }
 
-    private static UserNotFoundException userNotFoundException() {
+    @Override
+    public void convertToUser(String email) {
+        UserEntity user = getUserByEmail(email);
+        if (user == null) throw userNotFoundException();
+        user.setRole(USER);
+        this.userJpaRepository.save(user);
+    }
+
+    private UserEntity getUserByEmail(String email) {
+        return this.userJpaRepository.findByEmail(email);
+    }
+
+    private UserNotFoundException userNotFoundException() {
         return new UserNotFoundException("No encontramos el usuario.");
     }
 }
