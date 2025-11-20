@@ -32,16 +32,14 @@ public class UserController {
     private final DesactivateUser desactivateUser;
     private final ActivateUser activateUser;
 
-    public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase){
+    public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser, ActivateUser activateUser) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
-
-    public UserController(RegisterUser registerUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser, ActivateUser activateUser){
-        this.registerUserUseCase = registerUserUseCase;
         this.getAllUsers = getAllUsers;
         this.desactivateUser = desactivateUser;
         this.activateUser = activateUser;
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDTO request) {

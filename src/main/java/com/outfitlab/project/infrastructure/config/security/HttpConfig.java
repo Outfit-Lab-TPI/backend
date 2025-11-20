@@ -27,11 +27,16 @@ public class HttpConfig{
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("/**").permitAll() // modificable cuanddo tengamos implementada autenticacion via jwt
+                        .anyRequest()
+                        .authenticated()
+                )
+                /*.authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/api/users/register", "/api/users/login")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
-                )
+                )*/
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
