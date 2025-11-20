@@ -1,5 +1,6 @@
 package com.outfitlab.project.domain.model;
 
+import com.outfitlab.project.infrastructure.config.security.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ public class UserModel {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private String role;
+    private Role role;
     private boolean verified;
     private boolean status;
 
@@ -29,7 +30,7 @@ public class UserModel {
         this.hashedPassword = hashedPassword;
     }
 
-    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, boolean verified, boolean status) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
@@ -39,6 +40,9 @@ public class UserModel {
         this.hashedPassword = hashedPassword;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.status = status;
+        this.verified = verified;
+        this.role = role;
     }
 
     public String getPassword() {

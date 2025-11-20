@@ -79,7 +79,10 @@ public class UserEntity implements UserDetails {
                 entity.getYears(),
                 entity.getPassword(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getUpdatedAt(),
+                entity.getRole(),
+                entity.isVerified(),
+                entity.isStatus()
         );
     }
 
