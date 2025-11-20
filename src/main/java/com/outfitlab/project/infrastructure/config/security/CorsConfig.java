@@ -19,10 +19,12 @@ public class CorsConfig implements WebMvcConfigurer {
 
         config.setAllowedOriginPatterns(List.of(
                 "https://*.vercel.app",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "https://*.outfitlab.postman"
         ));  // le puse cualquiera q termine con vercel.app por si me llega a cambiar el dominio por los nuevos deploy CUIDADO.
         config.setAllowedMethods(List.of("*"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("*"));config.setExposedHeaders(List.of("*"));
+        config.setAllowCredentials(true); // IMPORTANTE
 
         source.registerCorsConfiguration("/**", config);
         return source;

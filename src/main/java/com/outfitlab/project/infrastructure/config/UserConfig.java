@@ -5,10 +5,13 @@ import com.outfitlab.project.domain.useCases.user.ActivateUser;
 import com.outfitlab.project.domain.useCases.user.DesactivateUser;
 import com.outfitlab.project.domain.useCases.user.GetAllUsers;
 import com.outfitlab.project.domain.useCases.user.RegisterUser;
+import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
 import com.outfitlab.project.infrastructure.repositories.UserRepositoryImpl;
+import com.outfitlab.project.infrastructure.repositories.interfaces.TokenRepository;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -41,7 +44,8 @@ public class UserConfig {
     }
 
     @Bean
-    public RegisterUser registerUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        return new RegisterUser(userRepository, passwordEncoder);
+    public RegisterUser registerUser(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+                                     TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository) {
+        return new RegisterUser(userRepository, passwordEncoder, authenticationManager, tokenRepository, jwtService, userJpaRepository);
     }
 }

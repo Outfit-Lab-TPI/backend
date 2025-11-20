@@ -5,6 +5,8 @@ import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
+import com.outfitlab.project.domain.model.dto.LoginDTO;
+import com.outfitlab.project.domain.useCases.user.LoginUser;
 import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.useCases.user.ActivateUser;
 import com.outfitlab.project.domain.useCases.user.DesactivateUser;
@@ -25,9 +27,14 @@ import java.util.Map;
 public class UserController {
 
     private final RegisterUser registerUserUseCase;
+    private final LoginUser loginUserUseCase;
     private final GetAllUsers getAllUsers;
     private final DesactivateUser desactivateUser;
     private final ActivateUser activateUser;
+
+    public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase){
+        this.registerUserUseCase = registerUserUseCase;
+        this.loginUserUseCase = loginUserUseCase;
 
     public UserController(RegisterUser registerUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser, ActivateUser activateUser){
         this.registerUserUseCase = registerUserUseCase;
@@ -37,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUserr(@Valid @RequestBody RegisterDTO request) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDTO request) {
 
         try {
             UserModel newUser = registerUserUseCase.execute(request);
@@ -50,6 +57,19 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
 
         } catch (UserAlreadyExistsException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("email", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginDTO loginDTO) {
+
+        try {
+            return loginUserUseCase.execute(loginDTO);
+
+        } catch (UserNotFoundException e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("email", e.getMessage());
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
