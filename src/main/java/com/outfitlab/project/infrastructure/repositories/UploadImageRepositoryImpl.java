@@ -54,7 +54,7 @@ public class UploadImageRepositoryImpl implements com.outfitlab.project.domain.i
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(key)
+                    .key(this.extractKeyFromUrl(key))
                     .build());
             log.info("Archivo eliminado de S3: {}", key);
         } catch (Exception e) {
@@ -66,5 +66,11 @@ public class UploadImageRepositoryImpl implements com.outfitlab.project.domain.i
     @Override
     public String getFileUrl(String key) {
         return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + key;
+    }
+
+    private String extractKeyFromUrl(String url) {
+        int index = url.indexOf(".amazonaws.com/");
+        if (index == -1) {throw new IllegalArgumentException("URL de S3 inválida: " + url);}
+        return url.substring(index + ".amazonaws.com/".length());
     }
 }

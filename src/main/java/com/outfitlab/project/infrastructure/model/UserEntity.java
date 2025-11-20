@@ -36,6 +36,9 @@ public class UserEntity implements UserDetails {
     private Role role;
 
 
+    @Column(nullable = false)
+    private String role;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -44,6 +47,12 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Token> tokens;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean status;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean verified;
 
     public UserEntity() {}
 

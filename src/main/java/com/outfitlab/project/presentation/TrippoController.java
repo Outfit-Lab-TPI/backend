@@ -2,6 +2,7 @@ package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.TripoModel;
+import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.domain.useCases.tripo.*;
 import com.outfitlab.project.presentation.dto.ImageUploadRequest;
 import com.outfitlab.project.presentation.dto.TripoModelDTO;
@@ -34,7 +35,7 @@ public class TrippoController {
             Map<String, Object> uploadData = this.uploadImageToTripo.execute(request.getImageUrl().getImageUrl());
             log.info("ACÁ DEBE ESTAR EL FILE_TOKEN: ------{}",uploadData.toString());
 
-            uploadData.put("minioImagePath", this.uploadImageToAws.execute( (MultipartFile) uploadData.get("imageMultipartFile")));
+            uploadData.put("minioImagePath", this.uploadImageToAws.execute( (MultipartFile) uploadData.get("imageMultipartFile"), "models_images"));
 
             String taskId = this.generateImageToModelTrippo.execute(uploadData);
 

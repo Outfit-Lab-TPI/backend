@@ -18,6 +18,10 @@ public class UserModel {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private String role;
+    private boolean verified;
+    private boolean status;
+
     public UserModel(String email, String name, String lastName, String hashedPassword) {
         this.email = email;
         this.name = name;

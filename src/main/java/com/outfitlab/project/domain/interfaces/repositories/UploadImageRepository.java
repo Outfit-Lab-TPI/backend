@@ -9,4 +9,5 @@ public interface UploadImageRepository {
     void deleteFile(String key);
 
     String getFileUrl(String key);
+
 }
