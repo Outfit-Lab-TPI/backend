@@ -1,15 +1,20 @@
 package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
+import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
+import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
-import com.outfitlab.project.domain.useCases.garment.AddGarmentToFavorite;
-import com.outfitlab.project.domain.useCases.garment.DeleteGarmentFromFavorite;
-import com.outfitlab.project.domain.useCases.garment.GetGarmentsByType;
-import com.outfitlab.project.domain.useCases.garment.GetGarmentsFavoritesForUserByEmail;
+import com.outfitlab.project.domain.useCases.bucketImages.DeleteImage;
+import com.outfitlab.project.domain.useCases.garment.*;
+import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
+import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +27,27 @@ public class GarmentController {
     private final AddGarmentToFavorite addGarmentToFavourite;
     private final DeleteGarmentFromFavorite deleteGarmentFromFavorite;
     private final GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail;
+    private final CreateGarment createGarment;
+    private final SaveImage saveImage;
+    private final DeleteGarment deleteGarment;
+    private final GetGarmentByCode getGarmentByCode;
+    private final DeleteImage deleteImage;
+    private final UpdateGarment updateGarment;
 
-    public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite, DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail) {
+    public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite,
+                             DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail,
+                             CreateGarment createGarment, SaveImage saveImage, DeleteGarment deleteGarment, GarmentRepository garmentRepository,
+                             GetGarmentByCode getGarmentByCode, DeleteImage deleteImage, UpdateGarment updateGarment) {
         this.getGarmentsByType = getGarmentsByType;
         this.addGarmentToFavourite = addGarmentToFavourite;
         this.deleteGarmentFromFavorite = deleteGarmentFromFavorite;
         this.getGarmentsFavoritesForUserByEmail = getGarmentsFavoritesForUserByEmail;
+        this.createGarment = createGarment;
+        this.saveImage = saveImage;
+        this.deleteGarment = deleteGarment;
+        this.getGarmentByCode = getGarmentByCode;
+        this.deleteImage = deleteImage;
+        this.updateGarment = updateGarment;
     }
 
     @GetMapping("/{typeOfGarment}")
@@ -99,9 +119,85 @@ public class GarmentController {
         }
     }
 
+    @PostMapping(value = "/new", consumes = "multipart/form-data")
+    public ResponseEntity<?> newGarment(@ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
+        String brandCode = "puma"; //user.marca.brandCode
+        try{
+            this.createGarment.execute(
+                    request.getNombre(),
+                    request.getTipo(),
+                    request.getColor(),
+                    request.getEvento(),
+                    brandCode,
+                    saveImageAndGetUrl(request.getImagen(), "garment_images")
+            );
+
+            return ResponseEntity.ok("Prenda creada correctamente.");
+        }catch (BrandsNotFoundException e){
+            return buildResponseEntityError(e.getMessage());
+        }
+    }
+
+    @PutMapping(value = "/update/{garmentCode}", consumes = "multipart/form-data")
+    public ResponseEntity<?> updateGarment(@PathVariable String garmentCode, @ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
+        String brandCode = "puma"; //user.marca.brandCode
+        try{
+            String oldImageUrl = request.getImagen() != null ? getOldImageUrlOfGarment(garmentCode) : "";
+
+            this.updateGarment.execute(
+                    request.getNombre(),
+                    request.getTipo(),
+                    request.getColor(),
+                    request.getEvento(),
+                    garmentCode,
+                    brandCode,
+                    checkIfImageIsEmptyToSaveAndGetUrl(request)
+            );
+            deleteImage(oldImageUrl);
+
+            return ResponseEntity.ok("Prenda acctualizada correctamente.");
+        }catch (GarmentNotFoundException e){
+            return buildResponseEntityError(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{garmentCode}")
+    public ResponseEntity<?> deleteGarment(@PathVariable String garmentCode, @AuthenticationPrincipal UserDetails user) {
+        String brandCode = "puma"; //user.marca.brandCode
+        try{
+            tryToDeleteGarmentAndImage(garmentCode, brandCode);
+            return ResponseEntity.ok("Prenda eliminada correctamente.");
+        }catch (BrandsNotFoundException | DeleteGarmentException e){
+            return buildResponseEntityError(e.getMessage());
+        }
+    }
+
+    private void tryToDeleteGarmentAndImage(String garmentCode, String brandCode) {
+        PrendaModel garment = this.getGarmentByCode.execute(garmentCode);
+
+        deleteImage(garment.getImagenUrl());
+        this.deleteGarment.execute(garment, brandCode);
+    }
+
     private ResponseEntity<?> buildResponseEntityError(String message){
         return ResponseEntity
                 .status(404)
                 .body(message);
+    }
+
+    private String getOldImageUrlOfGarment(String garmentCode) {
+        return this.getGarmentByCode.execute(garmentCode).getImagenUrl();
+    }
+
+    private String checkIfImageIsEmptyToSaveAndGetUrl(GarmentRequestDTO request) {
+        return request.getImagen() != null ? saveImageAndGetUrl(request.getImagen(), "garment_images") : "";
+    }
+
+    private void deleteImage(String oldImageUrl) {
+        if (!oldImageUrl.isEmpty()) this.deleteImage.execute(oldImageUrl);
+    }
+
+    private String saveImageAndGetUrl(MultipartFile image, String folder) {
+        return this.saveImage.execute(image, folder);
     }
 }

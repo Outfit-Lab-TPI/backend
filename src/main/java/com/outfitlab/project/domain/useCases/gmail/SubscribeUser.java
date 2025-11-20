@@ -2,7 +2,7 @@ package com.outfitlab.project.domain.useCases.gmail;
 
 import com.outfitlab.project.domain.interfaces.gateways.GmailGateway;
 
-public class SubscribeUser {
+public class    SubscribeUser {
 
     private final GmailGateway gmailGateway;
 
