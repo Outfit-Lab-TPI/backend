@@ -35,9 +35,11 @@ services:
       - MAX_REQUEST_SIZE=${MAX_REQUEST_SIZE}
       
       # API Keys
+      # API Keys
       - FASHION_IA_SECRET_KEY=${FASHION_IA_SECRET_KEY}
       - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
       
+<<<<<<< HEAD
       # JWT Authentication
       - JWT_SECRET=${JWT_SECRET:-mySecretKeyForJWT123456789012345678901234567890}
       - TOKEN_EXPIRATION=${TOKEN_EXPIRATION:-86400000}
@@ -50,6 +52,10 @@ services:
       # Gmail/Email Configuration
       - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME:-tpi8bits@gmail.com}
       - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
+=======
+      # Frontend Configuration
+      - FRONTEND_URL=${FRONTEND_BASE_URL}
+>>>>>>> 6cfddf8 (feat: relacion de usuarios con suscripcion)
     
     restart: unless-stopped
     networks:
