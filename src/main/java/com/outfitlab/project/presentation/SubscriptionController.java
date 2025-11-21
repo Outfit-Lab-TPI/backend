@@ -128,23 +128,28 @@ public class SubscriptionController {
         try {
             UserSubscriptionModel subscription = userSubscriptionRepository.findByUserEmail(email);
             
+            // Create nested maps to handle null values (for unlimited plans)
+            Map<String, Object> combinationsMap = new HashMap<>();
+            combinationsMap.put("used", subscription.getCombinationsUsed());
+            combinationsMap.put("max", subscription.getMaxCombinations());
+            
+            Map<String, Object> favoritesMap = new HashMap<>();
+            favoritesMap.put("count", subscription.getFavoritesCount());
+            favoritesMap.put("max", subscription.getMaxFavorites());
+            
+            Map<String, Object> modelsMap = new HashMap<>();
+            modelsMap.put("generated", subscription.getModelsGenerated());
+            modelsMap.put("max", subscription.getMaxModels());
+            
+            Map<String, Object> usageMap = new HashMap<>();
+            usageMap.put("combinations", combinationsMap);
+            usageMap.put("favorites", favoritesMap);
+            usageMap.put("models", modelsMap);
+            
             Map<String, Object> response = new HashMap<>();
             response.put("planCode", subscription.getPlanCode());
             response.put("status", subscription.getStatus());
-            response.put("usage", Map.of(
-                "combinations", Map.of(
-                    "used", subscription.getCombinationsUsed(),
-                    "max", subscription.getMaxCombinations()
-                ),
-                "favorites", Map.of(
-                    "count", subscription.getFavoritesCount(),
-                    "max", subscription.getMaxFavorites()
-                ),
-                "models", Map.of(
-                    "generated", subscription.getModelsGenerated(),
-                    "max", subscription.getMaxModels()
-                )
-            ));
+            response.put("usage", usageMap);
             
             return ResponseEntity.ok(response);
         } catch (SubscriptionNotFoundException e) {
