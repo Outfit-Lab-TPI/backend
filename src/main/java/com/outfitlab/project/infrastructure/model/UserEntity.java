@@ -44,6 +44,9 @@ public class UserEntity implements UserDetails {
     @JsonIgnore
     private List<Token> tokens;
 
+    @Column(unique = true)
+    private String verificationToken;
+
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean status;
 
@@ -67,6 +70,8 @@ public class UserEntity implements UserDetails {
         this.name = model.getName();
         this.lastName = model.getLastName();
         this.password = model.getHashedPassword();
+        this.verificationToken = model.getVerificationToken();
+        this.verified = false;
     }
 
     public static UserModel convertEntityToModel(UserEntity entity) {
@@ -82,7 +87,8 @@ public class UserEntity implements UserDetails {
                 entity.getUpdatedAt(),
                 entity.getRole(),
                 entity.isVerified(),
-                entity.isStatus()
+                entity.isStatus(),
+                entity.getVerificationToken()
         );
     }
 
