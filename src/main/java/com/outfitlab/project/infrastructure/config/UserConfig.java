@@ -1,5 +1,6 @@
 package com.outfitlab.project.infrastructure.config;
 
+import com.outfitlab.project.domain.interfaces.gateways.GmailGateway;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.useCases.user.*;
 import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
@@ -58,7 +59,12 @@ public class UserConfig {
 
     @Bean
     public RegisterUser registerUser(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
-                                     TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository) {
-        return new RegisterUser(userRepository, passwordEncoder, authenticationManager, tokenRepository, jwtService, userJpaRepository);
+                                     TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository, GmailGateway gmailGateway) {
+        return new RegisterUser(userRepository, passwordEncoder, authenticationManager, tokenRepository, jwtService, userJpaRepository, gmailGateway);
+    }
+
+    @Bean
+    public VerifyEmail verifyEmail(UserRepository userRepository, UserJpaRepository userJpaRepository) {
+        return new VerifyEmail(userRepository, userJpaRepository);
     }
 }

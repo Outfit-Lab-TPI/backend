@@ -2,7 +2,7 @@ package com.outfitlab.project.domain.useCases.user;
 
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
-import com.outfitlab.project.domain.exceptions.UserNotFoundException;
+import com.outfitlab.project.domain.interfaces.gateways.GmailGateway;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.infrastructure.config.security.Role;
@@ -13,6 +13,7 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.TokenReposit
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.UUID;
 
 public class RegisterUser {
 
@@ -22,15 +23,17 @@ public class RegisterUser {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authManager;
+    private final GmailGateway gmailGateway;
 
     public RegisterUser(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authManager,
-                        TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository) {
+                        TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository, GmailGateway gmailGateway) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authManager = authManager;
         this.tokenRepository = tokenRepository;
         this.jwtService =jwtService;
         this.userJpaRepository = userJpaRepository;
+        this.gmailGateway = gmailGateway;
     }
 
     public UserModel execute(RegisterDTO request) throws UserAlreadyExistsException {
@@ -38,6 +41,10 @@ public class RegisterUser {
         checkIfUserExists(request.getEmail());
 
         String hashedPassword = passwordEncoder.encode(request.getPassword());
+
+        String verificationToken = UUID.randomUUID().toString();
+
+        String verificationLink = "http://localhost:8080/api/users/verify?token=" + verificationToken;
 
         UserEntity userEntity = new UserEntity(
                 request.getName(),
@@ -47,17 +54,26 @@ public class RegisterUser {
                 hashedPassword
         );
         userEntity.setRole(Role.USER);
+        userEntity.setVerified(false);
+        userEntity.setVerificationToken(verificationToken);
+
+        var savedUser = userJpaRepository.save(userEntity);
+
+        String emailBody = "<h1>¡Bienvenido a Outfit Lab!</h1>" + "<p>Haz click en el enlace para verificar tu cuenta:</p>"
+                + "<a href=\"" + verificationLink + "\">Verificar cuenta </a>";
+
+        gmailGateway.sendEmail(request.getEmail(),"Verificación de cuenta de Outfit Lab", emailBody);
 
         UserModel newUserModel = new UserModel(
                 request.getEmail(),
                 request.getName(),
                 request.getLastName(),
-                hashedPassword
+                hashedPassword,
+                verificationToken
         );
 
         var accessToken = jwtService.generateToken(userEntity);
         var refreshToken = jwtService.generateRefreshToken(userEntity);
-        var savedUser = userJpaRepository.save(userEntity);
         saveUserToken(savedUser, accessToken);
         return newUserModel;
     }
