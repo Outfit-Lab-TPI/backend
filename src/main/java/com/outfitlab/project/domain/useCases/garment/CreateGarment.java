@@ -10,9 +10,17 @@ public class CreateGarment {
         this.garmentRepository = garmentRepository;
     }
 
-    public void execute(String name, String type, String color, String event, String brandCode, String imageUrl){
-        String garmentCode = this.formatGarmentCode(name);
-        this.garmentRepository.createGarment(name, type, color, event, brandCode, imageUrl, garmentCode);
+    public void execute(String name, String type, String color, String brandCode, String imageUrl, String garmentCode) {
+        this.garmentRepository.createGarment(
+                name,
+                type,
+                color,
+                brandCode,
+                imageUrl,
+                garmentCode,
+                null,
+                java.util.Collections.emptyList()
+        );
     }
 
     private String formatGarmentCode(String input) {

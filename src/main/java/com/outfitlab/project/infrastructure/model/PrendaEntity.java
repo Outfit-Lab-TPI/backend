@@ -2,6 +2,8 @@ package com.outfitlab.project.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.outfitlab.project.domain.model.BrandModel;
+import com.outfitlab.project.domain.model.ClimaModel;
+import com.outfitlab.project.domain.model.OcasionModel;
 import com.outfitlab.project.domain.model.PrendaModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -33,9 +37,6 @@ public class PrendaEntity {
     @Column(nullable = false)
     private String color;
 
-    @Column(nullable = false)
-    private String evento;
-
     @Column(unique = true)
     private String garmentCode;
 
@@ -44,7 +45,30 @@ public class PrendaEntity {
     @JsonBackReference
     private MarcaEntity marca;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "clima_id", nullable = false)
+    private ClimaEntity climaAdecuado;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "prenda_ocasion",
+            joinColumns = @JoinColumn(name = "prenda_id"),
+            inverseJoinColumns = @JoinColumn(name = "ocasion_id")
+    )
+    private Set<OcasionEntity> ocasiones;
+
     public PrendaEntity(){}
+
+    public PrendaEntity(String nombre, MarcaEntity marca, String tipo, String imagenUrl, String garmentCode, String color, ClimaEntity climaAdecuado, Set<OcasionEntity> ocasiones) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.imagenUrl = imagenUrl;
+        this.garmentCode = garmentCode;
+        this.color = color;
+        this.marca = marca;
+        this.climaAdecuado = climaAdecuado;
+        this.ocasiones = ocasiones;
+    }
 
     public PrendaEntity(String nombre, MarcaEntity marca, String tipo, String imagenUrl, String garmentCode) {
         this.nombre = nombre;
@@ -54,34 +78,33 @@ public class PrendaEntity {
         this.garmentCode = garmentCode;
     }
 
-    public PrendaEntity(String name, MarcaEntity brandEntity, String type, String imageUrl, String garmentCode, String color, String event) {
-        this.nombre = name;
-        this.tipo = type;
-        this.imagenUrl = imageUrl;
-        this.garmentCode = garmentCode;
-        this.color = color;
-        this.evento = event;
-        this.marca = brandEntity;
-    }
-
-    // ------------- acá hacemos los dos convert ------------
-
-
     public static PrendaModel convertToModel(PrendaEntity prendaEntity) {
         BrandModel marcaModel = MarcaEntity.convertToModelWithoutPrendas(prendaEntity.getMarca());
+
+        ClimaModel climaModel = new ClimaModel(
+                prendaEntity.getClimaAdecuado().getId(),
+                prendaEntity.getClimaAdecuado().getNombre()
+        );
+
+        Set<OcasionModel> ocasionesModels = prendaEntity.getOcasiones().stream()
+                .map(ocasionEntity -> new OcasionModel(ocasionEntity.getId(), ocasionEntity.getNombre()))
+                .collect(Collectors.toSet());
+
         return new PrendaModel(
                 prendaEntity.getNombre(),
                 marcaModel,
                 prendaEntity.getTipo(),
                 prendaEntity.getImagenUrl(),
                 prendaEntity.getGarmentCode(),
-                prendaEntity.getEvento(),
-                prendaEntity.getColor()
+                prendaEntity.getColor(),
+                climaModel,
+                ocasionesModels
         );
     }
 
     public static PrendaEntity convertToEntity(PrendaModel prendaModel) {
         MarcaEntity entityMarca = MarcaEntity.convertToEntityWithoutPrendas(prendaModel.getMarca());
+
         return new PrendaEntity(
                 prendaModel.getNombre(),
                 entityMarca,
@@ -95,6 +118,4 @@ public class PrendaEntity {
         return  garments.stream().map(PrendaEntity::convertToModel)
                 .toList();
     }
-    //--------------------------------------------------------
 }
-
