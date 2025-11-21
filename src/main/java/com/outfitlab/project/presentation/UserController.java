@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -67,8 +69,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/register-brand")
-    public ResponseEntity<?> registerbrandAndUser(@Valid @RequestBody RegisterDTO request) {
+    @PostMapping(value = "/register-brand", consumes = MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerbrandAndUser(@Valid @ModelAttribute RegisterDTO request) {
 
         try {
             UserModel newUser = registerUserUseCase.execute(request);
