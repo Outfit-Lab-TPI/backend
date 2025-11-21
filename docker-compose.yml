@@ -35,7 +35,12 @@ services:
       - MAX_REQUEST_SIZE=${MAX_REQUEST_SIZE}
       
       # API Keys
+      # API Keys
       - FASHION_IA_SECRET_KEY=${FASHION_IA_SECRET_KEY}
+      - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
+      
+      # Frontend Configuration
+      - FRONTEND_URL=${FRONTEND_BASE_URL}
     
     restart: unless-stopped
     networks:

@@ -7,6 +7,9 @@ import com.outfitlab.project.domain.useCases.combination.GetCombinationFavorites
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/combinations")
 public class CombinationController {
@@ -30,7 +33,16 @@ public class CombinationController {
         try {
             String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.addCombinationToFavourite.execute(combinationUrl, userEmail));
-        } catch (UserNotFoundException | FavoritesException | UserCombinationFavoriteAlreadyExistsException e) {
+        } catch (PlanLimitExceededException e) {
+            // Manejo específico para límites de plan
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            errorResponse.put("limitType", e.getLimitType());
+            errorResponse.put("currentUsage", e.getCurrentUsage());
+            errorResponse.put("maxAllowed", e.getMaxAllowed());
+            errorResponse.put("upgradeRequired", true);
+            return ResponseEntity.status(403).body(errorResponse);
+        } catch (UserNotFoundException | FavoritesException | UserCombinationFavoriteAlreadyExistsException | SubscriptionNotFoundException e) {
             return buildResponseEntityError(e.getMessage());
         }
     }
