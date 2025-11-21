@@ -22,4 +22,11 @@ public class SubscriptionRepositoryImpl implements SubscriptionRepository {
                 .map(SubscriptionEntity::convertToModel)
                 .toList();
     }
+    
+    @Override
+    public SubscriptionModel getByPlanCode(String planCode) {
+        return subscriptionJpaRepository.findByPlanCode(planCode)
+                .map(SubscriptionEntity::convertToModel)
+                .orElseThrow(() -> new RuntimeException("Plan no encontrado: " + planCode));
+    }
 }
