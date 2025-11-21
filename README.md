@@ -122,3 +122,27 @@ docker compose up --build
 ---
 
 **Status**: ✅ Listo para el deploy rey
+# Variables de entorno requeridas
+
+| Variable | Descripción | Ejemplo |
+| --- | --- | --- |
+| `SPRING_DATASOURCE_RENDER_URL` | JDBC URL de PostgreSQL (Render) | `jdbc:postgresql://...:5432/db` |
+| `SPRING_DATASOURCE_RENDER_USERNAME` | Usuario DB | `outfitlab_user` |
+| `SPRING_DATASOURCE_RENDER_PASSWORD` | Password DB | `s3cret` |
+| `SPRING_SECURITY_USER` | Usuario básico HTTP | `admin` |
+| `SPRING_SECURITY_PASSWORD` | Password básica | `admin123` |
+| `AWS_ACCESS_KEY_ID` | Credencial AWS | `AKIA...` |
+| `AWS_SECRET_ACCESS_KEY` | Credencial AWS | `...` |
+| `AWS_REGION` | Región S3 | `sa-east-1` |
+| `AWS_BUCKET_NAME` | Bucket S3 | `outfitlab-bucket` |
+| `FASHION_IA_SECRET_KEY` | API key modelo IA | `fa-...` |
+| `MP_ACCESS_TOKEN` | Token Mercado Pago | `APP_USR-...` |
+| `FRONTEND_BASE_URL` | URL pública del front | `https://outfitlab.com.ar` |
+| `FRONTEND_ORIGINS` | Lista de orígenes CORS | `https://outfitlab.com.ar,http://localhost:5173` |
+| `SPRING_MAIL_HOST` | Host SMTP | `smtp.gmail.com` |
+| `SPRING_MAIL_PORT` | Puerto SMTP | `587` |
+| `SPRING_MAIL_USERNAME` | Cuenta SMTP | `tpi8bits@gmail.com` |
+| `SPRING_MAIL_PASSWORD` | Password/Token SMTP | `xxxx` |
+| `MAX_FILE_SIZE` / `MAX_REQUEST_SIZE` | Límites upload | `50MB` |
+| `LOG_LEVEL_ROOT` / `LOG_LEVEL_OUTFITLAB` | Logging | `INFO` / `DEBUG` |
+| `SERVER_PORT` | Puerto interno | `8080` |

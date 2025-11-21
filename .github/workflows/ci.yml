@@ -1,4 +1,4 @@
-name: CI con PostgreSQL y Maven
+name: CI - Test y Build Docker
 
 on:
   pull_request:
@@ -91,3 +91,39 @@ jobs:
           AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
           FASHION_IA_SECRET_KEY: ${{ secrets.FASHION_IA_SECRET_KEY }}
           MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          TOKEN_EXPIRATION: ${{ secrets.TOKEN_EXPIRATION }}
+          REFRESH_EXPIRATION: ${{ secrets.REFRESH_EXPIRATION }}
+
+  build-and-push:
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/outfit-lab-tpi/backend-tpi
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
