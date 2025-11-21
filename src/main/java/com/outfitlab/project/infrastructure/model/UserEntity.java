@@ -44,11 +44,20 @@ public class UserEntity implements UserDetails {
     @JsonIgnore
     private List<Token> tokens;
 
+    @Column(unique = true)
+    private String verificationToken;
+
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean status;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean verified;
+
+    @OneToOne
+    @JoinColumn(name = "marca_id")
+    private MarcaEntity brand;
+
+    private boolean brandApproved;
 
     public UserEntity() {}
 
@@ -67,6 +76,8 @@ public class UserEntity implements UserDetails {
         this.name = model.getName();
         this.lastName = model.getLastName();
         this.password = model.getHashedPassword();
+        this.verificationToken = model.getVerificationToken();
+        this.verified = false;
     }
 
     public static UserModel convertEntityToModel(UserEntity entity) {
@@ -82,7 +93,8 @@ public class UserEntity implements UserDetails {
                 entity.getUpdatedAt(),
                 entity.getRole(),
                 entity.isVerified(),
-                entity.isStatus()
+                entity.isStatus(),
+                entity.getVerificationToken()
         );
     }
 
@@ -94,7 +106,7 @@ public class UserEntity implements UserDetails {
                 model.getSatulation(),
                 model.getSecondName(),
                 model.getYears(),
-                model.getPassword()
+                model.getHashedPassword()
         );
     }
 

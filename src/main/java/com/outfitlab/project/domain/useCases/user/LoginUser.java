@@ -48,8 +48,13 @@ public class LoginUser {
                             loginDTO.getPassword()
                     )
             );
-        } catch (AuthenticationException ex) {
+        } catch (AuthenticationException | UserNotFoundException ex) {
             throw new UserNotFoundException("Email o contraseña incorrecta. Vuelva a intentarlo.");
+        }
+
+        UserEntity userEntity = userJpaRepository.findByEmail(loginDTO.getEmail());
+        if (!userEntity.isVerified()){
+            throw new UserNotFoundException("La cuenta no ha sido verificada. Revisa tu correo electrónico.");
         }
 
         var user = userJpaRepository.getByEmail(loginDTO.getEmail())

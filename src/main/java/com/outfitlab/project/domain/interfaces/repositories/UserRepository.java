@@ -8,6 +8,8 @@ import java.util.List;
 public interface UserRepository {
     UserModel findUserByEmail(String userEmail) throws UserNotFoundException;
 
+    UserModel findUserByVerificationToken(String token) throws UserNotFoundException;
+
     UserModel saveUser(UserModel userModel);
 
     List<UserModel> findAll();
@@ -19,4 +21,6 @@ public interface UserRepository {
     void convertToAdmin(String email);
 
     void convertToUser(String email);
+
+    void updateBrandUser(String userEmail, String brandCode);
 }
