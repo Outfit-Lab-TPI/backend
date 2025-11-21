@@ -19,4 +19,6 @@ public interface UserRepository {
     void convertToAdmin(String email);
 
     void convertToUser(String email);
+
+    void updateBrandUser(String userEmail, String brandCode);
 }

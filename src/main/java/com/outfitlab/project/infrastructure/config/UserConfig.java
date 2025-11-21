@@ -4,6 +4,7 @@ import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.useCases.user.*;
 import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
 import com.outfitlab.project.infrastructure.repositories.UserRepositoryImpl;
+import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepository;
 import com.outfitlab.project.infrastructure.repositories.interfaces.TokenRepository;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 import org.springframework.context.annotation.Bean;
@@ -16,13 +17,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class UserConfig {
 
     @Bean
-    public UserRepository userRepository(UserJpaRepository userJpaRepository) {
-        return new UserRepositoryImpl(userJpaRepository);
+    public UserRepository userRepository(UserJpaRepository userJpaRepository, BrandJpaRepository brandJpaRepository) {
+        return new UserRepositoryImpl(userJpaRepository, brandJpaRepository);
     }
 
     @Bean
     public GetAllUsers getAllUsers(UserRepository userRepository) {
         return new GetAllUsers(userRepository);
+    }
+
+    @Bean
+    public UpdateBrandUser updateBrandUser(UserRepository userRepository) {
+        return new UpdateBrandUser(userRepository);
     }
 
     @Bean

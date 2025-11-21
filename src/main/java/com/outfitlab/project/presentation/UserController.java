@@ -1,22 +1,20 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
-import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.model.dto.LoginDTO;
+import com.outfitlab.project.domain.useCases.brand.CreateBrand;
+import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.domain.useCases.user.*;
-import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
-import com.outfitlab.project.presentation.dto.UserDTO;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,9 +28,12 @@ public class UserController {
     private final ActivateUser activateUser;
     private final ConvertToAdmin convertToAdmin;
     private final ConvertToUser convertToUser;
+    private final CreateBrand createBrand;
+    private final UpdateBrandUser updateBrandUser;
+    private final SaveImage saveImage;
 
     public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser,
-                          ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser) {
+                          ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser, CreateBrand createBrand, UpdateBrandUser updateBrandUser, SaveImage saveImage) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
         this.getAllUsers = getAllUsers;
@@ -40,6 +41,9 @@ public class UserController {
         this.activateUser = activateUser;
         this.convertToAdmin = convertToAdmin;
         this.convertToUser = convertToUser;
+        this.createBrand = createBrand;
+        this.updateBrandUser = updateBrandUser;
+        this.saveImage = saveImage;
     }
 
 
@@ -63,6 +67,33 @@ public class UserController {
         }
     }
 
+    @PostMapping("/register-brand")
+    public ResponseEntity<?> registerbrandAndUser(@Valid @RequestBody RegisterDTO request) {
+
+        try {
+            UserModel newUser = registerUserUseCase.execute(request);
+            String brandCode = createAndReturnBrand(
+                    request.getBrandName(),
+                    saveImageAndGetUrl(request.getLogoBrand(), "brand_logo_images"),
+                    request.getUrlSite()
+            );
+
+            updateBrandInUser(request.getEmail(), brandCode);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("email", newUser.getEmail());
+            response.put("name", newUser.getName());
+
+            response.put("message", "Registro exitoso. ¡Un administrador revisará tu marca!");
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        } catch (UserAlreadyExistsException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("email", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginDTO loginDTO) {
 
@@ -72,7 +103,7 @@ public class UserController {
         } catch (UserNotFoundException e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("email", e.getMessage());
-            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -146,5 +177,17 @@ public class UserController {
     public ResponseEntity<?> handleUserAlreadyExists(UserAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body("{\"error\": \"" + ex.getMessage() + "\"}");
+    }
+
+    private void updateBrandInUser(String email, String brandCode) {
+        this.updateBrandUser.execute(email, brandCode);
+    }
+
+    private String createAndReturnBrand(String brandName, String logoUrl, String urlStie) {
+        return this.createBrand.execute(brandName, logoUrl, urlStie);
+    }
+
+    private String saveImageAndGetUrl(MultipartFile image, String folder) {
+        return this.saveImage.execute(image, folder);
     }
 }
