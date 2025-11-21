@@ -27,7 +27,7 @@ public class RegisterDTO {
     private String brandName;
     private String urlSite;
     private MultipartFile logoBrand;
-    private boolean regsiterAsBrand;
+    private boolean registerAsBrand;
 
     public RegisterDTO() {}
 
@@ -80,10 +80,10 @@ public class RegisterDTO {
         this.logoBrand = logoBrand;
     }
 
-    public boolean isRegsiterAsBrand() {
-        return regsiterAsBrand;
+    public boolean isRegisterAsBrandAsBrand() {
+        return registerAsBrand;
     }
-    public void setRegsiterAsBrand(boolean regsiterAsBrand) {
-        this.regsiterAsBrand = regsiterAsBrand;
+    public void setRegisterAsBrandAsBrand(boolean registerAsBrand) {
+        this.registerAsBrand = registerAsBrand;
     }
 }
