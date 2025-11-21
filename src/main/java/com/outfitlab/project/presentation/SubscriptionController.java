@@ -4,6 +4,9 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
+import com.outfitlab.project.domain.exceptions.SubscriptionNotFoundException;
+import com.outfitlab.project.domain.interfaces.repositories.UserSubscriptionRepository;
+import com.outfitlab.project.domain.model.UserSubscriptionModel;
 import com.outfitlab.project.domain.useCases.subscription.CreateMercadoPagoPreference;
 import com.outfitlab.project.domain.useCases.subscription.GetAllSubscription;
 import com.outfitlab.project.domain.useCases.subscription.ProcessPaymentNotification;
@@ -38,19 +41,21 @@ public class SubscriptionController {
     private final CreateMercadoPagoPreference createPreferenceUseCase;
     private final ProcessPaymentNotification processNotificationUseCase;
     private final GetAllSubscription getAllSubscription;
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
     public SubscriptionController(
             CreateMercadoPagoPreference createPreferenceUseCase,
             ProcessPaymentNotification processNotificationUseCase,
-            GetAllSubscription getAllSubscription)
+            GetAllSubscription getAllSubscription,
+            UserSubscriptionRepository userSubscriptionRepository)
     {
         this.createPreferenceUseCase = createPreferenceUseCase;
         this.processNotificationUseCase = processNotificationUseCase;
         this.getAllSubscription = getAllSubscription;
+        this.userSubscriptionRepository = userSubscriptionRepository;
     }
 
     @PostMapping("/crear-suscripcion")
-    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<Map<String, String>> createPreference(@RequestBody SubscriptionRequest request) {
 
         if (request.getPlanId() == null || request.getUserEmail() == null || request.getPrice() == null) {
@@ -118,8 +123,32 @@ public class SubscriptionController {
         }
     }
 
-
-
-
-
+    @GetMapping("/user-subscription")
+    public ResponseEntity<?> getUserSubscription(@RequestParam String email) {
+        try {
+            UserSubscriptionModel subscription = userSubscriptionRepository.findByUserEmail(email);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("planCode", subscription.getPlanCode());
+            response.put("status", subscription.getStatus());
+            response.put("usage", Map.of(
+                "combinations", Map.of(
+                    "used", subscription.getCombinationsUsed(),
+                    "max", subscription.getMaxCombinations()
+                ),
+                "favorites", Map.of(
+                    "count", subscription.getFavoritesCount(),
+                    "max", subscription.getMaxFavorites()
+                ),
+                "models", Map.of(
+                    "generated", subscription.getModelsGenerated(),
+                    "max", subscription.getMaxModels()
+                )
+            ));
+            
+            return ResponseEntity.ok(response);
+        } catch (SubscriptionNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        }
+    }
 }

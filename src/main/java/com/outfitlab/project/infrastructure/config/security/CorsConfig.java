@@ -1,5 +1,6 @@
 package com.outfitlab.project.infrastructure.config.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -12,6 +13,12 @@ import java.util.List;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
+    private final String frontendUrl;
+
+    public CorsConfig(@Value("${frontend.url}") String frontendUrl) {
+        this.frontendUrl = frontendUrl;
+    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -19,8 +26,8 @@ public class CorsConfig implements WebMvcConfigurer {
 
         config.setAllowedOriginPatterns(List.of(
                 "https://*.vercel.app",
-                "http://localhost:5173"
-        ));  // le puse cualquiera q termine con vercel.app por si me llega a cambiar el dominio por los nuevos deploy CUIDADO.
+                frontendUrl
+        ));
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
 

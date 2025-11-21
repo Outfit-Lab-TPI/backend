@@ -1,6 +1,7 @@
 package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
+import com.outfitlab.project.domain.useCases.subscription.AssignFreePlanToUser;
 import com.outfitlab.project.domain.useCases.user.ActivateUser;
 import com.outfitlab.project.domain.useCases.user.DesactivateUser;
 import com.outfitlab.project.domain.useCases.user.GetAllUsers;
@@ -41,7 +42,9 @@ public class UserConfig {
     }
 
     @Bean
-    public RegisterUser registerUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        return new RegisterUser(userRepository, passwordEncoder);
+    public RegisterUser registerUser(UserRepository userRepository, 
+                                     PasswordEncoder passwordEncoder,
+                                     AssignFreePlanToUser assignFreePlanToUser) {
+        return new RegisterUser(userRepository, passwordEncoder, assignFreePlanToUser);
     }
 }
