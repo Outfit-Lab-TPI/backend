@@ -3,12 +3,16 @@ package com.outfitlab.project.presentation;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.useCases.user.VerifyEmail;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
-@Controller
+@RestController
 @RequestMapping("/api/users")
 public class VerificationController {
 
@@ -22,13 +26,34 @@ public class VerificationController {
     }
 
     @GetMapping("/verify")
-    public String verifyUser(@RequestParam("token") String token) {
+    public ResponseEntity<Void> verifyUser(@RequestParam("token") String token) throws URISyntaxException {
+
+        final String successMessage = "?verification=success";
+        final String errorMessage = "?verification=error&message=";
+
+        URI location;
+
         try {
             verifyEmailUseCase.execute(token);
-            return "redirect:" + frontendLoginUrl + "?verification=sucess";
-        } catch (UserNotFoundException e) {
-            return "redirect:" + frontendLoginUrl + "?verification=error&message=Token inválido o expirado.";
-        }
-    }
 
+            location = new URI(frontendLoginUrl + successMessage);
+
+        } catch (UserNotFoundException e) {
+            String userFriendlyMessage = "Token inválido o expirado.";
+            String encodedMessage = URLEncoder.encode(userFriendlyMessage, StandardCharsets.UTF_8);
+
+            location = new URI(frontendLoginUrl + errorMessage + encodedMessage);
+
+        } catch (Exception e) {
+            String userFriendlyMessage = "Error interno del servidor durante la verificación.";
+            String encodedMessage = URLEncoder.encode(userFriendlyMessage, StandardCharsets.UTF_8);
+
+            location = new URI(frontendLoginUrl + errorMessage + encodedMessage);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(location);
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+    }
 }
