@@ -2,7 +2,7 @@ package com.outfitlab.project.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.outfitlab.project.domain.model.UserModel;
-import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.domain.model.Role;
 import com.outfitlab.project.infrastructure.config.security.jwt.Token;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -59,9 +59,11 @@ public class UserEntity implements UserDetails {
 
     private boolean brandApproved;
 
-    public UserEntity() {}
+    public UserEntity() {
+    }
 
-    public UserEntity(String name, String lastName, String email, String satulation, String secondName, Integer years, String password) {
+    public UserEntity(String name, String lastName, String email, String satulation, String secondName, Integer years,
+            String password) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
@@ -94,8 +96,7 @@ public class UserEntity implements UserDetails {
                 entity.getRole(),
                 entity.isVerified(),
                 entity.isStatus(),
-                entity.getVerificationToken()
-        );
+                entity.getVerificationToken());
     }
 
     public static UserEntity convertModelToEntity(UserModel model) {
@@ -106,8 +107,7 @@ public class UserEntity implements UserDetails {
                 model.getSatulation(),
                 model.getSecondName(),
                 model.getYears(),
-                model.getHashedPassword()
-        );
+                model.getHashedPassword());
     }
 
     @PrePersist
@@ -125,6 +125,7 @@ public class UserEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name().toString()));
     }
+
     @Override
     public String getUsername() {
         return this.email;
@@ -134,6 +135,7 @@ public class UserEntity implements UserDetails {
     public String getPassword() {
         return this.password;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();

@@ -59,14 +59,24 @@ public class UserConfig {
     }
 
     @Bean
-    public RegisterUser registerUser(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
-                                     TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository, 
-                                     GmailGateway gmailGateway, AssignFreePlanToUser assignFreePlanToUser) {
-        return new RegisterUser(userRepository, passwordEncoder, authenticationManager, tokenRepository, jwtService, userJpaRepository, gmailGateway, assignFreePlanToUser);
+    public RegisterUser registerUser(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository,
+            GmailGateway gmailGateway, AssignFreePlanToUser assignFreePlanToUser) {
+        return new RegisterUser(userRepository, passwordEncoder, authenticationManager, tokenRepository, jwtService,
+                userJpaRepository, gmailGateway, assignFreePlanToUser);
     }
 
     @Bean
     public VerifyEmail verifyEmail(UserRepository userRepository, UserJpaRepository userJpaRepository) {
         return new VerifyEmail(userRepository, userJpaRepository);
+    }
+
+    @Bean
+    public LoginUser loginUser(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository) {
+        return new LoginUser(userRepository, passwordEncoder, authenticationManager, tokenRepository, jwtService,
+                userJpaRepository);
     }
 }
