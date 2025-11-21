@@ -16,6 +16,7 @@ public class UserModel {
     private Integer years;
     private String email;
     private String hashedPassword;
+    private String verificationToken;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -23,14 +24,15 @@ public class UserModel {
     private boolean verified;
     private boolean status;
 
-    public UserModel(String email, String name, String lastName, String hashedPassword) {
+    public UserModel(String email, String name, String lastName, String hashedPassword, String verificationToken) {
         this.email = email;
         this.name = name;
         this.lastName = lastName;
         this.hashedPassword = hashedPassword;
+        this.verificationToken = verificationToken;
     }
 
-    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, boolean verified, boolean status) {
+    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, boolean verified, boolean status, String verificationToken) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
@@ -43,6 +45,7 @@ public class UserModel {
         this.status = status;
         this.verified = verified;
         this.role = role;
+        this.verificationToken = verificationToken;
     }
 
     public String getPassword() {

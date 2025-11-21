@@ -26,6 +26,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public UserModel findUserByVerificationToken(String token) throws UserNotFoundException {
+        UserEntity entity = this.userJpaRepository.findByVerificationToken(token);
+        if (entity == null) throw userNotFoundException();
+        return UserEntity.convertEntityToModel(entity);
+    }
+
+    @Override
     public UserModel saveUser(UserModel userModel) {
         UserEntity entityToSave = new UserEntity(userModel);
         UserEntity savedEntity = userJpaRepository.save(entityToSave);

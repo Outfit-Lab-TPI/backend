@@ -12,6 +12,6 @@ public class ConvertToUser {
 
     public String execute(String email){
         this.userRepository.convertToUser(email);
-        return "El usuario se ha convertido a Usuario con éxito.";
+        return "El administrador se ha convertido a Usuario con éxito.";
     }
 }
