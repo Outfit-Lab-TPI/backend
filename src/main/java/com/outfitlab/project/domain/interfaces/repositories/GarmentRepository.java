@@ -15,4 +15,7 @@ public interface GarmentRepository {
 
     @Transactional
     void deleteGarment(String garmentCode);
+
+    @Transactional
+    void updateGarment(String name, String type, String color, String event, String garmentCode, String imageUrl, String newGarmentCode);
 }

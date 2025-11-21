@@ -32,6 +32,16 @@ public class GarmentConfig {
     }
 
     @Bean
+    public GetGarmentByCode getGarmentByCode(GarmentRepository garmentRepository){
+        return new GetGarmentByCode(garmentRepository);
+    }
+
+    @Bean
+    public UpdateGarment updateGarment(GarmentRepository garmentRepository, BrandRepository brandRepository){
+        return new UpdateGarment(garmentRepository, brandRepository);
+    }
+
+    @Bean
     public DeleteGarment deleteGarment(GarmentRepository garmentRepository, BrandRepository brandRepository) {
         return new DeleteGarment(garmentRepository, brandRepository);
     }

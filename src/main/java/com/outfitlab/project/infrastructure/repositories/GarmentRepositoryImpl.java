@@ -70,4 +70,20 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     public void deleteGarment(String garmentCode) {
         this.garmentJpaRepository.deleteByGarmentCode(garmentCode);
     }
+
+    @Override
+    public void updateGarment(String name, String type, String color, String event, String garmentCode, String imageUrl, String newGarmentCode) {
+        PrendaEntity garmentEntity = this.garmentJpaRepository.findByGarmentCode(garmentCode);
+        if (garmentEntity == null) throw new GarmentNotFoundException("No encontramos la prenda: " + garmentCode);
+
+        garmentEntity.setNombre(name);
+        garmentEntity.setTipo(type);
+        garmentEntity.setColor(color);
+        garmentEntity.setEvento(event);
+        garmentEntity.setGarmentCode(newGarmentCode);
+
+        if (!imageUrl.isEmpty()) garmentEntity.setImagenUrl(imageUrl); // la voy a actualizar solo si vino algo, si vino empty es pq no le actualizaron la img
+
+        garmentJpaRepository.save(garmentEntity);
+    }
 }

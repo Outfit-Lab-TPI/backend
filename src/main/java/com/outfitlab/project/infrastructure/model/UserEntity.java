@@ -1,16 +1,24 @@
 package com.outfitlab.project.infrastructure.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.outfitlab.project.domain.model.UserModel;
+import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.infrastructure.config.security.jwt.Token;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
-public class UserEntity {
+public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -24,15 +32,20 @@ public class UserEntity {
     private String secondName;
     private String lastName;
     private Integer years;
-
-    @Column(nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Token> tokens;
+
+    @Column(unique = true)
+    private String verificationToken;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean status;
@@ -57,6 +70,8 @@ public class UserEntity {
         this.name = model.getName();
         this.lastName = model.getLastName();
         this.password = model.getHashedPassword();
+        this.verificationToken = model.getVerificationToken();
+        this.verified = false;
     }
 
     public static UserModel convertEntityToModel(UserEntity entity) {
@@ -69,7 +84,11 @@ public class UserEntity {
                 entity.getYears(),
                 entity.getPassword(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getUpdatedAt(),
+                entity.getRole(),
+                entity.isVerified(),
+                entity.isStatus(),
+                entity.getVerificationToken()
         );
     }
 
@@ -94,5 +113,38 @@ public class UserEntity {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name().toString()));
+    }
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 }

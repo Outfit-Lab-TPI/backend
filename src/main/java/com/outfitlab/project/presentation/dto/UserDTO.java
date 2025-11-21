@@ -1,6 +1,7 @@
 package com.outfitlab.project.presentation.dto;
 
 import com.outfitlab.project.domain.model.UserModel;
+import com.outfitlab.project.infrastructure.config.security.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class UserDTO {
         private String name;
         private String lastName;
         private String email;
-        private String role;
+        private Role role;
         private boolean verified;
         private boolean status;
 

@@ -50,7 +50,6 @@ public class SubscriptionController {
     }
 
     @PostMapping("/crear-suscripcion")
-    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<Map<String, String>> createPreference(@RequestBody SubscriptionRequest request) {
 
         if (request.getPlanId() == null || request.getUserEmail() == null || request.getPrice() == null) {
@@ -103,7 +102,6 @@ public class SubscriptionController {
         return ResponseEntity.ok("Notification received, not a relevant topic.");
     }
 
-
     @GetMapping("/subscriptions")
     public ResponseEntity<?> getSubscriptions() {
         try {
@@ -118,8 +116,5 @@ public class SubscriptionController {
         }
     }
 
-
-
-
-
+    
 }
