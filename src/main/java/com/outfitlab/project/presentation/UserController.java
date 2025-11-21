@@ -1,22 +1,16 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
-import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.model.dto.LoginDTO;
 import com.outfitlab.project.domain.useCases.user.*;
-import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
-import com.outfitlab.project.presentation.dto.UserDTO;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
