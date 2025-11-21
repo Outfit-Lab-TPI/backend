@@ -48,7 +48,7 @@ public class LoginUser {
                             loginDTO.getPassword()
                     )
             );
-        } catch (AuthenticationException ex) {
+        } catch (AuthenticationException | UserNotFoundException ex) {
             throw new UserNotFoundException("Email o contraseña incorrecta. Vuelva a intentarlo.");
         }
 

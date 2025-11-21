@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface BrandRepository {
     BrandModel findByBrandCode(String brandCode);// hay que hacer un DTO que no me deje traer el id
+
     Page<BrandModel> getAllBrands(int page);
+
+    String createBrand(BrandModel brandModel);
 }
