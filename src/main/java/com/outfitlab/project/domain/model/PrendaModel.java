@@ -1,5 +1,7 @@
 package com.outfitlab.project.domain.model;
 
+import java.util.Set;
+
 public class PrendaModel {
 
     private String nombre;
@@ -7,19 +9,21 @@ public class PrendaModel {
     private String tipo;
     private String imagenUrl;
     private String garmentCode;
-    private String evento;
-    private String color;
+    private ColorModel color;
+    private ClimaModel climaAdecuado;
+    private Set<OcasionModel> ocasiones;
 
     public PrendaModel() {}
 
-    public PrendaModel(String nombre, BrandModel marca, String tipo, String imagenUrl, String garmentCode, String evento, String color) {
+    public PrendaModel(String nombre, BrandModel marca, String tipo, String imagenUrl, String garmentCode, ColorModel color, ClimaModel climaAdecuado, Set<OcasionModel> ocasiones) {
         this.nombre = nombre;
         this.marca = marca;
         this.tipo = tipo;
         this.imagenUrl = imagenUrl;
         this.garmentCode = garmentCode;
-        this.evento = evento;
         this.color = color;
+        this.climaAdecuado = climaAdecuado;
+        this.ocasiones = ocasiones;
     }
 
     public String getGarmentCode() {
@@ -62,16 +66,26 @@ public class PrendaModel {
         this.imagenUrl = imagenUrl;
     }
 
-    public String getEvento() {
-        return evento;
-    }
-    public void setEvento(String evento) {
-        this.evento = evento;
-    }
-    public String getColor() {
+    public ColorModel getColor() {
         return color;
     }
-    public void setColor(String color) {
+    public void setColor(ColorModel color) {
         this.color = color;
+    }
+
+    public ClimaModel getClimaAdecuado() {
+        return climaAdecuado;
+    }
+
+    public void setClimaAdecuado(ClimaModel climaAdecuado) {
+        this.climaAdecuado = climaAdecuado;
+    }
+
+    public Set<OcasionModel> getOcasiones() {
+        return ocasiones;
+    }
+
+    public void setOcasiones(Set<OcasionModel> ocasiones) {
+        this.ocasiones = ocasiones;
     }
 }

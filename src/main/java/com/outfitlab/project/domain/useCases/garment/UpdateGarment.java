@@ -6,6 +6,8 @@ import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.PrendaModel;
 
+import java.util.List;
+
 public class UpdateGarment {
 
     private final GarmentRepository garmentRepository;
@@ -16,10 +18,10 @@ public class UpdateGarment {
         this.brandRepository = brandRepository;
     }
 
-    public void execute(String name, String type, String color, String event, String garmentCode, String brandCode, String imageUrl) {
+    public void execute(String name, String type, String color, String event, String garmentCode, String brandCode, String imageUrl, String clima,  List<String> ocasionesNombres) {
         checkIfBrandExists(brandCode);
         checkIfCanUpdateGarment(this.garmentRepository.findByGarmentCode(garmentCode), brandCode);
-        this.garmentRepository.updateGarment(name, type, color, event, garmentCode, imageUrl, this.formatGarmentCode(name));
+        this.garmentRepository.updateGarment(name, type, color, event, garmentCode, imageUrl, this.formatGarmentCode(name), clima, ocasionesNombres);
     }
 
     private static void checkIfCanUpdateGarment(PrendaModel garment, String brandCode) {
