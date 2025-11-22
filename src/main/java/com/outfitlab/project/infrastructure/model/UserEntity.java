@@ -53,6 +53,12 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean verified;
 
+    @OneToOne
+    @JoinColumn(name = "marca_id")
+    private MarcaEntity brand;
+
+    private boolean brandApproved;
+
     public UserEntity() {}
 
     public UserEntity(String name, String lastName, String email, String satulation, String secondName, Integer years, String password) {
@@ -100,7 +106,7 @@ public class UserEntity implements UserDetails {
                 model.getSatulation(),
                 model.getSecondName(),
                 model.getYears(),
-                model.getPassword()
+                model.getHashedPassword()
         );
     }
 

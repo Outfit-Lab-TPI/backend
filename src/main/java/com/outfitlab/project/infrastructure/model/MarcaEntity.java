@@ -39,6 +39,12 @@ public class MarcaEntity {
 
     public MarcaEntity(){}
 
+    public MarcaEntity(String codigoMarca, String nombre, String logoUrl) {
+        this.codigoMarca = codigoMarca;
+        this.nombre = nombre;
+        this.logoUrl = logoUrl;
+    }
+
     public MarcaEntity(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.codigoMarca = codigoMarca;
         this.nombre = nombre;

@@ -29,4 +29,10 @@ public class BrandRepositoryImpl implements BrandRepository {
         return this.jpaMarcaRepository.findAll(PageRequest.of(page, PAGE_SIZE))
                 .map(MarcaEntity::convertToModelWithoutPrendas);
     }
+
+    @Override
+    public String createBrand(BrandModel model) {
+        return this.jpaMarcaRepository.save(new MarcaEntity(model.getCodigoMarca(), model.getNombre(), model.getLogoUrl()))
+                .getCodigoMarca();
+    }
 }
