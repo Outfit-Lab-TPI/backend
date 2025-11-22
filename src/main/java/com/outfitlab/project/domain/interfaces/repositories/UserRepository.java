@@ -2,6 +2,7 @@ package com.outfitlab.project.domain.interfaces.repositories;
 
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.model.UserModel;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -25,4 +26,7 @@ public interface UserRepository {
     void updateBrandUser(String userEmail, String brandCode);
 
     String getEmailUserRelatedToBrandByBrandCode(String brandCode);
+
+    @Transactional
+    void updateUser(String name, String lastname, String email, String password, String confirmPassword, String newImageUrl);
 }

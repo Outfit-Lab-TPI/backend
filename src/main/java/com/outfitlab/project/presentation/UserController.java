@@ -1,16 +1,24 @@
 package com.outfitlab.project.presentation;
 
+import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
+import com.outfitlab.project.domain.exceptions.PasswordIsNotTheSame;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.model.dto.LoginDTO;
 import com.outfitlab.project.domain.useCases.brand.CreateBrand;
+import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
+import com.outfitlab.project.domain.useCases.bucketImages.DeleteImage;
 import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.domain.useCases.user.*;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
+import com.outfitlab.project.presentation.dto.EditProfileRequestDTO;
+import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,9 +41,16 @@ public class UserController {
     private final CreateBrand createBrand;
     private final UpdateBrandUser updateBrandUser;
     private final SaveImage saveImage;
+    private final GetUserByEmail getUserByEmail;
+    private final UpdateUser updateUser;
+    private final DeleteImage deleteImage;
+
+
+
 
     public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser,
-                          ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser, CreateBrand createBrand, UpdateBrandUser updateBrandUser, SaveImage saveImage) {
+                          ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser, CreateBrand createBrand,
+                          UpdateBrandUser updateBrandUser, SaveImage saveImage, GetUserByEmail getUserByEmail, UpdateUser updateUser, DeleteImage deleteImage) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
         this.getAllUsers = getAllUsers;
@@ -46,6 +61,9 @@ public class UserController {
         this.createBrand = createBrand;
         this.updateBrandUser = updateBrandUser;
         this.saveImage = saveImage;
+        this.getUserByEmail = getUserByEmail;
+        this.updateUser = updateUser;
+        this.deleteImage = deleteImage;
     }
 
 
@@ -169,6 +187,35 @@ public class UserController {
         }
     }
 
+    @PutMapping(value = "/update/{userEmail}", consumes = "multipart/form-data")
+    public ResponseEntity<?> updateUser(@PathVariable String userEmail, @ModelAttribute EditProfileRequestDTO request, @AuthenticationPrincipal UserDetails user) {
+        try{
+            String oldImageUrl = request.getUserImg() != null ? getOldImageUrlOfUser(userEmail) : "";
+
+            this.updateUser.execute(
+                    request.getName(),
+                    request.getLastname(),
+                    request.getEmail(),
+                    request.getPassword(),
+                    request.getConfirmPassword(),
+                    checkIfImageIsEmptyToSaveAndGetUrl(request)
+            );
+            deleteImage(oldImageUrl);
+
+            return ResponseEntity.ok("Perfil actualizado");
+        }catch (UserNotFoundException | PasswordIsNotTheSame e){
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    private String checkIfImageIsEmptyToSaveAndGetUrl(EditProfileRequestDTO request) {
+        return request.getUserImg() != null ? saveImageAndGetUrl(request.getUserImg(), "user_profile_image") : "";
+    }
+
+    private String getOldImageUrlOfUser(String email) {
+        return this.getUserByEmail.execute(email).getUserImageUrl();
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFound(UserNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -192,4 +239,9 @@ public class UserController {
     private String saveImageAndGetUrl(MultipartFile image, String folder) {
         return this.saveImage.execute(image, folder);
     }
+
+    private void deleteImage(String oldImageUrl) {
+        if (!oldImageUrl.isEmpty()) this.deleteImage.execute(oldImageUrl);
+    }
+
 }
