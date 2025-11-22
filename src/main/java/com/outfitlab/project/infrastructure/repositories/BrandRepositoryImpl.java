@@ -7,8 +7,6 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepo
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class BrandRepositoryImpl implements BrandRepository {
 

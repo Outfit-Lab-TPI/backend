@@ -103,6 +103,11 @@ public class UserRepositoryImpl implements UserRepository {
         this.userJpaRepository.save(user);
     }
 
+    @Override
+    public String getEmailUserRelatedToBrandByBrandCode(String brandCode) {
+        return this.userJpaRepository.findByBrand_BrandCode(brandCode).getEmail();
+    }
+
     private static void checkIfBrandExists(MarcaEntity brand) {
         if (brand == null) throw new BrandsNotFoundException("No encontramos la marca para relacionarla al usuario.");
     }
