@@ -7,63 +7,109 @@ import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.BrandModel;
 import com.outfitlab.project.domain.model.dto.BrandAndGarmentsDTO;
 import com.outfitlab.project.domain.model.dto.PageDTO;
-import com.outfitlab.project.infrastructure.repositories.BrandRepositoryImpl;
-import com.outfitlab.project.infrastructure.repositories.GarmentRepositoryImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class GetBrandAndGarmentsByBrandCodeTest {
 
-    private BrandRepository brandRepository = mock(BrandRepositoryImpl.class);
-    private GarmentRepository garmentRepository = mock(GarmentRepositoryImpl.class);
-    private GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode = new GetBrandAndGarmentsByBrandCode(brandRepository, garmentRepository);
+    @Mock
+    private BrandRepository brandRepository;
+
+    @Mock
+    private GarmentRepository garmentRepository;
+
+    @InjectMocks
+    private GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode;
+
 
     @Test
-    public void givenValidBrandCodeAndPageWhenExecuteThenReturnBrandAndGarmentsDTO() throws BrandsNotFoundException, PageLessThanZeroException {
-        String brandCode = "nike";
-        int page = 0;
-        BrandModel brandModel = new BrandModel();
-        PageDTO upperGarments = new PageDTO();
-        PageDTO lowerGarments = new PageDTO();
-        when(brandRepository.findByBrandCode(brandCode)).thenReturn(brandModel);
-        when(garmentRepository.findByBrandCodeAndTipo(brandCode, "superior", page)).thenReturn(upperGarments);
-        when(garmentRepository.findByBrandCodeAndTipo(brandCode, "inferior", page)).thenReturn(lowerGarments);
+    public void shouldReturnBrandAndGarmentsDTOWhenBrandExistsAndPageIsValid() throws Exception {
+        String brandCode = "adidas";
+        int page = 1;
+        PageDTO upperGarmentsMock = new PageDTO();
+        PageDTO lowerGarmentsMock = new PageDTO();
 
-        BrandAndGarmentsDTO result = getBrandAndGarmentsByBrandCode.execute(brandCode, page);
+        givenRepositoryCallsAreSuccessful(brandCode, page, upperGarmentsMock, lowerGarmentsMock);
 
-        thenReturnBrandAndGarmentsDTO(result, upperGarments, lowerGarments, brandCode, page);
-    }
+        BrandAndGarmentsDTO result = whenExecuteGetBrandAndGarments(brandCode, page);
 
-    private void thenReturnBrandAndGarmentsDTO(BrandAndGarmentsDTO result, PageDTO upperGarments, PageDTO lowerGarments, String brandCode, int page) {
-        assertNotNull(result);
-        assertNotNull(result.getBrandDTO());
-        assertEquals(upperGarments, result.getGarmentTop());
-        assertEquals(lowerGarments, result.getGarmentBottom());
-        verify(brandRepository, times(1)).findByBrandCode(brandCode);
-        verify(garmentRepository, times(1)).findByBrandCodeAndTipo(brandCode, "superior", page);
-        verify(garmentRepository, times(1)).findByBrandCodeAndTipo(brandCode, "inferior", page);
+        thenResultContainsExpectedData(result, brandCode, page, upperGarmentsMock, lowerGarmentsMock);
     }
 
     @Test
-    public void givenNegativePageWhenExecuteThenThrowPageLessThanZeroException() {
+    public void shouldThrowPageLessThanZeroExceptionWhenPageIsNegative() {
         String brandCode = "nike";
-        int invalidPage = -1;
+        int invalidPage = -5;
 
         assertThrows(PageLessThanZeroException.class, () -> getBrandAndGarmentsByBrandCode.execute(brandCode, invalidPage));
+        thenRepositoryCallsAreNeverMade();
+    }
+
+    @Test
+    public void shouldThrowBrandsNotFoundExceptionWhenBrandCodeDoesNotExist() {
+        String brandCode = "nonexistent";
+        int page = 0;
+        givenRepositoryReturnsNullBrand(brandCode);
+
+        assertThrows(BrandsNotFoundException.class, () -> getBrandAndGarmentsByBrandCode.execute(brandCode, page));
+        thenBrandRepositoryWasCalled(brandCode, 1);
+        thenGarmentRepositoryWasNeverCalled();
+    }
+
+
+
+    // private methods -----------------------------------
+
+    private void givenRepositoryCallsAreSuccessful(String brandCode, int page, PageDTO upperGarments, PageDTO lowerGarments) {
+        when(brandRepository.findByBrandCode(brandCode)).thenReturn(new BrandModel());
+
+        when(garmentRepository.findByBrandCodeAndTipo(eq(brandCode), eq("superior"), eq(page))).thenReturn(upperGarments);
+        when(garmentRepository.findByBrandCodeAndTipo(eq(brandCode), eq("inferior"), eq(page))).thenReturn(lowerGarments);
+    }
+
+    private void givenRepositoryReturnsNullBrand(String brandCode) {
+        when(brandRepository.findByBrandCode(brandCode)).thenReturn(null);
+    }
+
+
+    private BrandAndGarmentsDTO whenExecuteGetBrandAndGarments(String brandCode, int page) throws BrandsNotFoundException, PageLessThanZeroException {
+        return getBrandAndGarmentsByBrandCode.execute(brandCode, page);
+    }
+
+
+    private void thenResultContainsExpectedData(BrandAndGarmentsDTO result, String brandCode, int page, PageDTO expectedUpper, PageDTO expectedLower) {
+        assertNotNull(result, "El DTO del resultado no debería ser nulo.");
+        assertNotNull(result.getBrandDTO(), "El DTO de la marca dentro del resultado no debería ser nulo.");
+
+        assertEquals(expectedUpper, result.getGarmentTop(), "Las prendas superiores deben coincidir con el mock.");
+        assertEquals(expectedLower, result.getGarmentBottom(), "Las prendas inferiores deben coincidir con el mock.");
+
+        thenBrandRepositoryWasCalled(brandCode, 1);
+        thenGarmentRepositoryWasCalled(brandCode, "superior", page, 1);
+        thenGarmentRepositoryWasCalled(brandCode, "inferior", page, 1);
+    }
+
+    private void thenBrandRepositoryWasCalled(String brandCode, int times) {
+        verify(brandRepository, times(times)).findByBrandCode(brandCode);
+    }
+
+    private void thenGarmentRepositoryWasCalled(String brandCode, String tipo, int page, int times) {
+        verify(garmentRepository, times(times)).findByBrandCodeAndTipo(brandCode, tipo, page);
+    }
+
+    private void thenRepositoryCallsAreNeverMade() {
         verify(brandRepository, never()).findByBrandCode(anyString());
         verify(garmentRepository, never()).findByBrandCodeAndTipo(anyString(), anyString(), anyInt());
     }
 
-    @Test
-    public void givenNonexistentBrandCodeWhenExecuteThenThrowBrandsNotFoundException() {
-        String brandCode = "cualquiera";
-        int page = 0;
-        when(brandRepository.findByBrandCode(brandCode)).thenReturn(null);
-
-        assertThrows(BrandsNotFoundException.class, () -> getBrandAndGarmentsByBrandCode.execute(brandCode, page));
-        verify(brandRepository, times(1)).findByBrandCode(brandCode);
+    private void thenGarmentRepositoryWasNeverCalled() {
+        verify(garmentRepository, never()).findByBrandCodeAndTipo(anyString(), anyString(), anyInt());
     }
 }
-
