@@ -94,6 +94,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           TOKEN_EXPIRATION: ${{ secrets.TOKEN_EXPIRATION }}
           REFRESH_EXPIRATION: ${{ secrets.REFRESH_EXPIRATION }}
+          GEMINI_API_KEY: ${{secrets.GEMINI_API_KEY}}
 
   build-and-push:
     needs: test
