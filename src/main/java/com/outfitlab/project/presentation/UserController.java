@@ -1,19 +1,16 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
 import com.outfitlab.project.domain.exceptions.PasswordIsNotTheSame;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.model.dto.LoginDTO;
 import com.outfitlab.project.domain.useCases.brand.CreateBrand;
-import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.useCases.bucketImages.DeleteImage;
 import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.domain.useCases.user.*;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
 import com.outfitlab.project.presentation.dto.EditProfileRequestDTO;
-import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,12 +42,12 @@ public class UserController {
     private final UpdateUser updateUser;
     private final DeleteImage deleteImage;
 
-
+    private final UserProfile userProfile;
 
 
     public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser,
                           ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser, CreateBrand createBrand,
-                          UpdateBrandUser updateBrandUser, SaveImage saveImage, GetUserByEmail getUserByEmail, UpdateUser updateUser, DeleteImage deleteImage) {
+                          UpdateBrandUser updateBrandUser, SaveImage saveImage, GetUserByEmail getUserByEmail, UpdateUser updateUser, DeleteImage deleteImage, UserProfile userProfile) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
         this.getAllUsers = getAllUsers;
@@ -64,6 +61,7 @@ public class UserController {
         this.getUserByEmail = getUserByEmail;
         this.updateUser = updateUser;
         this.deleteImage = deleteImage;
+        this.userProfile = userProfile;
     }
 
 
@@ -119,6 +117,18 @@ public class UserController {
 
         try {
             return loginUserUseCase.execute(loginDTO);
+
+        } catch (UserNotFoundException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("email", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getAuthUserProfile(){
+        try {
+            return ResponseEntity.ok(userProfile.execute());
 
         } catch (UserNotFoundException e) {
             Map<String, String> errorResponse = new HashMap<>();
