@@ -7,12 +7,17 @@ import com.outfitlab.project.domain.useCases.tripo.*;
 import com.outfitlab.project.presentation.dto.ImageUploadRequest;
 import com.outfitlab.project.presentation.dto.TripoModelDTO;
 import com.outfitlab.project.presentation.dto.TripoModelResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 
 @Slf4j
@@ -63,6 +68,26 @@ public class TrippoController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(TripoModelResponse.builder().message(e.getMessage()).build());
+        }
+    }
+
+    @GetMapping("/models/download")
+    public ResponseEntity<byte[]> downloadFile(@RequestParam String url) {
+        try {
+            URL externalUrl = new URL(url);
+            InputStream inputStream = externalUrl.openStream();
+            byte[] fileBytes = inputStream.readAllBytes();
+
+            String fileName = url.substring(url.lastIndexOf('/') + 1);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                    .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(fileBytes);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
