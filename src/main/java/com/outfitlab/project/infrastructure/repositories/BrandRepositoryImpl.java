@@ -1,5 +1,6 @@
 package com.outfitlab.project.infrastructure.repositories;
 
+import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
 import com.outfitlab.project.domain.model.BrandModel;
 import com.outfitlab.project.infrastructure.model.MarcaEntity;
@@ -19,7 +20,9 @@ public class BrandRepositoryImpl implements BrandRepository {
 
     @Override
     public BrandModel findByBrandCode(String brandCode) {
-        return MarcaEntity.convertToModelWithoutPrendas(this.jpaMarcaRepository.findByCodigoMarca(brandCode));
+        MarcaEntity entity = this.jpaMarcaRepository.findByCodigoMarca(brandCode);
+        if (entity == null) throw new BrandsNotFoundException("No encontramos la marca.");
+        return MarcaEntity.convertToModelWithoutPrendas(entity);
     }
 
     @Override

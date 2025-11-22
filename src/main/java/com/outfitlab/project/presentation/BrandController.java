@@ -4,10 +4,10 @@ import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.model.dto.BrandDTO;
 import com.outfitlab.project.domain.useCases.brand.ActivateBrand;
+import com.outfitlab.project.domain.useCases.brand.DesactivateBrand;
 import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.useCases.brand.GetBrandAndGarmentsByBrandCode;
-import com.outfitlab.project.domain.useCases.user.ConvertToAdmin;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +22,14 @@ public class BrandController {
     private final GetAllBrands getAllMarcas;
     private final GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode;
     private final ActivateBrand activateBrand;
+    private final DesactivateBrand desactivateBrand;
 
     public BrandController(GetAllBrands getAllMarcas, GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode,
-                           ActivateBrand activateBrand){
+                           ActivateBrand activateBrand, DesactivateBrand desactivateBrand){
         this.getAllMarcas = getAllMarcas;
         this.getBrandAndGarmentsByBrandCode = getBrandAndGarmentsByBrandCode;
         this.activateBrand = activateBrand;
+        this.desactivateBrand = desactivateBrand;
     }
 
     @GetMapping("/marcas")
@@ -54,9 +56,20 @@ public class BrandController {
     }
 
     @GetMapping("/activate/{brandCode}")
-    public ResponseEntity<?> activateUser(@PathVariable String brandCode) {
+    public ResponseEntity<?> activateUserByBrandCode(@PathVariable String brandCode) {
         try {
             return ResponseEntity.ok(this.activateBrand.execute(brandCode));
+        } catch (BrandsNotFoundException | UserNotFoundException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/desactivate/{brandCode}")
+    public ResponseEntity<?> desactivateUserByBrandCode(@PathVariable String brandCode) {
+        try {
+            return ResponseEntity.ok(this.desactivateBrand.execute(brandCode));
         } catch (BrandsNotFoundException | UserNotFoundException e) {
             return ResponseEntity
                     .status(404)
