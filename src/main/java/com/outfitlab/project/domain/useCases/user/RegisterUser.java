@@ -5,6 +5,7 @@ import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.interfaces.gateways.GmailGateway;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.model.UserModel;
+import com.outfitlab.project.domain.useCases.subscription.AssignFreePlanToUser;
 import com.outfitlab.project.infrastructure.config.security.Role;
 import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
 import com.outfitlab.project.infrastructure.config.security.jwt.Token;
@@ -13,6 +14,7 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.TokenReposit
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 public class RegisterUser {
@@ -24,18 +26,22 @@ public class RegisterUser {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authManager;
     private final GmailGateway gmailGateway;
+    private final AssignFreePlanToUser assignFreePlanToUser;
 
     public RegisterUser(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authManager,
-                        TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository, GmailGateway gmailGateway) {
+                        TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository, 
+                        GmailGateway gmailGateway, AssignFreePlanToUser assignFreePlanToUser) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authManager = authManager;
         this.tokenRepository = tokenRepository;
-        this.jwtService =jwtService;
+        this.jwtService = jwtService;
         this.userJpaRepository = userJpaRepository;
         this.gmailGateway = gmailGateway;
+        this.assignFreePlanToUser = assignFreePlanToUser;
     }
 
+    @Transactional
     public UserModel execute(RegisterDTO request) throws UserAlreadyExistsException {
 
         checkIfUserExists(request.getEmail());
@@ -58,6 +64,9 @@ public class RegisterUser {
         userEntity.setVerificationToken(verificationToken);
 
         var savedUser = userJpaRepository.save(userEntity);
+        
+        // INTEGRACIÓN SUSCRIPCIONES: Asignar plan FREE automáticamente
+        assignFreePlanToUser.execute(savedUser.getEmail());
 
         String emailBody = "<h1>¡Bienvenido a Outfit Lab!</h1>" + "<p>Haz click en el enlace para verificar tu cuenta:</p>"
                 + "<a href=\"" + verificationLink + "\">Verificar cuenta </a>";

@@ -31,7 +31,7 @@ public class CreateMercadoPagoPreference {
         items.add(itemRequest);
 
         PreferencePayerRequest payer = PreferencePayerRequest.builder()
-                .email(userEmail)
+                .email(userEmail) // dejo user email para poder pagar con cualquier cuenta
                 .build();
 
         PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
@@ -43,7 +43,7 @@ public class CreateMercadoPagoPreference {
         PreferenceRequest request = PreferenceRequest.builder()
                 .items(items)
                 .payer(payer)
-                .externalReference(planId)
+                .externalReference(userEmail)  // CAMBIO: Almacenar userEmail en vez de planId
                 .backUrls(backUrls)
                 .autoReturn("approved")
                 .build();

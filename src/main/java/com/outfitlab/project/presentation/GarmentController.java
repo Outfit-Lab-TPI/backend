@@ -126,10 +126,11 @@ public class GarmentController {
             this.createGarment.execute(
                     request.getNombre(),
                     request.getTipo(),
-                    request.getColor(),
-                    request.getEvento(),
+                    request.getColorNombre(),
                     brandCode,
-                    saveImageAndGetUrl(request.getImagen(), "garment_images")
+                    saveImageAndGetUrl(request.getImagen(), "garment_images"),
+                    request.getClimaNombre(),
+                    request.getOcasionesNombres()
             );
 
             return ResponseEntity.ok("Prenda creada correctamente.");
@@ -147,11 +148,13 @@ public class GarmentController {
             this.updateGarment.execute(
                     request.getNombre(),
                     request.getTipo(),
-                    request.getColor(),
+                    request.getColorNombre(),
                     request.getEvento(),
-                    garmentCode,
                     brandCode,
-                    checkIfImageIsEmptyToSaveAndGetUrl(request)
+                    garmentCode,
+                    checkIfImageIsEmptyToSaveAndGetUrl(request),
+                    request.getClimaNombre(),
+                    request.getOcasionesNombres()
             );
             deleteImage(oldImageUrl);
 

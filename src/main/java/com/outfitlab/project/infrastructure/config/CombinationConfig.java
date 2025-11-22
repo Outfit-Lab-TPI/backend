@@ -4,6 +4,8 @@ import com.outfitlab.project.domain.interfaces.repositories.UserCombinationFavor
 import com.outfitlab.project.domain.useCases.combination.AddCombinationToFavourite;
 import com.outfitlab.project.domain.useCases.combination.DeleteCombinationFromFavorite;
 import com.outfitlab.project.domain.useCases.combination.GetCombinationFavoritesForUserByEmail;
+import com.outfitlab.project.domain.useCases.subscription.CheckUserPlanLimit;
+import com.outfitlab.project.domain.useCases.subscription.IncrementUsageCounter;
 import com.outfitlab.project.infrastructure.repositories.UserCombinationFavoriteRepositoryImpl;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserCombinationFavoriteJpaRepository;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
@@ -20,8 +22,10 @@ public class CombinationConfig {
     }
 
     @Bean
-    public AddCombinationToFavourite addCombinationToFavourite(UserCombinationFavoriteRepository userCombinationFavoriteRepository){
-        return new AddCombinationToFavourite(userCombinationFavoriteRepository);
+    public AddCombinationToFavourite addCombinationToFavourite(UserCombinationFavoriteRepository userCombinationFavoriteRepository,
+                                                               CheckUserPlanLimit checkUserPlanLimit,
+                                                               IncrementUsageCounter incrementUsageCounter){
+        return new AddCombinationToFavourite(userCombinationFavoriteRepository, checkUserPlanLimit, incrementUsageCounter);
     }
 
     @Bean
