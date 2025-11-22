@@ -3,6 +3,7 @@ package com.outfitlab.project.presentation;
 import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.model.dto.BrandDTO;
+import com.outfitlab.project.domain.useCases.brand.ActivateBrand;
 import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.useCases.brand.GetBrandAndGarmentsByBrandCode;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,8 @@ class BrandControllerTest {
 
     private GetAllBrands getAllBrands = mock(GetAllBrands.class);;
     private GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode = mock(GetBrandAndGarmentsByBrandCode.class);
-    private BrandController brandController = new BrandController(getAllBrands, getBrandAndGarmentsByBrandCode);
+    private ActivateBrand activateBrand = mock(ActivateBrand.class);
+    private BrandController brandController = new BrandController(getAllBrands, getBrandAndGarmentsByBrandCode, activateBrand);
 
     @Test
     public void givenValidPageWhenGetMarcasThenReturnsOkWithContent() throws Exception, BrandsNotFoundException {
