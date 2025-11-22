@@ -22,7 +22,6 @@ public interface GarmentRepository {
             String color,
             String brandCode,
             String imageUrl,
-            String garmentCode,
             String climaNombre,
             List<String> ocasionesNombres
     );
@@ -31,7 +30,7 @@ public interface GarmentRepository {
     void deleteGarment(String garmentCode);
 
     @Transactional
-    void updateGarment(String name, String type, String color, String event, String garmentCode, String imageUrl, String newGarmentCode);
+    void updateGarment(String name, String type, String colorNombre, String event, String garmentCode, String imageUrl, String newGarmentCode, String climaNombre, List<String> ocasionesNombres);
 
     List<PrendaModel> findByClimaAndOcasion(String climaNombre, String ocasionNombre);
 

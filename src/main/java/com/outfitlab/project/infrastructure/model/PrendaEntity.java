@@ -1,10 +1,7 @@
 package com.outfitlab.project.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.outfitlab.project.domain.model.BrandModel;
-import com.outfitlab.project.domain.model.ClimaModel;
-import com.outfitlab.project.domain.model.OcasionModel;
-import com.outfitlab.project.domain.model.PrendaModel;
+import com.outfitlab.project.domain.model.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,9 +31,6 @@ public class PrendaEntity {
     @Column(nullable = false)
     private String imagenUrl;
 
-    @Column(nullable = false)
-    private String color;
-
     @Column(unique = true)
     private String garmentCode;
 
@@ -49,6 +43,10 @@ public class PrendaEntity {
     @JoinColumn(name = "clima_id", nullable = false)
     private ClimaEntity climaAdecuado;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "color_id", nullable = false)
+    private ColorEntity color;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "prenda_ocasion",
@@ -59,7 +57,7 @@ public class PrendaEntity {
 
     public PrendaEntity(){}
 
-    public PrendaEntity(String nombre, MarcaEntity marca, String tipo, String imagenUrl, String garmentCode, String color, ClimaEntity climaAdecuado, Set<OcasionEntity> ocasiones) {
+    public PrendaEntity(String nombre, MarcaEntity marca, String tipo, String imagenUrl, String garmentCode, ColorEntity color, ClimaEntity climaAdecuado, Set<OcasionEntity> ocasiones) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.imagenUrl = imagenUrl;
@@ -78,6 +76,15 @@ public class PrendaEntity {
         this.garmentCode = garmentCode;
     }
 
+    public PrendaEntity(String name, MarcaEntity brandEntity, String type, String imageUrl, ColorEntity color, ClimaEntity climaEntity, Set<OcasionEntity> ocasionesEntities) {
+        this.nombre = name;
+        this.tipo = type;
+        this.imagenUrl = imageUrl;
+        this.color = color;
+        this.climaAdecuado = climaEntity;
+        this.ocasiones = ocasionesEntities;
+    }
+
     public static PrendaModel convertToModel(PrendaEntity prendaEntity) {
         BrandModel marcaModel = MarcaEntity.convertToModelWithoutPrendas(prendaEntity.getMarca());
 
@@ -90,13 +97,17 @@ public class PrendaEntity {
                 .map(ocasionEntity -> new OcasionModel(ocasionEntity.getId(), ocasionEntity.getNombre()))
                 .collect(Collectors.toSet());
 
+        ColorModel colorModel = new ColorModel(prendaEntity.getColor().getId(),
+                prendaEntity.getColor().getNombre(),
+                prendaEntity.getColor().getValor());
+
         return new PrendaModel(
                 prendaEntity.getNombre(),
                 marcaModel,
                 prendaEntity.getTipo(),
                 prendaEntity.getImagenUrl(),
                 prendaEntity.getGarmentCode(),
-                prendaEntity.getColor(),
+                colorModel,
                 climaModel,
                 ocasionesModels
         );

@@ -1,6 +1,6 @@
 package com.outfitlab.project.infrastructure.repositories.interfaces;
 
-import com.outfitlab.project.domain.model.PrendaModel;
+import com.outfitlab.project.infrastructure.model.ColorEntity;
 import com.outfitlab.project.infrastructure.model.PrendaEntity;
 import com.outfitlab.project.infrastructure.model.ClimaEntity;
 import com.outfitlab.project.infrastructure.model.OcasionEntity;
@@ -36,4 +36,5 @@ public interface GarmentJpaRepository extends JpaRepository<PrendaEntity, Long> 
 
     Optional<OcasionEntity> findOcasionEntityByNombre(String nombre);
 
+    Optional<ColorEntity> findColorEntityByNombre(String colorNombre);
 }

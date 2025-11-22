@@ -92,7 +92,14 @@ public class GetGarmentRecomendationByText {
     }
 
     private boolean sonCompatibles(PrendaModel top, PrendaModel bottom) {
-        return true;
+        if (top.getColor().getValor() == 0 || bottom.getColor().getValor() == 0) {
+            return true;
+        }
+
+        int distance = Math.abs(top.getColor().getValor() - bottom.getColor().getValor());
+        int circularDistance = Math.min(distance, 30 - distance);
+
+        return circularDistance <= 5;
     }
 
 }

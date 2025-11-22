@@ -2,13 +2,17 @@ package com.outfitlab.project.presentation.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public class GarmentRequestDTO {
 
     private String nombre;
     private String tipo;
-    private String color;
+    private String colorNombre;
     private String evento;
     private MultipartFile imagen;
+    private String climaNombre;
+    private List<String> ocasionesNombres;
 
     public String getNombre() {
         return nombre;
@@ -26,12 +30,12 @@ public class GarmentRequestDTO {
         this.tipo = tipo;
     }
 
-    public String getColor() {
-        return color;
+    public String getColorNombre() {
+        return colorNombre;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setColorNombre(String color) {
+        this.colorNombre = color;
     }
 
     public String getEvento() {
@@ -49,5 +53,19 @@ public class GarmentRequestDTO {
     public void setImagen(MultipartFile imagen) {
         this.imagen = imagen;
     }
+
+    public String getClimaNombre() {
+        return climaNombre;
+    }
+
+    public void setClimaNombre(String climaNombre) {
+        this.climaNombre = climaNombre;
+    }
+
+    public List<String> getOcasionesNombres() {
+        return ocasionesNombres;
+    }
+
+    public void setOcasionesNombres(List<String> ocasionesNombres) {}
 }
 

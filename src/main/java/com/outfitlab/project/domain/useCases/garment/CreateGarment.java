@@ -2,6 +2,8 @@ package com.outfitlab.project.domain.useCases.garment;
 
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 
+import java.util.List;
+
 public class CreateGarment {
 
     private final GarmentRepository garmentRepository;
@@ -10,16 +12,15 @@ public class CreateGarment {
         this.garmentRepository = garmentRepository;
     }
 
-    public void execute(String name, String type, String color, String brandCode, String imageUrl, String garmentCode) {
+    public void execute(String name, String type, String color, String brandCode, String imageUrl, String climaNombre,  List<String> ocasionesNombres) {
         this.garmentRepository.createGarment(
                 name,
                 type,
                 color,
                 brandCode,
                 imageUrl,
-                garmentCode,
-                null,
-                java.util.Collections.emptyList()
+                climaNombre,
+                ocasionesNombres
         );
     }
 

@@ -7,10 +7,7 @@ import com.outfitlab.project.domain.model.OcasionModel;
 import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
 import com.outfitlab.project.domain.model.dto.PageDTO;
-import com.outfitlab.project.infrastructure.model.ClimaEntity;
-import com.outfitlab.project.infrastructure.model.MarcaEntity;
-import com.outfitlab.project.infrastructure.model.OcasionEntity;
-import com.outfitlab.project.infrastructure.model.PrendaEntity;
+import com.outfitlab.project.infrastructure.model.*;
 import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepository;
 import com.outfitlab.project.infrastructure.repositories.interfaces.GarmentJpaRepository;
 import org.springframework.data.domain.Page;
@@ -69,10 +66,9 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     public void createGarment(
             String name,
             String type,
-            String color,
+            String colorNombre,
             String brandCode,
             String imageUrl,
-            String garmentCode,
             String climaNombre,
             List<String> ocasionesNombres
     ) {
@@ -80,7 +76,8 @@ public class GarmentRepositoryImpl implements GarmentRepository {
         if (brandEntity == null) throw new GarmentNotFoundException("No encontramos la brand: " + brandCode);
         ClimaEntity climaEntity = garmentJpaRepository.findClimaEntityByNombre(climaNombre)
                 .orElseThrow(() -> new IllegalArgumentException("Clima no válido: " + climaNombre));
-
+        ColorEntity colorEntity = garmentJpaRepository.findColorEntityByNombre(colorNombre)
+                .orElseThrow(() -> new IllegalArgumentException("Color no válido: " + colorNombre));
         Set<OcasionEntity> ocasionesEntities = ocasionesNombres.stream()
                 .map(nombre -> garmentJpaRepository.findOcasionEntityByNombre(nombre)
                         .orElseThrow(() -> new IllegalArgumentException("Ocasión no válida: " + nombre)))
@@ -90,8 +87,7 @@ public class GarmentRepositoryImpl implements GarmentRepository {
                 brandEntity,
                 type,
                 imageUrl,
-                garmentCode,
-                color,
+                colorEntity,
                 climaEntity,
                 ocasionesEntities
         ));
@@ -103,14 +99,25 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     }
 
     @Override
-    public void updateGarment(String name, String type, String color, String event, String garmentCode, String imageUrl, String newGarmentCode) {
+    public void updateGarment(String name, String type, String colorNombre, String event, String garmentCode, String imageUrl, String newGarmentCode, String climaNombre, List<String> ocasionesNombres) {
         PrendaEntity garmentEntity = this.garmentJpaRepository.findByGarmentCode(garmentCode);
         if (garmentEntity == null) throw new GarmentNotFoundException("No encontramos la prenda: " + garmentCode);
+        ColorEntity colorEntity = this.garmentJpaRepository.findColorEntityByNombre(colorNombre)
+                .orElseThrow(() -> new IllegalArgumentException("Color no válido: " + colorNombre));
+        ClimaEntity climaEntity = garmentJpaRepository.findClimaEntityByNombre(climaNombre)
+                .orElseThrow(() -> new IllegalArgumentException("Clima no válido: " + climaNombre));
+        Set<OcasionEntity> ocasionesEntities = ocasionesNombres.stream()
+                .map(nombre -> garmentJpaRepository.findOcasionEntityByNombre(nombre)
+                        .orElseThrow(() -> new IllegalArgumentException("Ocasión no válida: " + nombre)))
+                .collect(Collectors.toSet());
+
 
         garmentEntity.setNombre(name);
         garmentEntity.setTipo(type);
-        garmentEntity.setColor(color);
+        garmentEntity.setColor(colorEntity);
         garmentEntity.setGarmentCode(newGarmentCode);
+        garmentEntity.setOcasiones(ocasionesEntities);
+        garmentEntity.setClimaAdecuado(climaEntity);
 
         if (!imageUrl.isEmpty()) garmentEntity.setImagenUrl(imageUrl); // la voy a actualizar solo si vino algo, si vino empty es pq no le actualizaron la img
 

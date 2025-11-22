@@ -6,6 +6,7 @@ import com.outfitlab.project.domain.useCases.garment.GetGarmentRecomendationByTe
 import com.outfitlab.project.infrastructure.repositories.GeminiClientImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
@@ -79,8 +80,8 @@ public class GarmentConfig {
     }
 
     @Bean
-    public String geminiApiKey() {
-        return "AIzaSyCWiq6FlFzRH8SM7Tmx-X2lg2RCo3TzkR0";
+    public String geminiApiKey(@Value("${gemini.api.key}") String apiKey) {
+        return apiKey;
     }
 
     @Bean
