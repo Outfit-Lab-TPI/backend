@@ -41,4 +41,6 @@ build/
 docker-compose.override.yml
 
 ### IA .MD ###
-dev_notes.md
+
+*.md
+*.sql

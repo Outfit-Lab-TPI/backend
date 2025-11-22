@@ -11,7 +11,7 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepos
 
 import java.util.List;
 
-import static com.outfitlab.project.infrastructure.config.security.Role.*;
+import static com.outfitlab.project.domain.model.Role.*;
 
 public class UserRepositoryImpl implements UserRepository {
 
@@ -26,14 +26,16 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public UserModel findUserByEmail(String userEmail) throws UserNotFoundException {
         UserEntity entity = getUserByEmail(userEmail);
-        if (entity == null) throw new UserNotFoundException("No encontramos el usuario con el email: " + userEmail);
+        if (entity == null)
+            throw new UserNotFoundException("No encontramos el usuario con el email: " + userEmail);
         return UserEntity.convertEntityToModel(entity);
     }
 
     @Override
     public UserModel findUserByVerificationToken(String token) throws UserNotFoundException {
         UserEntity entity = this.userJpaRepository.findByVerificationToken(token);
-        if (entity == null) throw userNotFoundException();
+        if (entity == null)
+            throw userNotFoundException();
         return UserEntity.convertEntityToModel(entity);
     }
 
@@ -49,13 +51,14 @@ public class UserRepositoryImpl implements UserRepository {
         List<UserModel> users = this.userJpaRepository.findAll()
                 .stream().map(UserEntity::convertEntityToModel)
                 .toList();
-        if (users.isEmpty()) throw new UserNotFoundException("No encontramos usuarios.");
+        if (users.isEmpty())
+            throw new UserNotFoundException("No encontramos usuarios.");
         return users;
     }
 
     @Override
     public void desactivateUser(String email) {
-        UserEntity entity =  getUserByEmail(email);
+        UserEntity entity = getUserByEmail(email);
         checkifUserExistsOrThrowException(entity);
 
         entity.setStatus(false);
@@ -64,7 +67,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void activateUser(String email) {
-        UserEntity entity =  getUserByEmail(email);
+        UserEntity entity = getUserByEmail(email);
         checkifUserExistsOrThrowException(entity);
 
         entity.setStatus(true);
@@ -98,11 +101,12 @@ public class UserRepositoryImpl implements UserRepository {
         checkIfBrandExists(brand);
 
         user.setBrand(brand);
-        user.setRole(BRAND); //la creo con rol Marca
-        user.setBrandApproved(false); //NO está aprobada por un admin, la aprueban desde las notif.
+        user.setRole(BRAND); // la creo con rol Marca
+        user.setBrandApproved(false); // NO está aprobada por un admin, la aprueban desde las notif.
         this.userJpaRepository.save(user);
     }
 
+    // ← Métodos de develop
     @Override
     public String getEmailUserRelatedToBrandByBrandCode(String brandCode) {
         UserEntity user = this.userJpaRepository.findByBrand_CodigoMarca(brandCode);
@@ -111,23 +115,27 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void updateUser(String name, String lastname, String email, String password, String confirmPassword, String newImageUrl) {
+    public void updateUser(String name, String lastname, String email, String password, String confirmPassword,
+            String newImageUrl) {
         UserEntity entity = this.userJpaRepository.findByEmail(email);
         checkifUserExistsOrThrowException(entity);
         entity.setName(name);
         entity.setLastName(lastname);
         entity.setEmail(email);
         entity.setPassword(password);
-        if(!newImageUrl.isEmpty()) entity.setUserImageUrl(newImageUrl);
+        if (!newImageUrl.isEmpty())
+            entity.setUserImageUrl(newImageUrl);
         this.userJpaRepository.save(entity);
     }
 
     private static void checkIfBrandExists(MarcaEntity brand) {
-        if (brand == null) throw new BrandsNotFoundException("No encontramos la marca para relacionarla al usuario.");
+        if (brand == null)
+            throw new BrandsNotFoundException("No encontramos la marca para relacionarla al usuario.");
     }
 
     private void checkifUserExistsOrThrowException(UserEntity user) {
-        if (user == null) throw userNotFoundException();
+        if (user == null)
+            throw userNotFoundException();
     }
 
     private UserEntity getUserByEmail(String email) {

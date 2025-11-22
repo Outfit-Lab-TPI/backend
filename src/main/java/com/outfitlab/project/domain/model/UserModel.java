@@ -1,6 +1,6 @@
 package com.outfitlab.project.domain.model;
 
-import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.domain.model.Role;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ public class UserModel {
     private String verificationToken;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String userImageUrl;
+    private String userImageUrl; // ← De develop
 
     private Role role;
     private boolean verified;
@@ -29,8 +29,10 @@ public class UserModel {
         this.verificationToken = verificationToken;
     }
 
-    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, LocalDateTime createdAt, LocalDateTime updatedAt,
-                     Role role, boolean verified, boolean status, String verificationToken, String userImageUrl) {
+    // Constructor completo con userImageUrl (de develop)
+    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years,
+            String hashedPassword, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, boolean verified,
+            boolean status, String verificationToken, String userImageUrl) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
@@ -47,9 +49,11 @@ public class UserModel {
         this.userImageUrl = userImageUrl;
     }
 
-    /*public String getPassword() {
-        return "";
-    }*/
+    /*
+     * public String getPassword() {
+     * return "";
+     * }
+     */
 
     public String getSatulation() {
         return satulation;

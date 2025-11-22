@@ -17,9 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
-@Service
 public class LoginUser {
     private final UserRepository userRepository;
     private final UserJpaRepository userJpaRepository;
@@ -29,31 +27,30 @@ public class LoginUser {
     private final AuthenticationManager authManager;
 
     public LoginUser(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authManager,
-                        TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository) {
+            TokenRepository tokenRepository, JwtService jwtService, UserJpaRepository userJpaRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authManager = authManager;
         this.tokenRepository = tokenRepository;
-        this.jwtService =jwtService;
+        this.jwtService = jwtService;
         this.userJpaRepository = userJpaRepository;
     }
-    public ResponseEntity<AuthResponse> execute(LoginDTO loginDTO){
-        if(loginDTO.getEmail().isBlank() || loginDTO.getPassword().isBlank()){
+
+    public ResponseEntity<AuthResponse> execute(LoginDTO loginDTO) {
+        if (loginDTO.getEmail().isBlank() || loginDTO.getPassword().isBlank()) {
             throw new NullFieldsException("Debe completar la totalidad de los campos para autenticarse.");
         }
-        try{
+        try {
             Authentication auth = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginDTO.getEmail(),
-                            loginDTO.getPassword()
-                    )
-            );
-        } catch (AuthenticationException | UserNotFoundException ex) {
+                            loginDTO.getPassword()));
+        } catch (AuthenticationException ex) {
             throw new UserNotFoundException("Email o contraseña incorrecta. Vuelva a intentarlo.");
         }
 
         UserEntity userEntity = userJpaRepository.findByEmail(loginDTO.getEmail());
-        if (!userEntity.isVerified()){
+        if (!userEntity.isVerified()) {
             throw new UserNotFoundException("La cuenta no ha sido verificada. Revisa tu correo electrónico.");
         }
 
@@ -69,11 +66,10 @@ public class LoginUser {
                         .access_token(accessToken)
                         .refresh_token(refreshToken)
                         .build(),
-                HttpStatus.OK
-        );
+                HttpStatus.OK);
     }
 
-    private void saveUserToken(UserEntity user, String token){
+    private void saveUserToken(UserEntity user, String token) {
         var saveToken = Token.builder()
                 .token(token)
                 .user(user)
@@ -84,10 +80,10 @@ public class LoginUser {
         tokenRepository.save(saveToken);
     }
 
-    private void revokeAllUserTokens(UserEntity user){
+    private void revokeAllUserTokens(UserEntity user) {
         var validTokens = tokenRepository.allValidTokensByUser(user.getId());
 
-        if(validTokens.isEmpty()){
+        if (validTokens.isEmpty()) {
             return;
         }
 
