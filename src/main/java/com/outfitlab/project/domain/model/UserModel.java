@@ -143,4 +143,12 @@ public class UserModel {
     public void setStatus(boolean status) {
         this.status = status;
     }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
 }

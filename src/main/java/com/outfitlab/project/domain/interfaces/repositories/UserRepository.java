@@ -22,4 +22,5 @@ public interface UserRepository {
 
     void convertToUser(String email);
 
+    void updateBrandUser(String userEmail, String brandCode);
 }

@@ -4,6 +4,9 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
+import com.outfitlab.project.domain.exceptions.SubscriptionNotFoundException;
+import com.outfitlab.project.domain.interfaces.repositories.UserSubscriptionRepository;
+import com.outfitlab.project.domain.model.UserSubscriptionModel;
 import com.outfitlab.project.domain.useCases.subscription.CreateMercadoPagoPreference;
 import com.outfitlab.project.domain.useCases.subscription.GetAllSubscription;
 import com.outfitlab.project.domain.useCases.subscription.ProcessPaymentNotification;
@@ -38,15 +41,18 @@ public class SubscriptionController {
     private final CreateMercadoPagoPreference createPreferenceUseCase;
     private final ProcessPaymentNotification processNotificationUseCase;
     private final GetAllSubscription getAllSubscription;
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
     public SubscriptionController(
             CreateMercadoPagoPreference createPreferenceUseCase,
             ProcessPaymentNotification processNotificationUseCase,
-            GetAllSubscription getAllSubscription)
+            GetAllSubscription getAllSubscription,
+            UserSubscriptionRepository userSubscriptionRepository)
     {
         this.createPreferenceUseCase = createPreferenceUseCase;
         this.processNotificationUseCase = processNotificationUseCase;
         this.getAllSubscription = getAllSubscription;
+        this.userSubscriptionRepository = userSubscriptionRepository;
     }
 
     @PostMapping("/crear-suscripcion")
@@ -102,6 +108,7 @@ public class SubscriptionController {
         return ResponseEntity.ok("Notification received, not a relevant topic.");
     }
 
+
     @GetMapping("/subscriptions")
     public ResponseEntity<?> getSubscriptions() {
         try {
@@ -116,5 +123,37 @@ public class SubscriptionController {
         }
     }
 
-    
+    @GetMapping("/user-subscription")
+    public ResponseEntity<?> getUserSubscription(@RequestParam String email) {
+        try {
+            UserSubscriptionModel subscription = userSubscriptionRepository.findByUserEmail(email);
+            
+            // Create nested maps to handle null values (for unlimited plans)
+            Map<String, Object> combinationsMap = new HashMap<>();
+            combinationsMap.put("used", subscription.getCombinationsUsed());
+            combinationsMap.put("max", subscription.getMaxCombinations());
+            
+            Map<String, Object> favoritesMap = new HashMap<>();
+            favoritesMap.put("count", subscription.getFavoritesCount());
+            favoritesMap.put("max", subscription.getMaxFavorites());
+            
+            Map<String, Object> modelsMap = new HashMap<>();
+            modelsMap.put("generated", subscription.getModelsGenerated());
+            modelsMap.put("max", subscription.getMaxModels());
+            
+            Map<String, Object> usageMap = new HashMap<>();
+            usageMap.put("combinations", combinationsMap);
+            usageMap.put("favorites", favoritesMap);
+            usageMap.put("models", modelsMap);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("planCode", subscription.getPlanCode());
+            response.put("status", subscription.getStatus());
+            response.put("usage", usageMap);
+            
+            return ResponseEntity.ok(response);
+        } catch (SubscriptionNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        }
+    }
 }
