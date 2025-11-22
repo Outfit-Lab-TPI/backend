@@ -23,7 +23,8 @@ public class BrandController {
     private final GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode;
     private final ActivateBrand activateBrand;
 
-    public BrandController(GetAllBrands getAllMarcas, GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode, ActivateBrand activateBrand){
+    public BrandController(GetAllBrands getAllMarcas, GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode,
+                           ActivateBrand activateBrand){
         this.getAllMarcas = getAllMarcas;
         this.getBrandAndGarmentsByBrandCode = getBrandAndGarmentsByBrandCode;
         this.activateBrand = activateBrand;

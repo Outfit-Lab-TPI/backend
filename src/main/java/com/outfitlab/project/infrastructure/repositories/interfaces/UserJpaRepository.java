@@ -13,5 +13,5 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByVerificationToken(String token);
 
-    UserEntity findByBrand_BrandCode(String brandCode);
+    UserEntity findByBrand_CodigoMarca(String brandCode);
 }

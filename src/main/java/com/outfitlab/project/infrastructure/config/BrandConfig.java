@@ -2,6 +2,8 @@ package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
+import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
+import com.outfitlab.project.domain.useCases.brand.ActivateBrand;
 import com.outfitlab.project.domain.useCases.brand.CreateBrand;
 import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.useCases.brand.GetBrandAndGarmentsByBrandCode;
@@ -26,6 +28,12 @@ public class BrandConfig {
     @Bean
     public CreateBrand createBrand(BrandRepository marcaRepository) {
         return new CreateBrand(marcaRepository);
+    }
+
+
+    @Bean
+    public ActivateBrand activateBrand(BrandRepository marcaRepository, UserRepository userRepository) {
+        return new ActivateBrand(marcaRepository, userRepository);
     }
 
     @Bean

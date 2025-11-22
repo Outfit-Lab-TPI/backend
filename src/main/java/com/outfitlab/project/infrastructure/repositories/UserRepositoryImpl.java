@@ -56,7 +56,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void desactivateUser(String email) {
         UserEntity entity =  getUserByEmail(email);
-        checkifUserExists(entity);
+        checkifUserExistsOrThrowException(entity);
 
         entity.setStatus(false);
         this.userJpaRepository.save(entity);
@@ -65,7 +65,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void activateUser(String email) {
         UserEntity entity =  getUserByEmail(email);
-        checkifUserExists(entity);
+        checkifUserExistsOrThrowException(entity);
 
         entity.setStatus(true);
         this.userJpaRepository.save(entity);
@@ -74,7 +74,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void convertToAdmin(String email) {
         UserEntity user = getUserByEmail(email);
-        checkifUserExists(user);
+        checkifUserExistsOrThrowException(user);
 
         user.setRole(ADMIN);
         this.userJpaRepository.save(user);
@@ -83,7 +83,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void convertToUser(String email) {
         UserEntity user = getUserByEmail(email);
-        checkifUserExists(user);
+        checkifUserExistsOrThrowException(user);
 
         user.setRole(USER);
         this.userJpaRepository.save(user);
@@ -92,7 +92,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void updateBrandUser(String userEmail, String brandCode) {
         UserEntity user = getUserByEmail(userEmail);
-        checkifUserExists(user);
+        checkifUserExistsOrThrowException(user);
 
         MarcaEntity brand = this.brandJpaRepository.findByCodigoMarca(brandCode);
         checkIfBrandExists(brand);
@@ -105,14 +105,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public String getEmailUserRelatedToBrandByBrandCode(String brandCode) {
-        return this.userJpaRepository.findByBrand_BrandCode(brandCode).getEmail();
+        UserEntity user = this.userJpaRepository.findByBrand_CodigoMarca(brandCode);
+        checkifUserExistsOrThrowException(user);
+        return user.getEmail();
     }
 
     private static void checkIfBrandExists(MarcaEntity brand) {
         if (brand == null) throw new BrandsNotFoundException("No encontramos la marca para relacionarla al usuario.");
     }
 
-    private void checkifUserExists(UserEntity user) {
+    private void checkifUserExistsOrThrowException(UserEntity user) {
         if (user == null) throw userNotFoundException();
     }
 
