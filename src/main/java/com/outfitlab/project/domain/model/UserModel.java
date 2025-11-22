@@ -15,6 +15,7 @@ public class UserModel {
     private String verificationToken;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String userImageUrl;
 
     private Role role;
     private boolean verified;
@@ -28,7 +29,8 @@ public class UserModel {
         this.verificationToken = verificationToken;
     }
 
-    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, boolean verified, boolean status, String verificationToken) {
+    public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, LocalDateTime createdAt, LocalDateTime updatedAt,
+                     Role role, boolean verified, boolean status, String verificationToken, String userImageUrl) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
@@ -42,6 +44,7 @@ public class UserModel {
         this.verified = verified;
         this.role = role;
         this.verificationToken = verificationToken;
+        this.userImageUrl = userImageUrl;
     }
 
     /*public String getPassword() {
@@ -150,5 +153,13 @@ public class UserModel {
 
     public void setVerificationToken(String verificationToken) {
         this.verificationToken = verificationToken;
+    }
+
+    public String getUserImageUrl() {
+        return userImageUrl;
+    }
+
+    public void setUserImageUrl(String userImageUrl) {
+        this.userImageUrl = userImageUrl;
     }
 }

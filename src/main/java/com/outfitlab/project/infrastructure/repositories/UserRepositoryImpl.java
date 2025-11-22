@@ -110,6 +110,18 @@ public class UserRepositoryImpl implements UserRepository {
         return user.getEmail();
     }
 
+    @Override
+    public void updateUser(String name, String lastname, String email, String password, String confirmPassword, String newImageUrl) {
+        UserEntity entity = this.userJpaRepository.findByEmail(email);
+        checkifUserExistsOrThrowException(entity);
+        entity.setName(name);
+        entity.setLastName(lastname);
+        entity.setEmail(email);
+        entity.setPassword(password);
+        if(!newImageUrl.isEmpty()) entity.setUserImageUrl(newImageUrl);
+        this.userJpaRepository.save(entity);
+    }
+
     private static void checkIfBrandExists(MarcaEntity brand) {
         if (brand == null) throw new BrandsNotFoundException("No encontramos la marca para relacionarla al usuario.");
     }

@@ -18,9 +18,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class UserConfig {
 
+
     @Bean
     public UserRepository userRepository(UserJpaRepository userJpaRepository, BrandJpaRepository brandJpaRepository) {
         return new UserRepositoryImpl(userJpaRepository, brandJpaRepository);
+    }
+
+    @Bean
+    public GetUserByEmail getUserByEmail(UserRepository userRepository) {
+        return new GetUserByEmail(userRepository);
+    }
+
+    @Bean
+    public UpdateUser updateUser(UserRepository userRepository) {
+        return new UpdateUser(userRepository);
     }
 
     @Bean
@@ -69,4 +80,5 @@ public class UserConfig {
     public VerifyEmail verifyEmail(UserRepository userRepository, UserJpaRepository userJpaRepository) {
         return new VerifyEmail(userRepository, userJpaRepository);
     }
+
 }

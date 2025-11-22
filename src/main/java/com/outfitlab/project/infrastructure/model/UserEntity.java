@@ -58,6 +58,7 @@ public class UserEntity implements UserDetails {
     private MarcaEntity brand;
 
     private boolean brandApproved;
+    private String userImageUrl;
 
     public UserEntity() {}
 
@@ -80,6 +81,19 @@ public class UserEntity implements UserDetails {
         this.verified = false;
     }
 
+    public UserEntity(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, String userImageUrl) {
+
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.satulation = satulation;
+        this.secondName = secondName;
+        this.years = years;
+        this.password = hashedPassword;
+        this.userImageUrl = userImageUrl;
+
+    }
+
     public static UserModel convertEntityToModel(UserEntity entity) {
         return new UserModel(
                 entity.getName(),
@@ -94,7 +108,8 @@ public class UserEntity implements UserDetails {
                 entity.getRole(),
                 entity.isVerified(),
                 entity.isStatus(),
-                entity.getVerificationToken()
+                entity.getVerificationToken(),
+                entity.getUserImageUrl()
         );
     }
 
@@ -106,7 +121,8 @@ public class UserEntity implements UserDetails {
                 model.getSatulation(),
                 model.getSecondName(),
                 model.getYears(),
-                model.getHashedPassword()
+                model.getHashedPassword(),
+                model.getUserImageUrl()
         );
     }
 
@@ -152,5 +168,13 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    public String getUserImageUrl() {
+        return userImageUrl;
+    }
+
+    public void setUserImageUrl(String userImageUrl) {
+        this.userImageUrl = userImageUrl;
     }
 }
