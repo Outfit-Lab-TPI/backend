@@ -6,6 +6,7 @@ import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.model.dto.LoginDTO;
 import com.outfitlab.project.domain.useCases.brand.CreateBrand;
 import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
+import com.outfitlab.project.domain.useCases.subscription.AssignFreePlanToUser;
 import com.outfitlab.project.domain.useCases.user.*;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
 import jakarta.validation.Valid;
@@ -33,9 +34,13 @@ public class UserController {
     private final CreateBrand createBrand;
     private final UpdateBrandUser updateBrandUser;
     private final SaveImage saveImage;
+    private final AssignFreePlanToUser assignFreePlanToUser;
 
-    public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase, GetAllUsers getAllUsers, DesactivateUser desactivateUser,
-                          ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser, CreateBrand createBrand, UpdateBrandUser updateBrandUser, SaveImage saveImage) {
+    public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase, GetAllUsers getAllUsers,
+            DesactivateUser desactivateUser,
+            ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser,
+            CreateBrand createBrand, UpdateBrandUser updateBrandUser, SaveImage saveImage,
+            AssignFreePlanToUser assignFreePlanToUser) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
         this.getAllUsers = getAllUsers;
@@ -46,14 +51,18 @@ public class UserController {
         this.createBrand = createBrand;
         this.updateBrandUser = updateBrandUser;
         this.saveImage = saveImage;
+        this.assignFreePlanToUser = assignFreePlanToUser;
     }
-
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDTO request) {
 
         try {
+            // 1. Registrar usuario
             UserModel newUser = registerUserUseCase.execute(request);
+
+            // 2. Asignar plan gratuito
+            assignFreePlanToUser.execute(newUser.getEmail());
 
             Map<String, Object> response = new HashMap<>();
             response.put("email", newUser.getEmail());
@@ -73,12 +82,17 @@ public class UserController {
     public ResponseEntity<?> registerbrandAndUser(@Valid @ModelAttribute RegisterDTO request) {
 
         try {
+            // 1. Registrar usuario
             UserModel newUser = registerUserUseCase.execute(request);
+
+            // 2. Asignar plan gratuito
+            assignFreePlanToUser.execute(newUser.getEmail());
+
+            // 3. Crear marca y asociarla al usuario
             String brandCode = createAndReturnBrand(
                     request.getBrandName(),
                     saveImageAndGetUrl(request.getLogoBrand(), "brand_logo_images"),
-                    request.getUrlSite()
-            );
+                    request.getUrlSite());
 
             updateBrandInUser(request.getEmail(), brandCode);
 

@@ -657,6 +657,60 @@ public LoginUser loginUser(
 }
 ```
 
+### ❌ 6. Un Use Case Llamando a Otro Use Case
+
+**Regla**: Los use cases NO deben llamar a otros use cases. La orquestación de múltiples casos de uso debe hacerse en el **controller**.
+
+```java
+// ❌ INCORRECTO - Use case orquestando otros use cases
+public class RegisterUser {
+    private final UserRepository userRepository;
+    private final AssignFreePlanToUser assignFreePlanToUser;  // ❌
+    
+    public UserModel execute(RegisterDTO request) {
+        // Lógica de registro
+        UserModel user = userRepository.saveUser(newUser);
+        
+        // ❌ Llamando a otro use case
+        assignFreePlanToUser.execute(user.getEmail());
+        
+        return user;
+    }
+}
+```
+
+```java
+// ✅ CORRECTO - Controller orquestando use cases
+@RestController
+public class UserController {
+    private final RegisterUser registerUser;
+    private final AssignFreePlanToUser assignFreePlanToUser;
+    
+    @PostMapping("/register")
+    @Transactional  // ✅ Control explícito de transacción
+    public ResponseEntity<?> register(@RequestBody RegisterDTO dto) {
+        try {
+            // 1. Registrar usuario
+            UserModel user = registerUser.execute(dto);
+            
+            // 2. Asignar plan gratuito
+            assignFreePlanToUser.execute(user.getEmail());
+            
+            return ResponseEntity.ok(UserDTO.convertToDTO(user));
+        } catch (UserAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+}
+```
+
+**Razones**:
+- ✅ **Responsabilidad Única**: Cada use case hace UNA cosa
+- ✅ **Reusabilidad**: `AssignFreePlanToUser` puede usarse en otros contextos
+- ✅ **Testabilidad**: Más fácil testear use cases independientes
+- ✅ **Claridad**: El controller muestra explícitamente el flujo completo
+- ✅ **Transaccionalidad**: Mejor control sobre transacciones
+
 ---
 
 ## Checklist para Code Review
@@ -670,6 +724,7 @@ Usa este checklist al revisar Pull Requests:
 - [ ] ¿No hay imports de `org.springframework` en domain?
 - [ ] ¿Los modelos de dominio son POJOs simples?
 - [ ] ¿Las interfaces de repositorio retornan Models (no Entities)?
+- [ ] ¿Los use cases NO llaman a otros use cases?
 
 ### Infraestructura
 
@@ -722,6 +777,10 @@ No directamente. Los use cases deben trabajar con Models. Los repositorios se en
 ### ¿Qué pasa si necesito usar una librería externa en un use case?
 
 Crea una interfaz (gateway) en domain y la implementación en infrastructure. Ejemplo: `GmailGateway` (interface) → `GmailGatewayImpl` (implementación).
+
+### ¿Puede un use case llamar a otro use case?
+
+**No**. La orquestación de múltiples use cases debe hacerse en el controller. Esto mantiene cada use case con una responsabilidad única, facilita el testing, y da mejor control sobre transacciones.
 
 ---
 
