@@ -2,6 +2,7 @@ package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
+import com.outfitlab.project.domain.helper.CodeFormatter;
 import com.outfitlab.project.domain.model.dto.BrandDTO;
 import com.outfitlab.project.domain.model.dto.UserWithBrandsDTO;
 import com.outfitlab.project.domain.useCases.brand.*;
@@ -12,7 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,14 +27,16 @@ public class BrandController {
     private final ActivateBrand activateBrand;
     private final DesactivateBrand desactivateBrand;
     private final GetAllBrandsWithRelatedUsers getAllBrandsWithRelatedUsers;
+    private final GetNotificationsNewBrands getNotificationsNewBrands;
 
     public BrandController(GetAllBrands getAllMarcas, GetBrandAndGarmentsByBrandCode getBrandAndGarmentsByBrandCode,
-                           ActivateBrand activateBrand, DesactivateBrand desactivateBrand, GetAllBrandsWithRelatedUsers getAllBrandsWithRelatedUsers){
+                           ActivateBrand activateBrand, DesactivateBrand desactivateBrand, GetAllBrandsWithRelatedUsers getAllBrandsWithRelatedUsers, GetNotificationsNewBrands getNotificationsNewBrands){
         this.getAllMarcas = getAllMarcas;
         this.getBrandAndGarmentsByBrandCode = getBrandAndGarmentsByBrandCode;
         this.activateBrand = activateBrand;
         this.desactivateBrand = desactivateBrand;
         this.getAllBrandsWithRelatedUsers = getAllBrandsWithRelatedUsers;
+        this.getNotificationsNewBrands = getNotificationsNewBrands;
     }
 
     @GetMapping("/marcas")
@@ -88,6 +93,26 @@ public class BrandController {
                     .status(404)
                     .body(e.getMessage());
         }
+    }
+
+    @GetMapping("/marcas/notifications-new-brands")
+    public ResponseEntity<?> getNotificationsNewBrands() {
+        try {
+
+            return ResponseEntity.ok(getBodyResponseForNotifications());
+        } catch (BrandsNotFoundException | UserNotFoundException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        }
+    }
+
+    private Map<String, Object> getBodyResponseForNotifications() {
+        List<UserWithBrandsDTO> records = this.getNotificationsNewBrands.execute();;
+        Map<String, Object> body = new HashMap<>();
+        body.put("totalElements", records.size());
+        body.put("notifications", records);
+        return body;
     }
 
     private static Map<String, Object> buildResponse(Page<BrandDTO> response) {
