@@ -1,22 +1,27 @@
 package com.outfitlab.project.infrastructure.repositories;
 
+import com.outfitlab.project.domain.enums.Role;
 import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.model.UserModel;
+import com.outfitlab.project.domain.model.dto.UserWithBrandsDTO;
 import com.outfitlab.project.infrastructure.model.MarcaEntity;
 import com.outfitlab.project.infrastructure.model.UserEntity;
 import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepository;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
-import static com.outfitlab.project.infrastructure.config.security.Role.*;
+import static com.outfitlab.project.domain.enums.Role.*;
 
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
     private final BrandJpaRepository brandJpaRepository;
+    private final int PAGE_SIZE = 10;
 
     public UserRepositoryImpl(UserJpaRepository UserJpaRepository, BrandJpaRepository brandJpaRepository) {
         this.userJpaRepository = UserJpaRepository;
@@ -68,6 +73,7 @@ public class UserRepositoryImpl implements UserRepository {
         checkifUserExistsOrThrowException(entity);
 
         entity.setStatus(true);
+        entity.setBrandApproved(true);
         this.userJpaRepository.save(entity);
     }
 
@@ -122,6 +128,22 @@ public class UserRepositoryImpl implements UserRepository {
         if(!newImageUrl.isEmpty()) entity.setUserImageUrl(newImageUrl);
 
         return UserEntity.convertEntityToModel(this.userJpaRepository.save(entity));
+    }
+
+    @Override
+    public Page<UserWithBrandsDTO> getAllBrandsWithUserRelated(int page) {
+        Page<UserEntity> records = this.userJpaRepository.findAllByRole(BRAND, PageRequest.of(page, PAGE_SIZE));
+        if (records == null) throw new BrandsNotFoundException("No hay Usuarios con marcas relacionadas.");
+        return records.map(UserEntity::convertEntityToModelWithBrand);
+    }
+
+    @Override
+    public List<UserModel> findAllWithRoleUserAndAdmin() {
+        List<UserModel> users = this.userJpaRepository.findAllByRoleIn(List.of(ADMIN, USER))
+                .stream().map(UserEntity::convertEntityToModel)
+                .toList();
+        if (users.isEmpty()) throw new UserNotFoundException("No encontramos usuarios.");
+        return users;
     }
 
     private static void checkIfBrandExists(MarcaEntity brand) {

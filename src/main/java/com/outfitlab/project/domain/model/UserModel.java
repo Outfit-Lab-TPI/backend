@@ -1,6 +1,7 @@
 package com.outfitlab.project.domain.model;
 
-import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.domain.enums.Role;
+import com.outfitlab.project.infrastructure.model.MarcaEntity;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ public class UserModel {
     private Role role;
     private boolean verified;
     private boolean status;
+    private BrandModel brand;
 
     public UserModel(String email, String name, String lastName, String hashedPassword, String verificationToken) {
         this.email = email;
@@ -45,6 +47,17 @@ public class UserModel {
         this.role = role;
         this.verificationToken = verificationToken;
         this.userImg = userImageUrl;
+    }
+
+    public UserModel(String name, String lastName, String email, Role role, boolean verified, boolean status, String userImageUrl, BrandModel brand) {
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.role = role;
+        this.verified = verified;
+        this.status = status;
+        this.userImg = userImageUrl;
+        this.brand = brand;
     }
 
     /*public String getPassword() {
@@ -161,5 +174,13 @@ public class UserModel {
 
     public void setUserImg(String userImg) {
         this.userImg = userImg;
+    }
+
+    public BrandModel getBrand() {
+        return brand;
+    }
+
+    public void setBrand(BrandModel brand) {
+        this.brand = brand;
     }
 }

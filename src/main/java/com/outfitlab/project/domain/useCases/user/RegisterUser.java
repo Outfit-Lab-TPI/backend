@@ -6,7 +6,7 @@ import com.outfitlab.project.domain.interfaces.gateways.GmailGateway;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.useCases.subscription.AssignFreePlanToUser;
-import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.domain.enums.Role;
 import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
 import com.outfitlab.project.infrastructure.config.security.jwt.Token;
 import com.outfitlab.project.infrastructure.model.UserEntity;

@@ -23,6 +23,11 @@ public class BrandConfig {
     }
 
     @Bean
+    public GetAllBrandsWithRelatedUsers getAllBrandsWithRelatedUsers(UserRepository userRepository) {
+        return new GetAllBrandsWithRelatedUsers(userRepository);
+    }
+
+    @Bean
     public CreateBrand createBrand(BrandRepository marcaRepository) {
         return new CreateBrand(marcaRepository);
     }

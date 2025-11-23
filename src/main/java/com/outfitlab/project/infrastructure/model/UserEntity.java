@@ -2,7 +2,8 @@ package com.outfitlab.project.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.outfitlab.project.domain.model.UserModel;
-import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.domain.enums.Role;
+import com.outfitlab.project.domain.model.dto.UserWithBrandsDTO;
 import com.outfitlab.project.infrastructure.config.security.jwt.Token;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -123,6 +124,20 @@ public class UserEntity implements UserDetails {
                 model.getYears(),
                 model.getHashedPassword(),
                 model.getUserImg()
+        );
+    }
+
+    public static UserWithBrandsDTO convertEntityToModelWithBrand(UserEntity entity) {
+        return new UserWithBrandsDTO(
+                entity.getEmail(),
+                entity.getLastName(),
+                entity.getName(),
+                entity.getRole(),
+                entity.isStatus(),
+                entity.isVerified(),
+                entity.isBrandApproved(),
+                entity.getUserImageUrl(),
+                MarcaEntity.convertToModelWithoutPrendas(entity.getBrand())
         );
     }
 

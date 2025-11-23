@@ -1,7 +1,7 @@
 package com.outfitlab.project.presentation.dto;
 
 import com.outfitlab.project.domain.model.UserModel;
-import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -85,9 +85,7 @@ public class MarcaEntity {
         return new BrandModel(
                 model.getCodigoMarca(),
                 model.getNombre(),
-                model.getLogoUrl(),
-                model.getCreatedAt(),
-                model.getUpdatedAt()
+                model.getLogoUrl()
         );
     }
 
