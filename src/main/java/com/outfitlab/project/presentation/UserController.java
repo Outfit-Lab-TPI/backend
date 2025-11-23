@@ -42,13 +42,14 @@ public class UserController {
     private final DeleteImage deleteImage;
     private final AssignFreePlanToUser assignFreePlanToUser;
     private final UserProfile userProfile;
+    private final RefreshToken refreshToken;
 
     public UserController(RegisterUser registerUserUseCase, LoginUser loginUserUseCase, GetAllUsers getAllUsers,
             DesactivateUser desactivateUser,
             ActivateUser activateUser, ConvertToAdmin convertToAdmin, ConvertToUser convertToUser,
             CreateBrand createBrand, UpdateBrandUser updateBrandUser, SaveImage saveImage,
             GetUserByEmail getUserByEmail, UpdateUser updateUser, DeleteImage deleteImage,
-            AssignFreePlanToUser assignFreePlanToUser, UserProfile userProfile) {
+            AssignFreePlanToUser assignFreePlanToUser, UserProfile userProfile, RefreshToken refreshToken) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
         this.getAllUsers = getAllUsers;
@@ -64,6 +65,7 @@ public class UserController {
         this.deleteImage = deleteImage;
         this.assignFreePlanToUser = assignFreePlanToUser;
         this.userProfile = userProfile;
+        this.refreshToken = refreshToken;
     }
 
     @PostMapping("/register")
@@ -131,6 +133,19 @@ public class UserController {
         } catch (UserNotFoundException e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("email", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
+        try {
+            String refreshTokenValue = request.get("refresh_token");
+            return refreshToken.execute(refreshTokenValue);
+
+        } catch (UserNotFoundException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
             return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
         }
     }
