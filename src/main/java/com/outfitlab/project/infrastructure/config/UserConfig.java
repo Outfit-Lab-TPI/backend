@@ -30,8 +30,8 @@ public class UserConfig {
     }
 
     @Bean
-    public UpdateUser updateUser(UserRepository userRepository) {
-        return new UpdateUser(userRepository);
+    public UpdateUser updateUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        return new UpdateUser(userRepository, passwordEncoder);
     }
 
     @Bean

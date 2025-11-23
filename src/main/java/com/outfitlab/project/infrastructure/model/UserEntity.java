@@ -122,7 +122,7 @@ public class UserEntity implements UserDetails {
                 model.getSecondName(),
                 model.getYears(),
                 model.getHashedPassword(),
-                model.getUserImageUrl()
+                model.getUserImg()
         );
     }
 

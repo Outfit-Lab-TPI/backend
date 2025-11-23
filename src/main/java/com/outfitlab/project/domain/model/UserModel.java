@@ -15,7 +15,7 @@ public class UserModel {
     private String verificationToken;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String userImageUrl;
+    private String userImg;
 
     private Role role;
     private boolean verified;
@@ -44,7 +44,7 @@ public class UserModel {
         this.verified = verified;
         this.role = role;
         this.verificationToken = verificationToken;
-        this.userImageUrl = userImageUrl;
+        this.userImg = userImageUrl;
     }
 
     /*public String getPassword() {
@@ -155,11 +155,11 @@ public class UserModel {
         this.verificationToken = verificationToken;
     }
 
-    public String getUserImageUrl() {
-        return userImageUrl;
+    public String getUserImg() {
+        return userImg;
     }
 
-    public void setUserImageUrl(String userImageUrl) {
-        this.userImageUrl = userImageUrl;
+    public void setUserImg(String userImg) {
+        this.userImg = userImg;
     }
 }

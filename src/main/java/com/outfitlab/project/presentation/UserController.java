@@ -1,24 +1,19 @@
 package com.outfitlab.project.presentation;
 
-import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
 import com.outfitlab.project.domain.exceptions.PasswordIsNotTheSame;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserAlreadyExistsException;
 import com.outfitlab.project.domain.model.dto.LoginDTO;
 import com.outfitlab.project.domain.useCases.brand.CreateBrand;
-import com.outfitlab.project.domain.useCases.brand.GetAllBrands;
 import com.outfitlab.project.domain.useCases.bucketImages.DeleteImage;
 import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.domain.useCases.user.*;
 import com.outfitlab.project.domain.model.dto.RegisterDTO;
 import com.outfitlab.project.presentation.dto.EditProfileRequestDTO;
-import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -187,12 +182,14 @@ public class UserController {
         }
     }
 
-    @PutMapping(value = "/update/{userEmail}", consumes = "multipart/form-data")
-    public ResponseEntity<?> updateUser(@PathVariable String userEmail, @ModelAttribute EditProfileRequestDTO request, @AuthenticationPrincipal UserDetails user) {
-        try{
-            String oldImageUrl = request.getUserImg() != null ? getOldImageUrlOfUser(userEmail) : "";
+    @PutMapping(value = "/update/{oldUserEmail}", consumes = "multipart/form-data")
+    public ResponseEntity<?> updateUser(@PathVariable String oldUserEmail, @ModelAttribute EditProfileRequestDTO request) {
 
-            this.updateUser.execute(
+        try{
+            String oldImageUrl = request.getUserImg() != null ? getOldImageUrlOfUser(oldUserEmail) : "";
+
+            UserModel updatedUser = this.updateUser.execute(
+                    oldUserEmail,
                     request.getName(),
                     request.getLastname(),
                     request.getEmail(),
@@ -202,7 +199,11 @@ public class UserController {
             );
             deleteImage(oldImageUrl);
 
-            return ResponseEntity.ok("Perfil actualizado");
+            Map<String, Object> response = new HashMap<>();
+            response.put("user", updatedUser);
+            response.put("message", "Perfil actualizado.");
+
+            return ResponseEntity.ok(response);
         }catch (UserNotFoundException | PasswordIsNotTheSame e){
             return ResponseEntity.status(404).body(e.getMessage());
         }
@@ -213,7 +214,7 @@ public class UserController {
     }
 
     private String getOldImageUrlOfUser(String email) {
-        return this.getUserByEmail.execute(email).getUserImageUrl();
+        return this.getUserByEmail.execute(email).getUserImg();
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -241,7 +242,7 @@ public class UserController {
     }
 
     private void deleteImage(String oldImageUrl) {
-        if (!oldImageUrl.isEmpty()) this.deleteImage.execute(oldImageUrl);
+        if (oldImageUrl != null && !oldImageUrl.isEmpty()) this.deleteImage.execute(oldImageUrl);
     }
 
 }

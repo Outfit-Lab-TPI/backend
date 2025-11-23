@@ -111,15 +111,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void updateUser(String name, String lastname, String email, String password, String confirmPassword, String newImageUrl) {
-        UserEntity entity = this.userJpaRepository.findByEmail(email);
+    public UserModel updateUser(String oldUserEmail, String name, String lastname, String newEmail, String password, String newImageUrl) {
+        UserEntity entity = this.userJpaRepository.findByEmail(oldUserEmail);
         checkifUserExistsOrThrowException(entity);
         entity.setName(name);
         entity.setLastName(lastname);
-        entity.setEmail(email);
-        entity.setPassword(password);
+        entity.setEmail(newEmail);
+
+        if (!password.isEmpty()) entity.setPassword(password);
         if(!newImageUrl.isEmpty()) entity.setUserImageUrl(newImageUrl);
-        this.userJpaRepository.save(entity);
+
+        return UserEntity.convertEntityToModel(this.userJpaRepository.save(entity));
     }
 
     private static void checkIfBrandExists(MarcaEntity brand) {
