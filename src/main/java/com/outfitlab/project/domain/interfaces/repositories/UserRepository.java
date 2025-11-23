@@ -37,4 +37,6 @@ public interface UserRepository {
     Page<UserWithBrandsDTO> getAllBrandsWithUserRelated(int page);
 
     List<UserModel> findAllWithRoleUserAndAdmin();
+
+    List<UserWithBrandsDTO> getNotApprovedBrands();
 }
