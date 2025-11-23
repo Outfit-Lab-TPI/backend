@@ -121,7 +121,7 @@ public class GarmentController {
 
     @PostMapping(value = "/new", consumes = "multipart/form-data")
     public ResponseEntity<?> newGarment(@ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
-        String brandCode = "puma"; //user.marca.brandCode
+        String brandCode = request.getCodigoMarca();
         try{
             this.createGarment.execute(
                     request.getNombre(),
@@ -141,41 +141,51 @@ public class GarmentController {
 
     @PutMapping(value = "/update/{garmentCode}", consumes = "multipart/form-data")
     public ResponseEntity<?> updateGarment(@PathVariable String garmentCode, @ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
-        String brandCode = "puma"; //user.marca.brandCode
+
+        String brandCode;
+
         try{
-            String oldImageUrl = request.getImagen() != null ? getOldImageUrlOfGarment(garmentCode) : "";
+            PrendaModel existingGarment = this.getGarmentByCode.execute(garmentCode);
+            brandCode = existingGarment.getMarca().getCodigoMarca();
+            String oldImageUrl = request.getImagen() != null ? existingGarment.getImagenUrl() : "";
 
             this.updateGarment.execute(
                     request.getNombre(),
                     request.getTipo(),
                     request.getColorNombre(),
                     request.getEvento(),
-                    brandCode,
                     garmentCode,
+                    brandCode,
                     checkIfImageIsEmptyToSaveAndGetUrl(request),
                     request.getClimaNombre(),
                     request.getOcasionesNombres()
             );
+
             deleteImage(oldImageUrl);
 
-            return ResponseEntity.ok("Prenda acctualizada correctamente.");
-        }catch (GarmentNotFoundException e){
+            return ResponseEntity.ok("Prenda actualizada correctamente.");
+
+        }catch (GarmentNotFoundException | BrandsNotFoundException e){
+
             return buildResponseEntityError(e.getMessage());
         }
     }
 
     @DeleteMapping("/delete/{garmentCode}")
     public ResponseEntity<?> deleteGarment(@PathVariable String garmentCode, @AuthenticationPrincipal UserDetails user) {
-        String brandCode = "puma"; //user.marca.brandCode
+        String brandCode;
         try{
+            PrendaModel garment = this.getGarmentByCode.execute(garmentCode);
+            brandCode = garment.getMarca().getCodigoMarca();
+
             tryToDeleteGarmentAndImage(garmentCode, brandCode);
             return ResponseEntity.ok("Prenda eliminada correctamente.");
-        }catch (BrandsNotFoundException | DeleteGarmentException e){
+        }catch (GarmentNotFoundException | BrandsNotFoundException | DeleteGarmentException e){
             return buildResponseEntityError(e.getMessage());
         }
     }
 
-    private void tryToDeleteGarmentAndImage(String garmentCode, String brandCode) {
+        private void tryToDeleteGarmentAndImage(String garmentCode, String brandCode) {
         PrendaModel garment = this.getGarmentByCode.execute(garmentCode);
 
         deleteImage(garment.getImagenUrl());

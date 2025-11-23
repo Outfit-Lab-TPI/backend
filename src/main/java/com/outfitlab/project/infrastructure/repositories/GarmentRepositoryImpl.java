@@ -3,6 +3,7 @@ package com.outfitlab.project.infrastructure.repositories;
 import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.ClimaModel;
+import com.outfitlab.project.domain.model.ColorModel;
 import com.outfitlab.project.domain.model.OcasionModel;
 import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
@@ -144,9 +145,15 @@ public class GarmentRepositoryImpl implements GarmentRepository {
 
     @Override
     public List<OcasionModel> findAllOcasiones() {
-        // CORRECCIÓN: Usar el método de JPA unificado y mapear
         return garmentJpaRepository.findAllOcasionEntities().stream()
                 .map(entity -> new OcasionModel(entity.getId(), entity.getNombre()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ColorModel> findAllColores() {
+        return garmentJpaRepository.findAllColorEntities().stream()
+                .map(entity -> new ColorModel(entity.getId(), entity.getNombre(), entity.getValor()))
                 .collect(Collectors.toList());
     }
 }
