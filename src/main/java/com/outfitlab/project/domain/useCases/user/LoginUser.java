@@ -65,6 +65,7 @@ public class LoginUser {
                 AuthResponse.builder()
                         .access_token(accessToken)
                         .refresh_token(refreshToken)
+                        .user(UserEntity.convertEntityToModel(user))
                         .build(),
                 HttpStatus.OK);
     }
