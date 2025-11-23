@@ -27,7 +27,11 @@ public class SecurityAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String userUsername;
         final String jwtToken;
-        if(request.getServletPath().contains("/api/users")){
+        if (
+                request.getServletPath().equals("/api/users/login")
+                        || request.getServletPath().equals("/api/users/register")
+                        || request.getServletPath().startsWith("/api/users/verify")
+        ) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -26,18 +26,17 @@ public class HttpConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf.disable())
-                //.anonymous(a -> a.disable())
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                /*.authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/**").permitAll() // modificable cuanddo tengamos implementada autenticacion via jwt
                         .anyRequest()
                         .authenticated()
-                )
-                /*.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/users/register", "/api/users/login")
+                )*/
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("/api/users/register", "/api/users/login/**", "/api/users/verify/**", "/login")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
-                )*/
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
