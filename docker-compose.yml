@@ -37,6 +37,13 @@ services:
       # API Keys
       - FASHION_IA_SECRET_KEY=${FASHION_IA_SECRET_KEY}
       - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      
+      # Backend API URL (for email links)
+      - BACKEND_API_URL=${BACKEND_API_URL:-http://localhost:8080}
+      
+      # Webhook URL for Mercado Pago
+      - WEBHOOK_BASE_URL=${WEBHOOK_BASE_URL:-http://localhost:8080}
       
       # JWT Authentication
       - JWT_SECRET=${JWT_SECRET:-mySecretKeyForJWT123456789012345678901234567890}
