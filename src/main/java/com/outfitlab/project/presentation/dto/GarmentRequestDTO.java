@@ -13,6 +13,7 @@ public class GarmentRequestDTO {
     private MultipartFile imagen;
     private String climaNombre;
     private List<String> ocasionesNombres;
+    private String codigoMarca;
 
     public String getNombre() {
         return nombre;
@@ -67,5 +68,12 @@ public class GarmentRequestDTO {
     }
 
     public void setOcasionesNombres(List<String> ocasionesNombres) {}
+
+    public String getCodigoMarca() {
+        return codigoMarca;
+    }
+    public void setCodigoMarca(String codigoMarca) {
+        this.codigoMarca = codigoMarca;
+    }
 }
 
