@@ -37,7 +37,6 @@ public class ProcessPaymentNotification {
         Payment payment = paymentGateway.getPaymentDetails(paymentId);
 
         String status = payment.getStatus();
-<<<<<<< HEAD
         String userEmail = payment.getExternalReference();  // CAMBIO: userEmail desde externalReference
         
         // CAMBIO: planCode desde los items del pago
@@ -47,23 +46,16 @@ public class ProcessPaymentNotification {
             !payment.getAdditionalInfo().getItems().isEmpty()) {
             planCode = payment.getAdditionalInfo().getItems().get(0).getId();
         }
-=======
-        String planCode = payment.getExternalReference();
-        String userEmail = payment.getPayer().getEmail();
->>>>>>> 6cfddf8 (feat: relacion de usuarios con suscripcion)
 
         System.out.printf("Procesando Webhook de PAGO. ID Pago MP: %s, Plan: %s, Email: %s, Status: %s%n",
                 paymentId, planCode, userEmail, status);
 
         if ("approved".equals(status)) {
             try {
-<<<<<<< HEAD
                 if (planCode == null) {
                     System.err.println("Error: No se pudo obtener el plan code del pago");
                     return;
                 }
-=======
->>>>>>> 6cfddf8 (feat: relacion de usuarios con suscripcion)
                 upgradeUserSubscription(userEmail, planCode);
                 System.out.println("Suscripción actualizada a " + planCode + " para usuario: " + userEmail);
             } catch (SubscriptionNotFoundException e) {
