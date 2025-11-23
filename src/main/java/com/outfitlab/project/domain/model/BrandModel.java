@@ -7,6 +7,7 @@ public class BrandModel {
 
     private String codigoMarca;
     private String nombre;
+    private String urlSite;
     private String logoUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -29,6 +30,19 @@ public class BrandModel {
         this.logoUrl = logoUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public BrandModel(String codigoMarca, String nombre, String logoUrl, String urlSite) {
+        this.codigoMarca = codigoMarca;
+        this.nombre = nombre;
+        this.urlSite = urlSite;
+        this.logoUrl = logoUrl;
+    }
+
+    public BrandModel(String codigoMarca, String nombre, String logoUrl) {
+        this.codigoMarca = codigoMarca;
+        this.nombre = nombre;
+        this.logoUrl = logoUrl;
     }
 
     public String getCodigoMarca() {
@@ -77,5 +91,13 @@ public class BrandModel {
 
     public void setPrendas(List<PrendaModel> prendas) {
         this.prendas = prendas;
+    }
+
+    public String getUrlSite() {
+        return urlSite;
+    }
+
+    public void setUrlSite(String urlSite) {
+        this.urlSite = urlSite;
     }
 }

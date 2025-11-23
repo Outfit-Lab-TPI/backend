@@ -36,6 +36,27 @@ services:
       
       # API Keys
       - FASHION_IA_SECRET_KEY=${FASHION_IA_SECRET_KEY}
+      - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      
+      # Backend API URL (for email links)
+      - BACKEND_API_URL=${BACKEND_API_URL:-http://localhost:8080}
+      
+      # Webhook URL for Mercado Pago
+      - WEBHOOK_BASE_URL=${WEBHOOK_BASE_URL:-http://localhost:8080}
+      
+      # JWT Authentication
+      - JWT_SECRET=${JWT_SECRET:-mySecretKeyForJWT123456789012345678901234567890}
+      - TOKEN_EXPIRATION=${TOKEN_EXPIRATION:-86400000}
+      - REFRESH_EXPIRATION=${REFRESH_EXPIRATION:-604800000}
+      
+      # Frontend Configuration
+      - FRONTEND_BASE_URL=${FRONTEND_BASE_URL:-http://localhost:5173}
+      - FRONTEND_ORIGINS=${FRONTEND_ORIGINS:-http://localhost:5173,https://*.vercel.app}
+      
+      # Gmail/Email Configuration
+      - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME:-tpi8bits@gmail.com}
+      - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
     
     restart: unless-stopped
     networks:

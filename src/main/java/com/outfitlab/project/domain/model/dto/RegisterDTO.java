@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 public class RegisterDTO {
 
@@ -23,8 +24,12 @@ public class RegisterDTO {
     )
     private String password;
 
-    public RegisterDTO() {
-    }
+    private String brandName;
+    private String urlSite;
+    private MultipartFile logoBrand;
+    private boolean registerAsBrand;
+
+    public RegisterDTO() {}
 
     public String getEmail() {
         return email;
@@ -52,5 +57,33 @@ public class RegisterDTO {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getUrlSite() {
+        return urlSite;
+    }
+    public void setUrlSite(String sitioUrl) {
+        this.urlSite = sitioUrl;
+    }
+
+    public MultipartFile getLogoBrand() {
+        return logoBrand;
+    }
+    public void setLogoBrand(MultipartFile logoBrand) {
+        this.logoBrand = logoBrand;
+    }
+
+    public boolean isRegisterAsBrandAsBrand() {
+        return registerAsBrand;
+    }
+    public void setRegisterAsBrandAsBrand(boolean registerAsBrand) {
+        this.registerAsBrand = registerAsBrand;
     }
 }

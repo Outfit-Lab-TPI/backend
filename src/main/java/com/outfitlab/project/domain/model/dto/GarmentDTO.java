@@ -11,13 +11,12 @@ public class GarmentDTO {
     private String evento;
     private String color;
 
-    public GarmentDTO(String nombre, String tipo, String imagenUrl, String garmentCode, String marcaNombre, String evento, String color) {
+    public GarmentDTO(String nombre, String tipo, String imagenUrl, String garmentCode, String marcaNombre, String color) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.imagenUrl = imagenUrl;
         this.garmentCode = garmentCode;
         this.marcaNombre = marcaNombre;
-        this.evento = evento;
         this.color = color;
     }
 
@@ -81,8 +80,7 @@ public class GarmentDTO {
                 prendaModel.getImagenUrl(),
                 prendaModel.getGarmentCode(),
                 prendaModel.getMarca().getNombre(),
-                prendaModel.getEvento(),
-                prendaModel.getColor()
+                prendaModel.getColor().getNombre()
         );
     }
 }

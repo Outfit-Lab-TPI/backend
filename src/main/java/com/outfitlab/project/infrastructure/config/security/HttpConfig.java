@@ -30,9 +30,9 @@ public class HttpConfig{
                         .requestMatchers("/**").permitAll() // modificable cuanddo tengamos implementada autenticacion via jwt
                         .anyRequest()
                         .authenticated()
-                )
-                /*.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/users/register", "/api/users/login")
+                )/*
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("/api/users/register", "/api/users/login/**", "/api/users/verify/**", "/login")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
