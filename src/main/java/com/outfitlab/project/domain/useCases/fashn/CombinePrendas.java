@@ -4,6 +4,7 @@ import com.outfitlab.project.domain.exceptions.FashnApiException;
 import com.outfitlab.project.domain.exceptions.PredictionFailedException;
 import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
 import com.outfitlab.project.domain.model.dto.CombineRequestDTO;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class CombinePrendas {
 
@@ -15,14 +16,14 @@ public class CombinePrendas {
         this.iFashnRepository = iFashnRepository;
     }
 
-    public String execute(CombineRequestDTO request) throws FashnApiException, PredictionFailedException {
+    public String execute(CombineRequestDTO request, UserDetails user) throws FashnApiException, PredictionFailedException {
         System.out.println(request.toString());
         checkRequestCombine(request.getTop(), request.getBottom());
 
-        if (isOnlyTop(request.getTop(), request.getBottom())) return combine(request.getTop(), TOPS, request.getAvatarType());
-        if (isOnlyBotton(request.getBottom(), request.getTop())) return combine(request.getBottom(), BOTTOMS, request.getAvatarType());
+        if (isOnlyTop(request.getTop(), request.getBottom())) return combine(request.getTop(), TOPS, request.getAvatarType(), user);
+        if (isOnlyBotton(request.getBottom(), request.getTop())) return combine(request.getBottom(), BOTTOMS, request.getAvatarType(), user);
 
-        return combineTopAndBottom(request.getTop(), request.getBottom(), request.getAvatarType());
+        return combineTopAndBottom(request.getTop(), request.getBottom(), request.getAvatarType(), user);
     }
 
     private boolean isOnlyTop(String top, String bottom) {
@@ -37,11 +38,11 @@ public class CombinePrendas {
         return bottom != null && (top == null || top.isBlank());
     }
 
-    private String combine(String garmentUrl, String category, String avatarType) throws FashnApiException, PredictionFailedException {
-        return this.iFashnRepository.pollStatus(this.iFashnRepository.combine(garmentUrl, category, avatarType));
+    private String combine(String garmentUrl, String category, String avatarType, UserDetails user) throws FashnApiException, PredictionFailedException {
+        return this.iFashnRepository.pollStatus(this.iFashnRepository.combine(garmentUrl, category, avatarType, user));
     }
 
-    private String combineTopAndBottom(String top, String bottom, String avatarType) throws FashnApiException, PredictionFailedException {
-        return this.iFashnRepository.combineTopAndBottom(top, bottom, avatarType);
+    private String combineTopAndBottom(String top, String bottom, String avatarType, UserDetails user) throws FashnApiException, PredictionFailedException {
+        return this.iFashnRepository.combineTopAndBottom(top, bottom, avatarType, user);
     }
 }

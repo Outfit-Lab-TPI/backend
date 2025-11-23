@@ -4,12 +4,14 @@ import com.outfitlab.project.domain.exceptions.FashnApiException;
 import com.outfitlab.project.domain.exceptions.PredictionFailedException;
 import com.outfitlab.project.domain.exceptions.PredictionTimeoutException;
 import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
+import com.outfitlab.project.infrastructure.model.UserEntity;
 import com.outfitlab.project.presentation.dto.FashnResponse;
 import com.outfitlab.project.presentation.dto.StatusResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -40,8 +42,8 @@ public class FashnRepositoryImpl implements FashnRepository {
     }
 
     @Override
-    public String combine(String garmentUrl, String category, String avatarType) throws FashnApiException {
-        return getFashnCombineId(new HttpEntity<>(buildHttpBody(garmentUrl, category, avatarType), buildHttpHeaders()));
+    public String combine(String garmentUrl, String category, String avatarType, UserDetails user) throws FashnApiException {
+        return getFashnCombineId(new HttpEntity<>(buildHttpBody(garmentUrl, category, avatarType, user), buildHttpHeaders()));
     }
 
     private String getFashnCombineId(HttpEntity<Map<String, Object>> httpEntity) throws FashnApiException {
@@ -79,8 +81,8 @@ public class FashnRepositoryImpl implements FashnRepository {
     }
 
     @Override
-    public String combineTopAndBottom(String top, String bottom, String avatarType) throws PredictionFailedException, FashnApiException {
-        return pollStatus(combineSecondGarment(bottom, "bottoms", pollStatus(combine(top, "tops", avatarType))));
+    public String combineTopAndBottom(String top, String bottom, String avatarType, UserDetails user) throws PredictionFailedException, FashnApiException {
+        return pollStatus(combineSecondGarment(bottom, "bottoms", pollStatus(combine(top, "tops", avatarType, user))));
     }
 
     @Override
@@ -112,12 +114,12 @@ public class FashnRepositoryImpl implements FashnRepository {
     }
 
     @NotNull
-    private Map<String, Object> buildHttpBody(String garmentUrl, String category, String avatarType) {
+    private Map<String, Object> buildHttpBody(String garmentUrl, String category, String avatarType, UserDetails user) throws FashnApiException {
         Map<String, Object> body = new HashMap<>();
         body.put("model_name", "tryon-v1.6");
 
         Map<String, String> inputs = new HashMap<>();
-        inputs.put("model_image", getAvatarUrl(avatarType));
+        inputs.put("model_image", getAvatarUrl(avatarType, user));
         inputs.put("garment_image", garmentUrl);
         inputs.put("garment_photo_type", GARMENT_PHOTO_TYPE);
         inputs.put("moderation_level", "none");
@@ -207,12 +209,24 @@ public class FashnRepositoryImpl implements FashnRepository {
         }
     }
 
-    private String getAvatarUrl(String avatarType) {
+    private String getAvatarUrl(String avatarType, UserDetails user) throws FashnApiException {
         return switch (avatarType.toUpperCase()) {
             case "MAN" -> AVATAR_MAN;
             case "WOMAN" -> AVATAR_WOMAN;
-            default -> "AVATAR CUSTOM ELEGIDO POR EL USER"; //deberia hacer un get de la Bdd con el link del avatar que tiene en su perfil
+            case "CUSTOM" -> getUserAvatarUrl(user);
+            default -> throw new FashnApiException("Tipo de avatar inválido: " + avatarType + ". Use 'MAN', 'WOMAN' o 'CUSTOM'.");
         };
+    }
+
+    private String getUserAvatarUrl(UserDetails user) {
+        String userAvatarUrl = null;
+        if (user instanceof UserEntity) {
+            userAvatarUrl = ((UserEntity) user).getUserImageUrl();
+        }
+        if (userAvatarUrl == null || userAvatarUrl.isEmpty()) {
+            return AVATAR_MAN;
+        }
+        return userAvatarUrl;
     }
 
 }

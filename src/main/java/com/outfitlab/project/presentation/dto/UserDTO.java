@@ -1,7 +1,7 @@
 package com.outfitlab.project.presentation.dto;
 
 import com.outfitlab.project.domain.model.UserModel;
-import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,13 +20,12 @@ public class UserDTO {
         private boolean status;
 
         public static UserDTO convertToDTO(UserModel model) {
-            return new UserDTO(
-                    model.getName(),
-                    model.getLastName(),
-                    model.getEmail(),
-                    model.getRole(),
-                    model.isVerified(),
-                    model.isStatus()
-            );
+                return new UserDTO(
+                                model.getName(),
+                                model.getLastName(),
+                                model.getEmail(),
+                                model.getRole(),
+                                model.isVerified(),
+                                model.isStatus());
         }
 }

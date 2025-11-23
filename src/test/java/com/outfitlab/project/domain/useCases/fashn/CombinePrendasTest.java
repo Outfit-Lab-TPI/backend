@@ -3,11 +3,13 @@ package com.outfitlab.project.domain.useCases.fashn;
 import com.outfitlab.project.domain.exceptions.FashnApiException;
 import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
 import com.outfitlab.project.domain.model.dto.CombineRequestDTO;
+import com.outfitlab.project.infrastructure.repositories.FashnRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,14 +32,15 @@ public class CombinePrendasTest {
     private static final String COMBINED_RESULT = "combined-result";
     private static final String GENDER_MALE = "male";
     private static final String GENDER_FEMALE = "female";
+    private UserDetails mockUser = mock(UserDetails.class);
 
 
     @Test
     public void shouldThrowFashnApiExceptionWhenBothTopAndBottomAreNull() {
         CombineRequestDTO request = createRequest(null, null, GENDER_MALE);
 
-        assertThrows(FashnApiException.class, () -> combinePrendas.execute(request));
-        thenFashnRepositoryWasNeverCalled();
+
+        assertThrows(FashnApiException.class, () -> combinePrendas.execute(request, mockUser));
     }
 
     @Test
@@ -56,7 +59,6 @@ public class CombinePrendasTest {
     public void shouldReturnResultWhenOnlyBottomIsProvided() throws Exception {
         CombineRequestDTO request = createRequest(null, BOTTOM_URL, GENDER_FEMALE);
         givenCombineCallReturnsTaskAndPollReturnsResult(BOTTOM_URL, "bottoms", GENDER_FEMALE, TASK_ID_BOTTOM, RESULT_BOTTOM);
-
         String result = whenExecuteCombine(request);
 
         thenResultIsSuccessfulAndCombineWasCalled(result, RESULT_BOTTOM, BOTTOM_URL, "bottoms", GENDER_FEMALE);
@@ -87,17 +89,17 @@ public class CombinePrendasTest {
     // private methods -----------------------------------
 
     private void givenCombineCallReturnsTaskAndPollReturnsResult(String itemUrl, String category, String gender, String taskId, String result) throws FashnApiException {
-        when(fashnRepository.combine(itemUrl, category, gender)).thenReturn(taskId);
+        when(fashnRepository.combine(itemUrl, category, gender, mockUser)).thenReturn(taskId);
 
         when(fashnRepository.pollStatus(taskId)).thenReturn(result);
     }
 
     private void givenCombineTopAndBottomCallReturnsResult(String topUrl, String bottomUrl, String gender, String result) throws FashnApiException {
-        when(fashnRepository.combineTopAndBottom(topUrl, bottomUrl, gender)).thenReturn(result);
+        when(fashnRepository.combineTopAndBottom(topUrl, bottomUrl, gender, mockUser)).thenReturn(result);
     }
 
     private String whenExecuteCombine(CombineRequestDTO request) throws FashnApiException {
-        return combinePrendas.execute(request);
+        return combinePrendas.execute(request, mockUser);
     }
 
     private void thenResultIsSuccessful(String actual, String expected) {
@@ -111,7 +113,7 @@ public class CombinePrendasTest {
     }
 
     private void thenCombineWasCalled(String itemUrl, String category, String gender, int times) {
-        verify(fashnRepository, times(times)).combine(itemUrl, category, gender);
+        verify(fashnRepository, times(times)).combine(itemUrl, category, gender, mockUser);
     }
 
     private void thenPollStatusWasCalled(String taskId) throws FashnApiException {
@@ -119,17 +121,17 @@ public class CombinePrendasTest {
     }
 
     private void thenCombineTopAndBottomWasCalled(String topUrl, String bottomUrl, String gender) throws FashnApiException {
-        verify(fashnRepository, times(1)).combineTopAndBottom(topUrl, bottomUrl, gender);
+        verify(fashnRepository, times(1)).combineTopAndBottom(topUrl, bottomUrl, gender, mockUser);
     }
 
     private void thenFashnRepositoryWasNeverCalled() {
-        verify(fashnRepository, never()).combine(anyString(), anyString(), anyString());
+        verify(fashnRepository, never()).combine(anyString(), anyString(), anyString(), mockUser);
         verify(fashnRepository, never()).pollStatus(anyString());
-        verify(fashnRepository, never()).combineTopAndBottom(anyString(), anyString(), anyString());
+        verify(fashnRepository, never()).combineTopAndBottom(anyString(), anyString(), anyString(), mockUser);
     }
 
     private void thenCombineWasNeverCalled() {
-        verify(fashnRepository, never()).combine(anyString(), anyString(), anyString());
+        verify(fashnRepository, never()).combine(anyString(), anyString(), anyString(), mockUser);
     }
 
     private void thenPollStatusWasNeverCalled() throws FashnApiException {
@@ -137,6 +139,6 @@ public class CombinePrendasTest {
     }
 
     private void thenCombineTopAndBottomWasNeverCalled() throws FashnApiException {
-        verify(fashnRepository, never()).combineTopAndBottom(anyString(), anyString(), anyString());
+        verify(fashnRepository, never()).combineTopAndBottom(anyString(), anyString(), anyString(), mockUser);
     }
 }

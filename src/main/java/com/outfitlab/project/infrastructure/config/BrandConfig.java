@@ -23,10 +23,19 @@ public class BrandConfig {
     }
 
     @Bean
+    public GetAllBrandsWithRelatedUsers getAllBrandsWithRelatedUsers(UserRepository userRepository) {
+        return new GetAllBrandsWithRelatedUsers(userRepository);
+    }
+
+    @Bean
     public CreateBrand createBrand(BrandRepository marcaRepository) {
         return new CreateBrand(marcaRepository);
     }
 
+    @Bean
+    public GetNotificationsNewBrands getNotificationsNewBrands(UserRepository userRepository) {
+        return new GetNotificationsNewBrands(userRepository);
+    }
 
     @Bean
     public ActivateBrand activateBrand(BrandRepository marcaRepository, UserRepository userRepository) {

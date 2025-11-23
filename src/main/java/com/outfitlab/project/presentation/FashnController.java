@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.*;
@@ -24,11 +26,11 @@ public class FashnController {
     public FashnController(CombinePrendas combinePrendas) {this.combinePrendas = combinePrendas;}
 
     @PostMapping("/combinar-prendas")
-    public ResponseEntity<GeneratedResponse> combine(@RequestBody CombineRequest request) {
+    public ResponseEntity<GeneratedResponse> combine(@RequestBody CombineRequest request, @AuthenticationPrincipal UserDetails user) {
         System.out.println(request.toString());
 
         try {
-            return ResponseEntity.ok(new GeneratedResponse("OK", this.combinePrendas.execute(CombineRequest.convertToDomainModel(request))));
+            return ResponseEntity.ok(new GeneratedResponse("OK", this.combinePrendas.execute(CombineRequest.convertToDomainModel(request), user)));
         } catch (PredictionFailedException e) {
             return buildHttpResponse(e.getMessage(), "FAILED", BAD_GATEWAY);
         } catch (PredictionTimeoutException e) {
