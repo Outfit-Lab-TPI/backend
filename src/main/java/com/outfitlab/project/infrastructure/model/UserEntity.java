@@ -97,6 +97,31 @@ public class UserEntity implements UserDetails {
     }
 
     public static UserModel convertEntityToModel(UserEntity entity) {
+        UserModel model = new UserModel(
+                entity.getName(),
+                entity.getLastName(),
+                entity.getEmail(),
+                entity.getSatulation(),
+                entity.getSecondName(),
+                entity.getYears(),
+                entity.getPassword(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                entity.getRole(),
+                entity.isVerified(),
+                entity.isStatus(),
+                entity.getVerificationToken(),
+                entity.getUserImageUrl());
+
+        // Incluir brand si existe (null-safe)
+        if (entity.getBrand() != null) {
+            model.setBrand(MarcaEntity.convertToModelWithoutPrendas(entity.getBrand()));
+        }
+
+        return model;
+    }
+
+    public static UserModel convertEntityUserOrAdminToModel(UserEntity entity) {
         return new UserModel(
                 entity.getName(),
                 entity.getLastName(),

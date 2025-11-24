@@ -9,4 +9,5 @@ public class ImageData {
     private String status;
     private String imageUrl;
     private String errorMessage;
+    private boolean esFavorita;
 }

@@ -21,7 +21,8 @@ class BrandControllerTest {
     private ActivateBrand activateBrand = mock(ActivateBrand.class);
     private DesactivateBrand desactivateBrand = mock(DesactivateBrand.class);
     private GetAllBrandsWithRelatedUsers getAllBrandsWithRelatedUsers = mock(GetAllBrandsWithRelatedUsers.class);
-    private BrandController brandController = new BrandController(getAllBrands, getBrandAndGarmentsByBrandCode, activateBrand, desactivateBrand, getAllBrandsWithRelatedUsers);
+    private GetNotificationsNewBrands getNotificationsNewBrands = mock(GetNotificationsNewBrands.class);
+    private BrandController brandController = new BrandController(getAllBrands, getBrandAndGarmentsByBrandCode, activateBrand, desactivateBrand, getAllBrandsWithRelatedUsers, getNotificationsNewBrands);
 
     @Test
     public void givenValidPageWhenGetMarcasThenReturnsOkWithContent() throws Exception, BrandsNotFoundException {

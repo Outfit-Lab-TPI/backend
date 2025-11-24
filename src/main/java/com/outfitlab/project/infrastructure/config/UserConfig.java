@@ -99,4 +99,10 @@ public class UserConfig {
     public VerifyEmail verifyEmail(UserRepository userRepository, UserJpaRepository userJpaRepository) {
         return new VerifyEmail(userRepository, userJpaRepository);
     }
+
+    @Bean
+    public RefreshToken refreshToken(JwtService jwtService, UserJpaRepository userJpaRepository,
+            TokenRepository tokenRepository) {
+        return new RefreshToken(jwtService, userJpaRepository, tokenRepository);
+    }
 }

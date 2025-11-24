@@ -15,6 +15,7 @@ public class CreateGarment {
     public void execute(String name, String type, String color, String brandCode, String imageUrl, String climaNombre,  List<String> ocasionesNombres) {
         this.garmentRepository.createGarment(
                 name,
+                formatGarmentCode(name),
                 type,
                 color,
                 brandCode,

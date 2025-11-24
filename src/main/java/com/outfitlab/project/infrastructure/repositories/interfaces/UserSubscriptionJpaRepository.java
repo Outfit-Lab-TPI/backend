@@ -13,19 +13,19 @@ public interface UserSubscriptionJpaRepository extends JpaRepository<UserSubscri
     @Query("SELECT us FROM UserSubscriptionEntity us JOIN FETCH us.user u JOIN FETCH us.subscription WHERE u.email = :email")
     Optional<UserSubscriptionEntity> findByUserEmail(@Param("email") String email);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE UserSubscriptionEntity u SET u.combinationsUsed = u.combinationsUsed + 1 WHERE u.user.id = :userId")
     void incrementCombinationsByUserId(@Param("userId") Long userId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE UserSubscriptionEntity u SET u.favoritesCount = u.favoritesCount + 1 WHERE u.user.id = :userId")
     void incrementFavoritesByUserId(@Param("userId") Long userId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE UserSubscriptionEntity u SET u.favoritesCount = u.favoritesCount - 1 WHERE u.user.id = :userId AND u.favoritesCount > 0")
     void decrementFavoritesByUserId(@Param("userId") Long userId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE UserSubscriptionEntity u SET u.modelsGenerated = u.modelsGenerated + 1 WHERE u.user.id = :userId")
     void incrementModelsByUserId(@Param("userId") Long userId);
 }

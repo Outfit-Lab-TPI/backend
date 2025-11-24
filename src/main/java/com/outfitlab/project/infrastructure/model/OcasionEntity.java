@@ -1,5 +1,6 @@
 package com.outfitlab.project.infrastructure.model;
 
+import com.outfitlab.project.domain.model.OcasionModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +22,12 @@ public class OcasionEntity {
 
     public OcasionEntity(String nombre) {
         this.nombre = nombre;
+    }
+
+    public static OcasionModel convertEntityToModel(OcasionEntity entity) {
+        OcasionModel model = new OcasionModel();
+        model.setId(entity.getId());
+        model.setNombre(entity.getNombre());
+        return model;
     }
 }

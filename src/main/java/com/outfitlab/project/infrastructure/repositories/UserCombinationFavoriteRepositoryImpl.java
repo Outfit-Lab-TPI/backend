@@ -13,6 +13,7 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.UserCombinat
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 public class UserCombinationFavoriteRepositoryImpl implements UserCombinationFavoriteRepository {
 
@@ -68,7 +69,7 @@ public class UserCombinationFavoriteRepositoryImpl implements UserCombinationFav
             throw new UserNotFoundException("No encontramos un usuario con el email: " + userEmail);
 
         Page<UserCombinationFavoriteEntity> favorites = this.userCombinationFavoriteJpaRepository
-                .findByUser_Email(userEmail, PageRequest.of(page, PAGE_SIZE));
+                .findByUser_Email(userEmail, PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt")));
         if (favorites.isEmpty())
             throw new FavoritesException("El usuario no tiene combinaciones favoritas.");
 
