@@ -2,7 +2,6 @@ package com.outfitlab.project.infrastructure.gateways;
 
 import com.outfitlab.project.domain.interfaces.gateways.GmailGateway;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -12,7 +11,7 @@ public class GmailGatewayImpl implements GmailGateway {
     private final JavaMailSender mailSender;
     private final String senderEmail;
 
-    public GmailGatewayImpl(JavaMailSender mailSender, @Value("${spring.mail.username}") String senderEmail) {
+    public GmailGatewayImpl(JavaMailSender mailSender, String senderEmail) {
         this.mailSender = mailSender;
         this.senderEmail = senderEmail;
     }
