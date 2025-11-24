@@ -15,24 +15,24 @@ public class UserSubscriptionRepositoryImpl implements UserSubscriptionRepositor
     private final UserSubscriptionJpaRepository jpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final SubscriptionJpaRepository subscriptionJpaRepository;
-    
+
     public UserSubscriptionRepositoryImpl(UserSubscriptionJpaRepository jpaRepository,
-                                         UserJpaRepository userJpaRepository,
-                                         SubscriptionJpaRepository subscriptionJpaRepository) {
+            UserJpaRepository userJpaRepository,
+            SubscriptionJpaRepository subscriptionJpaRepository) {
         this.jpaRepository = jpaRepository;
         this.userJpaRepository = userJpaRepository;
         this.subscriptionJpaRepository = subscriptionJpaRepository;
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public UserSubscriptionModel findByUserEmail(String userEmail) throws SubscriptionNotFoundException {
         return jpaRepository.findByUserEmail(userEmail)
-            .map(UserSubscriptionEntity::convertToModel)
-            .orElseThrow(() -> new SubscriptionNotFoundException(
-                "No se encontró suscripción para el usuario: " + userEmail));
+                .map(UserSubscriptionEntity::convertToModel)
+                .orElseThrow(() -> new SubscriptionNotFoundException(
+                        "No se encontró suscripción para el usuario: " + userEmail));
     }
-    
+
     @Override
     @Transactional
     public UserSubscriptionModel save(UserSubscriptionModel subscription) {
@@ -40,10 +40,10 @@ public class UserSubscriptionRepositoryImpl implements UserSubscriptionRepositor
         if (user == null) {
             throw new RuntimeException("Usuario no encontrado: " + subscription.getUserEmail());
         }
-        
+
         SubscriptionEntity subscriptionEntity = subscriptionJpaRepository.findByPlanCode(subscription.getPlanCode())
-            .orElseThrow(() -> new RuntimeException("Plan no encontrado: " + subscription.getPlanCode()));
-        
+                .orElseThrow(() -> new RuntimeException("Plan no encontrado: " + subscription.getPlanCode()));
+
         UserSubscriptionEntity entity = new UserSubscriptionEntity();
         entity.setUser(user);
         entity.setSubscription(subscriptionEntity);
@@ -56,20 +56,21 @@ public class UserSubscriptionRepositoryImpl implements UserSubscriptionRepositor
         entity.setSubscriptionStart(subscription.getSubscriptionStart());
         entity.setSubscriptionEnd(subscription.getSubscriptionEnd());
         entity.setStatus(subscription.getStatus());
-        
+
         UserSubscriptionEntity saved = jpaRepository.save(entity);
         return UserSubscriptionEntity.convertToModel(saved);
     }
-    
+
     @Override
     @Transactional
     public UserSubscriptionModel update(UserSubscriptionModel subscription) {
         UserSubscriptionEntity entity = jpaRepository.findByUserEmail(subscription.getUserEmail())
-            .orElseThrow(() -> new RuntimeException("Suscripción no encontrada para: " + subscription.getUserEmail()));
-        
+                .orElseThrow(
+                        () -> new RuntimeException("Suscripción no encontrada para: " + subscription.getUserEmail()));
+
         SubscriptionEntity subscriptionEntity = subscriptionJpaRepository.findByPlanCode(subscription.getPlanCode())
-            .orElseThrow(() -> new RuntimeException("Plan no encontrado: " + subscription.getPlanCode()));
-        
+                .orElseThrow(() -> new RuntimeException("Plan no encontrado: " + subscription.getPlanCode()));
+
         entity.setSubscription(subscriptionEntity);
         entity.setCombinationsUsed(subscription.getCombinationsUsed());
         entity.setFavoritesCount(subscription.getFavoritesCount());
@@ -80,32 +81,49 @@ public class UserSubscriptionRepositoryImpl implements UserSubscriptionRepositor
         entity.setSubscriptionStart(subscription.getSubscriptionStart());
         entity.setSubscriptionEnd(subscription.getSubscriptionEnd());
         entity.setStatus(subscription.getStatus());
-        
+
         UserSubscriptionEntity updated = jpaRepository.save(entity);
         return UserSubscriptionEntity.convertToModel(updated);
     }
-    
+
     @Override
     @Transactional
     public void incrementCounter(String userEmail, String counterType) {
-        switch(counterType) {
+        // Obtener el user_id desde el email
+        UserEntity user = userJpaRepository.findByEmail(userEmail);
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado: " + userEmail);
+        }
+
+        System.out.println("🔍 DEBUG incrementCounter - Email: " + userEmail + ", UserId: " + user.getId()
+                + ", CounterType: " + counterType);
+
+        switch (counterType) {
             case "combinations":
-                jpaRepository.incrementCombinations(userEmail);
+                jpaRepository.incrementCombinationsByUserId(user.getId());
+                System.out.println("✅ Ejecutado incrementCombinationsByUserId para userId: " + user.getId());
                 break;
             case "favorites":
-                jpaRepository.incrementFavorites(userEmail);
+                jpaRepository.incrementFavoritesByUserId(user.getId());
+                System.out.println("✅ Ejecutado incrementFavoritesByUserId para userId: " + user.getId());
                 break;
             case "3d_models":
-                jpaRepository.incrementModels(userEmail);
+                jpaRepository.incrementModelsByUserId(user.getId());
+                System.out.println("✅ Ejecutado incrementModelsByUserId para userId: " + user.getId());
                 break;
         }
     }
-    
+
     @Override
     @Transactional
     public void decrementCounter(String userEmail, String counterType) {
         if ("favorites".equals(counterType)) {
-            jpaRepository.decrementFavorites(userEmail);
+            // Obtener el user_id desde el email
+            UserEntity user = userJpaRepository.findByEmail(userEmail);
+            if (user == null) {
+                throw new RuntimeException("Usuario no encontrado: " + userEmail);
+            }
+            jpaRepository.decrementFavoritesByUserId(user.getId());
         }
     }
 }

@@ -7,6 +7,8 @@ import java.util.List;
 public interface SubscriptionRepository {
 
     List<SubscriptionModel> getAllSubscriptions();
-    
+
     SubscriptionModel getByPlanCode(String planCode);
+
+    List<SubscriptionModel> findByPlanType(String planType);
 }
