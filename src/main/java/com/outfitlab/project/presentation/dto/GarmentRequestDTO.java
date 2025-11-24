@@ -13,6 +13,7 @@ public class GarmentRequestDTO {
     private MultipartFile imagen;
     private String climaNombre;
     private List<String> ocasionesNombres;
+    private String codigoMarca;
 
     public String getNombre() {
         return nombre;
@@ -66,6 +67,29 @@ public class GarmentRequestDTO {
         return ocasionesNombres;
     }
 
-    public void setOcasionesNombres(List<String> ocasionesNombres) {}
+    public void setOcasionesNombres(List<String> ocasionesNombres) {
+        this.ocasionesNombres = ocasionesNombres;
+    }
+
+    public String getCodigoMarca() {
+        return codigoMarca;
+    }
+    public void setCodigoMarca(String codigoMarca) {
+        this.codigoMarca = codigoMarca;
+    }
+
+    @Override
+    public String toString() {
+        return "GarmentRequestDTO{" +
+                "nombre='" + nombre + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", colorNombre='" + colorNombre + '\'' +
+                ", evento='" + evento + '\'' +
+                ", imagen=" + imagen +
+                ", climaNombre='" + climaNombre + '\'' +
+                ", ocasionesNombres=" + ocasionesNombres +
+                ", codigoMarca='" + codigoMarca + '\'' +
+                '}';
+    }
 }
 

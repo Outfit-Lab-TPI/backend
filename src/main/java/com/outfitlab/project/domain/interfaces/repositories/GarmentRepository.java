@@ -1,6 +1,7 @@
 package com.outfitlab.project.domain.interfaces.repositories;
 
 import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
+import com.outfitlab.project.domain.model.ColorModel;
 import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.dto.PageDTO;
 import com.outfitlab.project.domain.model.ClimaModel;
@@ -18,6 +19,7 @@ public interface GarmentRepository {
 
     void createGarment(
             String name,
+            String garmentCode,
             String type,
             String color,
             String brandCode,
@@ -39,4 +41,6 @@ public interface GarmentRepository {
     List<OcasionModel> findAllOcasiones();
 
     List<PrendaModel> findAll();
+
+    List<ColorModel> findAllColores();
 }

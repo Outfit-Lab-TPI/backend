@@ -32,6 +32,9 @@ public interface GarmentJpaRepository extends JpaRepository<PrendaEntity, Long> 
     @Query("SELECT o FROM OcasionEntity o")
     List<OcasionEntity> findAllOcasionEntities();
 
+    @Query("SELECT c FROM ColorEntity c")
+    List<ColorEntity> findAllColorEntities();
+
     Optional<ClimaEntity> findClimaEntityByNombre(String nombre);
 
     Optional<OcasionEntity> findOcasionEntityByNombre(String nombre);

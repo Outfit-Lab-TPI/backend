@@ -111,7 +111,28 @@ public class UserEntity implements UserDetails {
                 entity.isVerified(),
                 entity.isStatus(),
                 entity.getVerificationToken(),
-                entity.getUserImageUrl());
+                entity.getUserImageUrl(),
+                MarcaEntity.convertToModelWithoutPrendas(entity.getBrand())
+        );
+    }
+
+    public static UserModel convertEntityUserOrAdminToModel(UserEntity entity) {
+        return new UserModel(
+                entity.getName(),
+                entity.getLastName(),
+                entity.getEmail(),
+                entity.getSatulation(),
+                entity.getSecondName(),
+                entity.getYears(),
+                entity.getPassword(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                entity.getRole(),
+                entity.isVerified(),
+                entity.isStatus(),
+                entity.getVerificationToken(),
+                entity.getUserImageUrl()
+        );
     }
 
     public static UserModel convertEntityToModelWithId(UserEntity entity) {

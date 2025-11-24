@@ -12,17 +12,18 @@ import java.util.regex.Pattern;
 public class AssignFreePlanToUser {
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private static final String FREE_PLAN_CODE = "free-monthly";
-    
+    private static final String FREE_PLAN_CODE_USER = "user-free-monthly";
+    private static final String FREE_PLAN_CODE_BRAND = "brand-free-monthly";
+
     public AssignFreePlanToUser(UserSubscriptionRepository userSubscriptionRepository,
                                 SubscriptionRepository subscriptionRepository) {
         this.userSubscriptionRepository = userSubscriptionRepository;
         this.subscriptionRepository = subscriptionRepository;
     }
     
-    public void execute(String userEmail) {
+    public void execute(String userEmail, boolean isBrand) {
         SubscriptionModel freePlan = 
-            subscriptionRepository.getByPlanCode(FREE_PLAN_CODE);
+            subscriptionRepository.getByPlanCode(isBrand ? FREE_PLAN_CODE_USER : FREE_PLAN_CODE_BRAND);
         
         UserSubscriptionModel userSubscription = new UserSubscriptionModel();
         userSubscription.setUserEmail(userEmail);

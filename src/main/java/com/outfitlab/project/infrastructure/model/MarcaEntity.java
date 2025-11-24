@@ -85,6 +85,8 @@ public class MarcaEntity {
     }
 
     public static BrandModel convertToModelWithoutPrendas(MarcaEntity model) {
+        if (model == null) return null;
+
         return new BrandModel(
                 model.getCodigoMarca(),
                 model.getNombre(),

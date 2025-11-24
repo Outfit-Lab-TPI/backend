@@ -155,7 +155,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<UserModel> findAllWithRoleUserAndAdmin() {
         List<UserModel> users = this.userJpaRepository.findAllByRoleIn(List.of(ADMIN, USER))
-                .stream().map(UserEntity::convertEntityToModel)
+                .stream().map(UserEntity::convertEntityUserOrAdminToModel)
                 .toList();
         if (users.isEmpty())
             throw new UserNotFoundException("No encontramos usuarios.");
