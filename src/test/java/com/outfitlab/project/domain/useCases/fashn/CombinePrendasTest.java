@@ -125,13 +125,13 @@ public class CombinePrendasTest {
     }
 
     private void thenFashnRepositoryWasNeverCalled() {
-        verify(fashnRepository, never()).combine(anyString(), anyString(), anyString(), mockUser);
+        verify(fashnRepository, never()).combine(anyString(), anyString(), anyString(), any());
         verify(fashnRepository, never()).pollStatus(anyString());
-        verify(fashnRepository, never()).combineTopAndBottom(anyString(), anyString(), anyString(), mockUser);
+        verify(fashnRepository, never()).combineTopAndBottom(anyString(), anyString(), anyString(), any());
     }
 
     private void thenCombineWasNeverCalled() {
-        verify(fashnRepository, never()).combine(anyString(), anyString(), anyString(), mockUser);
+        verify(fashnRepository, never()).combine(anyString(), anyString(), anyString(), any());
     }
 
     private void thenPollStatusWasNeverCalled() throws FashnApiException {
@@ -139,6 +139,6 @@ public class CombinePrendasTest {
     }
 
     private void thenCombineTopAndBottomWasNeverCalled() throws FashnApiException {
-        verify(fashnRepository, never()).combineTopAndBottom(anyString(), anyString(), anyString(), mockUser);
+        verify(fashnRepository, never()).combineTopAndBottom(anyString(), anyString(), anyString(), any());
     }
 }
