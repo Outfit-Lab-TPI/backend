@@ -1,6 +1,7 @@
 package com.outfitlab.project.infrastructure.repositories;
 
 import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
+import com.outfitlab.project.domain.interfaces.repositories.ClimaRepository;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.ClimaModel;
 import com.outfitlab.project.domain.model.ColorModel;
@@ -9,8 +10,7 @@ import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
 import com.outfitlab.project.domain.model.dto.PageDTO;
 import com.outfitlab.project.infrastructure.model.*;
-import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepository;
-import com.outfitlab.project.infrastructure.repositories.interfaces.GarmentJpaRepository;
+import com.outfitlab.project.infrastructure.repositories.interfaces.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -23,10 +23,16 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     private final int PAGE_SIZE = 10;
     private final GarmentJpaRepository garmentJpaRepository;
     private final BrandJpaRepository brandJpaRepository;
+    private final ColorJpaRepository colorJpaRepository;
+    private final ClimaJpaRepository climaJpaRepository;
+    private final OcacionJpaRepository ocacionJpaRepository;
 
-    public GarmentRepositoryImpl(GarmentJpaRepository garmentJpaRepository, BrandJpaRepository brandJpaRepository) {
+    public GarmentRepositoryImpl(GarmentJpaRepository garmentJpaRepository, BrandJpaRepository brandJpaRepository, ColorJpaRepository colorJpaRepository, ClimaJpaRepository climaJpaRepository, OcacionJpaRepository ocacionJpaRepository) {
         this.garmentJpaRepository = garmentJpaRepository;
         this.brandJpaRepository = brandJpaRepository;
+        this.colorJpaRepository = colorJpaRepository;
+        this.climaJpaRepository = climaJpaRepository;
+        this.ocacionJpaRepository = ocacionJpaRepository;
     }
 
     @Override
@@ -75,12 +81,12 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     ) {
         MarcaEntity brandEntity = this.brandJpaRepository.findByCodigoMarca(brandCode);
         if (brandEntity == null) throw new GarmentNotFoundException("No encontramos la brand: " + brandCode);
-        ClimaEntity climaEntity = garmentJpaRepository.findClimaEntityByNombre(climaNombre)
+        ClimaEntity climaEntity = this.climaJpaRepository.findClimaEntityByNombre(climaNombre)
                 .orElseThrow(() -> new IllegalArgumentException("Clima no válido: " + climaNombre));
-        ColorEntity colorEntity = garmentJpaRepository.findColorEntityByNombre(colorNombre)
+        ColorEntity colorEntity = this.colorJpaRepository.findColorEntityByNombre(colorNombre)
                 .orElseThrow(() -> new IllegalArgumentException("Color no válido: " + colorNombre));
         Set<OcasionEntity> ocasionesEntities = ocasionesNombres.stream()
-                .map(nombre -> garmentJpaRepository.findOcasionEntityByNombre(nombre)
+                .map(nombre -> this.ocacionJpaRepository.findOcasionEntityByNombre(nombre)
                         .orElseThrow(() -> new IllegalArgumentException("Ocasión no válida: " + nombre)))
                 .collect(Collectors.toSet());
         this.garmentJpaRepository.save(new PrendaEntity(
@@ -103,12 +109,12 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     public void updateGarment(String name, String type, String colorNombre, String event, String garmentCode, String imageUrl, String newGarmentCode, String climaNombre, List<String> ocasionesNombres) {
         PrendaEntity garmentEntity = this.garmentJpaRepository.findByGarmentCode(garmentCode);
         if (garmentEntity == null) throw new GarmentNotFoundException("No encontramos la prenda: " + garmentCode);
-        ColorEntity colorEntity = this.garmentJpaRepository.findColorEntityByNombre(colorNombre)
+        ColorEntity colorEntity = this.colorJpaRepository.findColorEntityByNombre(colorNombre)
                 .orElseThrow(() -> new IllegalArgumentException("Color no válido: " + colorNombre));
-        ClimaEntity climaEntity = garmentJpaRepository.findClimaEntityByNombre(climaNombre)
+        ClimaEntity climaEntity = this.climaJpaRepository.findClimaEntityByNombre(climaNombre)
                 .orElseThrow(() -> new IllegalArgumentException("Clima no válido: " + climaNombre));
         Set<OcasionEntity> ocasionesEntities = ocasionesNombres.stream()
-                .map(nombre -> garmentJpaRepository.findOcasionEntityByNombre(nombre)
+                .map(nombre -> this.ocacionJpaRepository.findOcasionEntityByNombre(nombre)
                         .orElseThrow(() -> new IllegalArgumentException("Ocasión no válida: " + nombre)))
                 .collect(Collectors.toSet());
 

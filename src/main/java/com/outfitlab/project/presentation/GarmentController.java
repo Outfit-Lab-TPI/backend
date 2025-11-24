@@ -9,6 +9,7 @@ import com.outfitlab.project.domain.useCases.garment.*;
 import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
 import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/garments")
 public class GarmentController {
@@ -139,9 +141,10 @@ public class GarmentController {
         }
     }
 
-    @PutMapping(value = "/update/{garmentCode}", consumes = "multipart/form-data")
+    @PatchMapping(value = "/update/{garmentCode}", consumes = "multipart/form-data")
     public ResponseEntity<?> updateGarment(@PathVariable String garmentCode, @ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
 
+        log.info(request.toString());
         String brandCode;
 
         try{

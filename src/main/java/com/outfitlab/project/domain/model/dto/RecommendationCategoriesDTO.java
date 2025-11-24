@@ -16,4 +16,28 @@ public class RecommendationCategoriesDTO {
         this.ocasiones = ocasiones;
         this.colores = colores;
     }
+
+    public List<ClimaModel> getClimas() {
+        return climas;
+    }
+
+    public void setClimas(List<ClimaModel> climas) {
+        this.climas = climas;
+    }
+
+    public List<OcasionModel> getOcasiones() {
+        return ocasiones;
+    }
+
+    public void setOcasiones(List<OcasionModel> ocasiones) {
+        this.ocasiones = ocasiones;
+    }
+
+    public List<ColorModel> getColores() {
+        return colores;
+    }
+
+    public void setColores(List<ColorModel> colores) {
+        this.colores = colores;
+    }
 }
