@@ -3,6 +3,8 @@ package com.outfitlab.project.domain.useCases.fashn;
 import com.outfitlab.project.domain.exceptions.FashnApiException;
 import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
 import com.outfitlab.project.domain.model.dto.CombineRequestDTO;
+import com.outfitlab.project.domain.useCases.subscription.CheckUserPlanLimit;
+import com.outfitlab.project.domain.useCases.subscription.IncrementUsageCounter;
 import com.outfitlab.project.infrastructure.repositories.FashnRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +21,12 @@ public class CombinePrendasTest {
 
     @Mock
     private FashnRepository fashnRepository;
+
+    @Mock
+    private CheckUserPlanLimit checkUserPlanLimit;
+
+    @Mock
+    private IncrementUsageCounter incrementUsageCounter;
 
     @InjectMocks
     private CombinePrendas combinePrendas;
