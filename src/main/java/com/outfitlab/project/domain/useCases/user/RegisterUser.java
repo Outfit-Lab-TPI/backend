@@ -13,9 +13,14 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.TokenReposit
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.mail.MailException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.UUID;
 
 public class RegisterUser {
+
+    private static final Logger log = LoggerFactory.getLogger(RegisterUser.class);
 
     private final UserRepository userRepository;
     private final UserJpaRepository userJpaRepository;
@@ -66,7 +71,12 @@ public class RegisterUser {
                 + "<p>Haz click en el enlace para verificar tu cuenta:</p>"
                 + "<a href=\"" + verificationLink + "\">Verificar cuenta </a>";
 
-        gmailGateway.sendEmail(request.getEmail(), "Verificación de cuenta de Outfit Lab", emailBody);
+        try {
+            gmailGateway.sendEmail(request.getEmail(), "Verificación de cuenta de Outfit Lab", emailBody);
+        } catch (MailException ex) {
+            // No bloquear el registro si el correo falla (ej. puerto SMTP bloqueado)
+            log.warn("No se pudo enviar email de verificación a {}: {}", request.getEmail(), ex.getMessage());
+        }
 
         UserModel newUserModel = new UserModel(
                 request.getEmail(),

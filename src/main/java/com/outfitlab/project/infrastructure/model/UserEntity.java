@@ -97,7 +97,7 @@ public class UserEntity implements UserDetails {
     }
 
     public static UserModel convertEntityToModel(UserEntity entity) {
-        return new UserModel(
+        UserModel model = new UserModel(
                 entity.getName(),
                 entity.getLastName(),
                 entity.getEmail(),
@@ -111,9 +111,14 @@ public class UserEntity implements UserDetails {
                 entity.isVerified(),
                 entity.isStatus(),
                 entity.getVerificationToken(),
-                entity.getUserImageUrl(),
-                MarcaEntity.convertToModelWithoutPrendas(entity.getBrand())
-        );
+                entity.getUserImageUrl());
+
+        // Incluir brand si existe (null-safe)
+        if (entity.getBrand() != null) {
+            model.setBrand(MarcaEntity.convertToModelWithoutPrendas(entity.getBrand()));
+        }
+
+        return model;
     }
 
     public static UserModel convertEntityUserOrAdminToModel(UserEntity entity) {
@@ -131,8 +136,7 @@ public class UserEntity implements UserDetails {
                 entity.isVerified(),
                 entity.isStatus(),
                 entity.getVerificationToken(),
-                entity.getUserImageUrl()
-        );
+                entity.getUserImageUrl());
     }
 
     public static UserEntity convertModelToEntity(UserModel model) {

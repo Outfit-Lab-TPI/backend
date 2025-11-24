@@ -2,6 +2,8 @@ package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
 import com.outfitlab.project.domain.useCases.fashn.CombinePrendas;
+import com.outfitlab.project.domain.useCases.subscription.CheckUserPlanLimit;
+import com.outfitlab.project.domain.useCases.subscription.IncrementUsageCounter;
 import com.outfitlab.project.infrastructure.repositories.FashnRepositoryImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,9 @@ public class FashnConfig {
     }
 
     @Bean
-    public CombinePrendas combinePrendas(FashnRepository iFashnRepository){
-        return new CombinePrendas(iFashnRepository);
+    public CombinePrendas combinePrendas(FashnRepository iFashnRepository,
+            CheckUserPlanLimit checkUserPlanLimit,
+            IncrementUsageCounter incrementUsageCounter) {
+        return new CombinePrendas(iFashnRepository, checkUserPlanLimit, incrementUsageCounter);
     }
 }
