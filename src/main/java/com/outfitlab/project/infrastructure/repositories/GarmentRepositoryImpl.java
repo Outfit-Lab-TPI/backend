@@ -79,7 +79,9 @@ public class GarmentRepositoryImpl implements GarmentRepository {
             String climaNombre,
             List<String> ocasionesNombres
     ) {
+        System.out.println(brandCode);
         MarcaEntity brandEntity = this.brandJpaRepository.findByCodigoMarca(brandCode);
+        System.out.println("ES NULL ?????? ----------" + brandEntity + " ---- NOSE: --" + brandEntity == null );
         if (brandEntity == null) throw new GarmentNotFoundException("No encontramos la brand: " + brandCode);
         ClimaEntity climaEntity = this.climaJpaRepository.findClimaEntityByNombre(climaNombre)
                 .orElseThrow(() -> new IllegalArgumentException("Clima no válido: " + climaNombre));

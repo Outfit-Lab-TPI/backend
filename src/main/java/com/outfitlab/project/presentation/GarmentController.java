@@ -123,6 +123,7 @@ public class GarmentController {
 
     @PostMapping(value = "/new", consumes = "multipart/form-data")
     public ResponseEntity<?> newGarment(@ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
+        log.info(request.toString());
         String brandCode = request.getCodigoMarca();
         try{
             this.createGarment.execute(

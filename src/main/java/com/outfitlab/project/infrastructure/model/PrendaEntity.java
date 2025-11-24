@@ -78,6 +78,7 @@ public class PrendaEntity {
 
     public PrendaEntity(String name, MarcaEntity brandEntity, String type, String imageUrl, ColorEntity color, ClimaEntity climaEntity, Set<OcasionEntity> ocasionesEntities) {
         this.nombre = name;
+        this.marca = brandEntity;
         this.tipo = type;
         this.imagenUrl = imageUrl;
         this.color = color;
