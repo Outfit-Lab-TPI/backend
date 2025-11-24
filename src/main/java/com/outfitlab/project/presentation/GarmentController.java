@@ -8,9 +8,8 @@ import com.outfitlab.project.domain.useCases.bucketImages.DeleteImage;
 import com.outfitlab.project.domain.useCases.garment.*;
 import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/garments")
 public class GarmentController {
@@ -37,11 +37,9 @@ public class GarmentController {
     private final UpdateGarment updateGarment;
 
     public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite,
-            DeleteGarmentFromFavorite deleteGarmentFromFavorite,
-            GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail,
-            CreateGarment createGarment, SaveImage saveImage, DeleteGarment deleteGarment,
-            GarmentRepository garmentRepository,
-            GetGarmentByCode getGarmentByCode, DeleteImage deleteImage, UpdateGarment updateGarment) {
+                             DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail,
+                             CreateGarment createGarment, SaveImage saveImage, DeleteGarment deleteGarment, GarmentRepository garmentRepository,
+                             GetGarmentByCode getGarmentByCode, DeleteImage deleteImage, UpdateGarment updateGarment) {
         this.getGarmentsByType = getGarmentsByType;
         this.addGarmentToFavourite = addGarmentToFavourite;
         this.deleteGarmentFromFavorite = deleteGarmentFromFavorite;
@@ -56,7 +54,7 @@ public class GarmentController {
 
     @GetMapping("/{typeOfGarment}")
     public ResponseEntity<?> getGarmentsByType(@RequestParam(defaultValue = "0") int page,
-            @PathVariable String typeOfGarment) {
+                                              @PathVariable String typeOfGarment){
         try {
             return ResponseEntity.ok(buildResponse(this.getGarmentsByType.execute(typeOfGarment, page)
                     .map(GarmentDTO::convertModelToDTO)));
@@ -66,15 +64,16 @@ public class GarmentController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllGarments(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<?> getAllGarments(@RequestParam(defaultValue = "0") int page){
         String top = "superior", bottoms = "inferior";
 
         try {
             return ResponseEntity.ok(
                     new AllGarmentsResponse(
                             buildResponse(this.getGarmentsByType.execute(top, page).map(GarmentDTO::convertModelToDTO)),
-                            buildResponse(
-                                    this.getGarmentsByType.execute(bottoms, page).map(GarmentDTO::convertModelToDTO))));
+                            buildResponse(this.getGarmentsByType.execute(bottoms, page).map(GarmentDTO::convertModelToDTO))
+                    )
+            );
         } catch (GarmentNotFoundException e) {
             return buildResponseEntityError(e.getMessage());
         }
@@ -92,26 +91,20 @@ public class GarmentController {
     }
 
     @GetMapping("/favorite/add/{garmentCode}")
-    public ResponseEntity<?> addGarmentToFavorite(@PathVariable String garmentCode) {
+    public ResponseEntity<?> addGarmentToFavorite(@PathVariable String garmentCode){
         try {
-            // Obtener email del usuario autenticado desde el JWT token
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userEmail = authentication.getName();
-
+            String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.addGarmentToFavourite.execute(garmentCode, userEmail));
-        } catch (GarmentNotFoundException | UserNotFoundException | UserGarmentFavoriteAlreadyExistsException
-                | FavoritesException e) {
+        } catch (GarmentNotFoundException | UserNotFoundException | UserGarmentFavoriteAlreadyExistsException |
+                 FavoritesException e) {
             return buildResponseEntityError(e.getMessage());
         }
     }
 
     @GetMapping("/favorite/delete/{garmentCode}")
-    public ResponseEntity<?> deleteGarmentFromFavorite(@PathVariable String garmentCode) {
+    public ResponseEntity<?> deleteGarmentFromFavorite(@PathVariable String garmentCode){
         try {
-            // Obtener email del usuario autenticado desde el JWT token
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userEmail = authentication.getName();
-
+            String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.deleteGarmentFromFavorite.execute(garmentCode, userEmail));
         } catch (UserGarmentFavoriteNotFoundException | UserNotFoundException | GarmentNotFoundException e) {
             return buildResponseEntityError(e.getMessage());
@@ -119,12 +112,9 @@ public class GarmentController {
     }
 
     @GetMapping("/favorite")
-    public ResponseEntity<?> getFavorites(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<?> getFavorites(@RequestParam(defaultValue = "0") int page){
         try {
-            // Obtener email del usuario autenticado desde el JWT token
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userEmail = authentication.getName();
-
+            String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
         } catch (UserNotFoundException | PageLessThanZeroException | FavoritesException e) {
             return buildResponseEntityError(e.getMessage());
@@ -132,10 +122,10 @@ public class GarmentController {
     }
 
     @PostMapping(value = "/new", consumes = "multipart/form-data")
-    public ResponseEntity<?> newGarment(@ModelAttribute GarmentRequestDTO request,
-            @AuthenticationPrincipal UserDetails user) {
-        String brandCode = "puma"; // user.marca.brandCode
-        try {
+    public ResponseEntity<?> newGarment(@ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
+        log.info(request.toString());
+        String brandCode = request.getCodigoMarca();
+        try{
             this.createGarment.execute(
                     request.getNombre(),
                     request.getTipo(),
@@ -143,59 +133,70 @@ public class GarmentController {
                     brandCode,
                     saveImageAndGetUrl(request.getImagen(), "garment_images"),
                     request.getClimaNombre(),
-                    request.getOcasionesNombres());
+                    request.getOcasionesNombres()
+            );
 
             return ResponseEntity.ok("Prenda creada correctamente.");
-        } catch (BrandsNotFoundException e) {
+        }catch (BrandsNotFoundException e){
             return buildResponseEntityError(e.getMessage());
         }
     }
 
-    @PutMapping(value = "/update/{garmentCode}", consumes = "multipart/form-data")
-    public ResponseEntity<?> updateGarment(@PathVariable String garmentCode, @ModelAttribute GarmentRequestDTO request,
-            @AuthenticationPrincipal UserDetails user) {
-        String brandCode = "puma"; // user.marca.brandCode
-        try {
-            String oldImageUrl = request.getImagen() != null ? getOldImageUrlOfGarment(garmentCode) : "";
+    @PatchMapping(value = "/update/{garmentCode}", consumes = "multipart/form-data")
+    public ResponseEntity<?> updateGarment(@PathVariable String garmentCode, @ModelAttribute GarmentRequestDTO request, @AuthenticationPrincipal UserDetails user) {
+
+        log.info(request.toString());
+        String brandCode;
+
+        try{
+            PrendaModel existingGarment = this.getGarmentByCode.execute(garmentCode);
+            brandCode = existingGarment.getMarca().getCodigoMarca();
+            String oldImageUrl = request.getImagen() != null ? existingGarment.getImagenUrl() : "";
 
             this.updateGarment.execute(
                     request.getNombre(),
                     request.getTipo(),
                     request.getColorNombre(),
                     request.getEvento(),
-                    brandCode,
                     garmentCode,
+                    brandCode,
                     checkIfImageIsEmptyToSaveAndGetUrl(request),
                     request.getClimaNombre(),
-                    request.getOcasionesNombres());
+                    request.getOcasionesNombres()
+            );
+
             deleteImage(oldImageUrl);
 
-            return ResponseEntity.ok("Prenda acctualizada correctamente.");
-        } catch (GarmentNotFoundException e) {
+            return ResponseEntity.ok("Prenda actualizada correctamente.");
+
+        }catch (GarmentNotFoundException | BrandsNotFoundException e){
+
             return buildResponseEntityError(e.getMessage());
         }
     }
 
     @DeleteMapping("/delete/{garmentCode}")
-    public ResponseEntity<?> deleteGarment(@PathVariable String garmentCode,
-            @AuthenticationPrincipal UserDetails user) {
-        String brandCode = "puma"; // user.marca.brandCode
-        try {
+    public ResponseEntity<?> deleteGarment(@PathVariable String garmentCode, @AuthenticationPrincipal UserDetails user) {
+        String brandCode;
+        try{
+            PrendaModel garment = this.getGarmentByCode.execute(garmentCode);
+            brandCode = garment.getMarca().getCodigoMarca();
+
             tryToDeleteGarmentAndImage(garmentCode, brandCode);
             return ResponseEntity.ok("Prenda eliminada correctamente.");
-        } catch (BrandsNotFoundException | DeleteGarmentException e) {
+        }catch (GarmentNotFoundException | BrandsNotFoundException | DeleteGarmentException e){
             return buildResponseEntityError(e.getMessage());
         }
     }
 
-    private void tryToDeleteGarmentAndImage(String garmentCode, String brandCode) {
+        private void tryToDeleteGarmentAndImage(String garmentCode, String brandCode) {
         PrendaModel garment = this.getGarmentByCode.execute(garmentCode);
 
         deleteImage(garment.getImagenUrl());
         this.deleteGarment.execute(garment, brandCode);
     }
 
-    private ResponseEntity<?> buildResponseEntityError(String message) {
+    private ResponseEntity<?> buildResponseEntityError(String message){
         return ResponseEntity
                 .status(404)
                 .body(message);
@@ -210,8 +211,7 @@ public class GarmentController {
     }
 
     private void deleteImage(String oldImageUrl) {
-        if (!oldImageUrl.isEmpty())
-            this.deleteImage.execute(oldImageUrl);
+        if (!oldImageUrl.isEmpty()) this.deleteImage.execute(oldImageUrl);
     }
 
     private String saveImageAndGetUrl(MultipartFile image, String folder) {

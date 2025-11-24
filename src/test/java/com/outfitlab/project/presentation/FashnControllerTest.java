@@ -11,10 +11,8 @@ import com.outfitlab.project.presentation.dto.GeneratedResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,8 +24,7 @@ class FashnControllerTest {
     private IncrementUsageCounter incrementUsageCounter;
     private RestTemplate restTemplate;
     private FashnController fashnController;
-    private SecurityContext securityContext;
-    private Authentication authentication;
+    private UserDetails mockUser;
 
     @BeforeEach
     public void setUp() {
@@ -35,15 +32,8 @@ class FashnControllerTest {
         checkUserPlanLimit = mock(CheckUserPlanLimit.class);
         incrementUsageCounter = mock(IncrementUsageCounter.class);
         restTemplate = mock(RestTemplate.class);
-
-        securityContext = mock(SecurityContext.class);
-        authentication = mock(Authentication.class);
-
-        SecurityContextHolder.setContext(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn("test@example.com");
-
         fashnController = new FashnController(combinePrendas, checkUserPlanLimit, incrementUsageCounter, restTemplate);
+        mockUser = mock(UserDetails.class);
     }
 
     @Test
@@ -53,16 +43,16 @@ class FashnControllerTest {
         request.setBottom("bottom_url");
         request.setAvatarType("fullbody");
 
-        when(combinePrendas.execute(any(), anyString())).thenReturn("result_url");
+        when(combinePrendas.execute(any(), any(UserDetails.class))).thenReturn("result_url");
 
-        ResponseEntity<GeneratedResponse> response = fashnController.combine(request);
+        ResponseEntity<GeneratedResponse> response = fashnController.combine(request, mockUser);
 
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals("OK", response.getBody().getStatus());
         assertEquals("result_url", response.getBody().getImageUrl());
 
-        verify(combinePrendas, times(1)).execute(any(), anyString());
+        verify(combinePrendas, times(1)).execute(any(), any(UserDetails.class));
     }
 
     @Test
@@ -71,9 +61,10 @@ class FashnControllerTest {
         request.setTop("top_url");
         request.setAvatarType("fullbody");
 
-        when(combinePrendas.execute(any(), anyString())).thenThrow(new PredictionFailedException("Prediction failed"));
+        when(combinePrendas.execute(any(), any(UserDetails.class)))
+                .thenThrow(new PredictionFailedException("Prediction failed"));
 
-        ResponseEntity<GeneratedResponse> response = fashnController.combine(request);
+        ResponseEntity<GeneratedResponse> response = fashnController.combine(request, mockUser);
 
         assertEquals(502, response.getStatusCode().value());
         assertNotNull(response.getBody());
@@ -87,10 +78,10 @@ class FashnControllerTest {
         request.setBottom("bottom_url");
         request.setAvatarType("fullbody");
 
-        when(combinePrendas.execute(any(), anyString()))
+        when(combinePrendas.execute(any(), any(UserDetails.class)))
                 .thenThrow(new PredictionTimeoutException("Prediction timeout"));
 
-        ResponseEntity<GeneratedResponse> response = fashnController.combine(request);
+        ResponseEntity<GeneratedResponse> response = fashnController.combine(request, mockUser);
 
         assertEquals(504, response.getStatusCode().value());
         assertNotNull(response.getBody());
@@ -104,9 +95,9 @@ class FashnControllerTest {
         request.setTop("top_url");
         request.setAvatarType("fullbody");
 
-        when(combinePrendas.execute(any(), anyString())).thenThrow(new FashnApiException("Fashn API error"));
+        when(combinePrendas.execute(any(), any(UserDetails.class))).thenThrow(new FashnApiException("Fashn API error"));
 
-        ResponseEntity<GeneratedResponse> response = fashnController.combine(request);
+        ResponseEntity<GeneratedResponse> response = fashnController.combine(request, mockUser);
 
         assertEquals(502, response.getStatusCode().value());
         assertNotNull(response.getBody());

@@ -10,14 +10,16 @@ public class GarmentDTO {
     private String marcaNombre;
     private String evento;
     private String color;
+    private String clima;
 
-    public GarmentDTO(String nombre, String tipo, String imagenUrl, String garmentCode, String marcaNombre, String color) {
+    public GarmentDTO(String nombre, String tipo, String imagenUrl, String garmentCode, String marcaNombre, String color, String clima) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.imagenUrl = imagenUrl;
         this.garmentCode = garmentCode;
         this.marcaNombre = marcaNombre;
         this.color = color;
+        this.clima = clima;
     }
 
     public String getGarmentCode() {
@@ -72,6 +74,13 @@ public class GarmentDTO {
     public void setColor(String color) {
         this.color = color;
     }
+    public String getClima() {
+        return clima;
+    }
+
+    public void setClima(String clima) {
+        this.clima = clima;
+    }
 
     public static GarmentDTO convertModelToDTO(PrendaModel prendaModel) {
         return new GarmentDTO(
@@ -80,7 +89,8 @@ public class GarmentDTO {
                 prendaModel.getImagenUrl(),
                 prendaModel.getGarmentCode(),
                 prendaModel.getMarca().getNombre(),
-                prendaModel.getColor().getNombre()
+                prendaModel.getColor().getNombre(),
+                prendaModel.getClimaAdecuado().getNombre()
         );
     }
 }

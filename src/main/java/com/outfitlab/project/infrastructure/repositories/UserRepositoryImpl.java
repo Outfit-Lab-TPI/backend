@@ -1,6 +1,5 @@
 package com.outfitlab.project.infrastructure.repositories;
 
-import com.outfitlab.project.domain.enums.Role;
 import com.outfitlab.project.domain.exceptions.BrandsNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
@@ -148,11 +147,22 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<UserModel> findAllWithRoleUserAndAdmin() {
         List<UserModel> users = this.userJpaRepository.findAllByRoleIn(List.of(ADMIN, USER))
-                .stream().map(UserEntity::convertEntityToModel)
+                .stream().map(UserEntity::convertEntityUserOrAdminToModel)
                 .toList();
         if (users.isEmpty())
             throw new UserNotFoundException("No encontramos usuarios.");
         return users;
+    }
+
+    @Override
+    public List<UserWithBrandsDTO> getNotApprovedBrands() {
+        List<UserEntity> records = this.userJpaRepository.findAllByRoleAndBrandApprovedFalse(BRAND);
+        if (records == null || records.isEmpty()) {
+            throw new BrandsNotFoundException("Todas las marcas ya están aprobadas.");
+        }
+        return records.stream()
+                .map(UserEntity::convertEntityToModelWithBrand)
+                .toList();
     }
 
     private static void checkIfBrandExists(MarcaEntity brand) {

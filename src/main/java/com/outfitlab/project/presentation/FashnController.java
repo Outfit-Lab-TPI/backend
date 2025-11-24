@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import com.outfitlab.project.domain.useCases.subscription.CheckUserPlanLimit;
@@ -45,22 +45,12 @@ public class FashnController {
     }
 
     @PostMapping("/combinar-prendas")
-    public ResponseEntity<GeneratedResponse> combine(@RequestBody CombineRequest request) {
+    public ResponseEntity<GeneratedResponse> combine(@RequestBody CombineRequest request,
+            @AuthenticationPrincipal UserDetails user) {
         System.out.println(request.toString());
 
         try {
-            // Obtener email del usuario autenticado
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userEmail = authentication.getName();
-
-            // Validar límite de combinaciones
-            checkUserPlanLimit.execute(userEmail, "combinations");
-
-            String result = this.combinePrendas.execute(CombineRequest.convertToDomainModel(request), userEmail);
-
-            // Incrementar contador
-            incrementUsageCounter.execute(userEmail, "combinations");
-
+            String result = this.combinePrendas.execute(CombineRequest.convertToDomainModel(request), user);
             return ResponseEntity.ok(new GeneratedResponse("OK", result));
         } catch (PlanLimitExceededException e) {
             return buildHttpResponse(e.getMessage(), "LIMIT_EXCEEDED", FORBIDDEN);
@@ -78,10 +68,9 @@ public class FashnController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<?> downloadImage(@RequestParam String imageUrl) {
+    public ResponseEntity<?> downloadImage(@RequestParam String imageUrl, @AuthenticationPrincipal UserDetails user) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userEmail = authentication.getName();
+            String userEmail = user.getUsername();
 
             // Validar límite de descargas
             checkUserPlanLimit.execute(userEmail, "downloads");

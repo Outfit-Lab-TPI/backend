@@ -32,6 +32,10 @@ public class BrandConfig {
         return new CreateBrand(marcaRepository);
     }
 
+    @Bean
+    public GetNotificationsNewBrands getNotificationsNewBrands(UserRepository userRepository) {
+        return new GetNotificationsNewBrands(userRepository);
+    }
 
     @Bean
     public ActivateBrand activateBrand(BrandRepository marcaRepository, UserRepository userRepository) {

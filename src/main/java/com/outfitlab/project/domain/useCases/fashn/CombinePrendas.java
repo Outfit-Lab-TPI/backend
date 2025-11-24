@@ -8,6 +8,7 @@ import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
 import com.outfitlab.project.domain.model.dto.CombineRequestDTO;
 import com.outfitlab.project.domain.useCases.subscription.CheckUserPlanLimit;
 import com.outfitlab.project.domain.useCases.subscription.IncrementUsageCounter;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class CombinePrendas {
 
@@ -25,10 +26,12 @@ public class CombinePrendas {
         this.incrementUsageCounter = incrementUsageCounter;
     }
 
-    public String execute(CombineRequestDTO request, String userEmail)
+    public String execute(CombineRequestDTO request, UserDetails user)
             throws FashnApiException, PredictionFailedException, PlanLimitExceededException,
             SubscriptionNotFoundException {
         System.out.println(request.toString());
+
+        String userEmail = user.getUsername();
 
         // Validar límite de combinaciones
         checkUserPlanLimit.execute(userEmail, "combinations");
@@ -37,11 +40,11 @@ public class CombinePrendas {
 
         String result;
         if (isOnlyTop(request.getTop(), request.getBottom())) {
-            result = combine(request.getTop(), TOPS, request.getAvatarType());
+            result = combine(request.getTop(), TOPS, request.getAvatarType(), user);
         } else if (isOnlyBotton(request.getBottom(), request.getTop())) {
-            result = combine(request.getBottom(), BOTTOMS, request.getAvatarType());
+            result = combine(request.getBottom(), BOTTOMS, request.getAvatarType(), user);
         } else {
-            result = combineTopAndBottom(request.getTop(), request.getBottom(), request.getAvatarType());
+            result = combineTopAndBottom(request.getTop(), request.getBottom(), request.getAvatarType(), user);
         }
 
         // Incrementar contador de combinaciones después de éxito
@@ -63,13 +66,13 @@ public class CombinePrendas {
         return bottom != null && (top == null || top.isBlank());
     }
 
-    private String combine(String garmentUrl, String category, String avatarType)
+    private String combine(String garmentUrl, String category, String avatarType, UserDetails user)
             throws FashnApiException, PredictionFailedException {
-        return this.iFashnRepository.pollStatus(this.iFashnRepository.combine(garmentUrl, category, avatarType));
+        return this.iFashnRepository.pollStatus(this.iFashnRepository.combine(garmentUrl, category, avatarType, user));
     }
 
-    private String combineTopAndBottom(String top, String bottom, String avatarType)
+    private String combineTopAndBottom(String top, String bottom, String avatarType, UserDetails user)
             throws FashnApiException, PredictionFailedException {
-        return this.iFashnRepository.combineTopAndBottom(top, bottom, avatarType);
+        return this.iFashnRepository.combineTopAndBottom(top, bottom, avatarType, user);
     }
 }
