@@ -64,6 +64,11 @@ public class UserModel {
         this.brand = brand;
     }
 
+    public UserModel(Long id, String email) {
+        this.id = id;
+        this.email = email;
+    }
+
     /*
      * public String getPassword() {
      * return "";

@@ -149,4 +149,10 @@ public class GarmentRepositoryImpl implements GarmentRepository {
                 .map(entity -> new OcasionModel(entity.getId(), entity.getNombre()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<PrendaModel> findAll() {
+        List<PrendaEntity> entities = garmentJpaRepository.findAll();
+        return PrendaEntity.convertToListModel(entities);
+    }
 }

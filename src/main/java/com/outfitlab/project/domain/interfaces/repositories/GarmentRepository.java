@@ -38,4 +38,5 @@ public interface GarmentRepository {
 
     List<OcasionModel> findAllOcasiones();
 
+    List<PrendaModel> findAll();
 }

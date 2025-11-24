@@ -26,6 +26,14 @@ public class PrendaModel {
         this.ocasiones = ocasiones;
     }
 
+
+    public PrendaModel(Long id, String nombre, String imagenUrl, BrandModel marca) {
+        this.id = id;
+        this.nombre = nombre;
+        this.imagenUrl = imagenUrl;
+        this.marca = marca;
+    }
+
     public Long getId() {return id;}
 
     public void setId(Long id) {this.id = id;}
