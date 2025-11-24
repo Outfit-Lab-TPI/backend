@@ -3,6 +3,8 @@ package com.outfitlab.project.domain.useCases.fashn;
 import com.outfitlab.project.domain.exceptions.FashnApiException;
 import com.outfitlab.project.domain.interfaces.repositories.FashnRepository;
 import com.outfitlab.project.domain.model.dto.CombineRequestDTO;
+import com.outfitlab.project.domain.useCases.subscription.CheckUserPlanLimit;
+import com.outfitlab.project.domain.useCases.subscription.IncrementUsageCounter;
 import com.outfitlab.project.infrastructure.repositories.FashnRepositoryImpl;
 import org.junit.jupiter.api.Test;
 
@@ -12,14 +14,19 @@ import static org.mockito.Mockito.*;
 class CombinePrendasTest {
 
     private FashnRepository fashnRepository = mock(FashnRepositoryImpl.class);
+    private CheckUserPlanLimit checkUserPlanLimit = mock(CheckUserPlanLimit.class);
+    private IncrementUsageCounter incrementUsageCounter = mock(IncrementUsageCounter.class);
 
-    private CombinePrendas combinePrendas = new CombinePrendas(fashnRepository);
+    private CombinePrendas combinePrendas = new CombinePrendas(fashnRepository, checkUserPlanLimit,
+            incrementUsageCounter);
+
+    private static final String TEST_USER_EMAIL = "test@example.com";
 
     @Test
     public void givenNullTopAndBottomWhenExecuteThenThrowFashnApiException() {
         CombineRequestDTO request = new CombineRequestDTO(null, null, false, "male");
 
-        assertThrows(FashnApiException.class, () -> combinePrendas.execute(request));
+        assertThrows(FashnApiException.class, () -> combinePrendas.execute(request, TEST_USER_EMAIL));
     }
 
     @Test
@@ -29,7 +36,7 @@ class CombinePrendasTest {
         when(fashnRepository.combine("top-url", "tops", "female")).thenReturn("taskId123");
         when(fashnRepository.pollStatus("taskId123")).thenReturn("result-top-ok");
 
-        String result = combinePrendas.execute(request);
+        String result = combinePrendas.execute(request, TEST_USER_EMAIL);
 
         assertNotNull(result);
         assertEquals("result-top-ok", result);
@@ -37,12 +44,12 @@ class CombinePrendasTest {
 
     @Test
     public void givenOnlyBottomWhenExecuteThenCallCombineWithBottomsCategory() throws Exception {
-        CombineRequestDTO request = new CombineRequestDTO(null, "bottom-url",false, "female");
+        CombineRequestDTO request = new CombineRequestDTO(null, "bottom-url", false, "female");
 
         when(fashnRepository.combine("bottom-url", "bottoms", "female")).thenReturn("taskId456");
         when(fashnRepository.pollStatus("taskId456")).thenReturn("result-bottom-ok");
 
-        String result = combinePrendas.execute(request);
+        String result = combinePrendas.execute(request, TEST_USER_EMAIL);
 
         assertNotNull(result);
         assertEquals("result-bottom-ok", result);
@@ -55,7 +62,7 @@ class CombinePrendasTest {
         when(fashnRepository.combineTopAndBottom("top-url", "bottom-url", "male"))
                 .thenReturn("combined-result");
 
-        String result = combinePrendas.execute(request);
+        String result = combinePrendas.execute(request, TEST_USER_EMAIL);
 
         assertNotNull(result);
         assertEquals("combined-result", result);

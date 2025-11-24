@@ -12,6 +12,8 @@ import com.outfitlab.project.domain.useCases.subscription.GetAllSubscription;
 import com.outfitlab.project.domain.useCases.subscription.ProcessPaymentNotification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
@@ -23,14 +25,37 @@ class SubscriptionRequest {
     private BigDecimal price;
     private String currency;
 
-    public String getPlanId() { return planId; }
-    public void setPlanId(String planId) { this.planId = planId; }
-    public String getUserEmail() { return userEmail; }
-    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
+    public String getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(String planId) {
+        this.planId = planId;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
 }
 
@@ -47,8 +72,7 @@ public class SubscriptionController {
             CreateMercadoPagoPreference createPreferenceUseCase,
             ProcessPaymentNotification processNotificationUseCase,
             GetAllSubscription getAllSubscription,
-            UserSubscriptionRepository userSubscriptionRepository)
-    {
+            UserSubscriptionRepository userSubscriptionRepository) {
         this.createPreferenceUseCase = createPreferenceUseCase;
         this.processNotificationUseCase = processNotificationUseCase;
         this.getAllSubscription = getAllSubscription;
@@ -67,8 +91,7 @@ public class SubscriptionController {
                     request.getPlanId(),
                     request.getUserEmail(),
                     request.getPrice(),
-                    request.getCurrency() != null ? request.getCurrency() : "ARS"
-            );
+                    request.getCurrency() != null ? request.getCurrency() : "ARS");
 
             Map<String, String> response = new HashMap<>();
             response.put("initPoint", initPointUrl);
@@ -87,8 +110,7 @@ public class SubscriptionController {
     @PostMapping("/webhooks")
     public ResponseEntity<String> handleMercadoPagoWebhook(
             @RequestParam(name = "id", required = false) String id,
-            @RequestParam(name = "topic", required = false) String topic)
-    {
+            @RequestParam(name = "topic", required = false) String topic) {
         if ("payment".equals(topic) && id != null) {
             try {
                 Long paymentId = Long.parseLong(id);
@@ -108,12 +130,16 @@ public class SubscriptionController {
         return ResponseEntity.ok("Notification received, not a relevant topic.");
     }
 
-
     @GetMapping("/subscriptions")
     public ResponseEntity<?> getSubscriptions() {
         try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal()))
+                    ? auth.getName()
+                    : null;
+
             Map<String, Object> response = new HashMap<>();
-            response.put("data", this.getAllSubscription.execute());
+            response.put("data", this.getAllSubscription.execute(userEmail));
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -124,33 +150,47 @@ public class SubscriptionController {
     }
 
     @GetMapping("/user-subscription")
-    public ResponseEntity<?> getUserSubscription(@RequestParam String email) {
+    public ResponseEntity<?> getUserSubscription() {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
             UserSubscriptionModel subscription = userSubscriptionRepository.findByUserEmail(email);
-            
+
             // Create nested maps to handle null values (for unlimited plans)
             Map<String, Object> combinationsMap = new HashMap<>();
             combinationsMap.put("used", subscription.getCombinationsUsed());
             combinationsMap.put("max", subscription.getMaxCombinations());
-            
+
             Map<String, Object> favoritesMap = new HashMap<>();
             favoritesMap.put("count", subscription.getFavoritesCount());
             favoritesMap.put("max", subscription.getMaxFavorites());
-            
+
             Map<String, Object> modelsMap = new HashMap<>();
             modelsMap.put("generated", subscription.getModelsGenerated());
             modelsMap.put("max", subscription.getMaxModels());
-            
+
+            Map<String, Object> downloadsMap = new HashMap<>();
+            downloadsMap.put("count", subscription.getDownloadsCount());
+            downloadsMap.put("max", subscription.getMaxDownloads());
+
             Map<String, Object> usageMap = new HashMap<>();
             usageMap.put("combinations", combinationsMap);
             usageMap.put("favorites", favoritesMap);
             usageMap.put("models", modelsMap);
-            
+            usageMap.put("downloads", downloadsMap);
+
+            if (subscription.getGarmentsUploaded() > 0 || subscription.getMaxGarments() != null) {
+                Map<String, Object> garmentsMap = new HashMap<>();
+                garmentsMap.put("uploaded", subscription.getGarmentsUploaded());
+                garmentsMap.put("max", subscription.getMaxGarments());
+                usageMap.put("garments", garmentsMap);
+            }
+
             Map<String, Object> response = new HashMap<>();
             response.put("planCode", subscription.getPlanCode());
             response.put("status", subscription.getStatus());
             response.put("usage", usageMap);
-            
+
             return ResponseEntity.ok(response);
         } catch (SubscriptionNotFoundException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));

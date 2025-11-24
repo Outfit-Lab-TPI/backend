@@ -22,6 +22,11 @@ public class SubscriptionModel {
 
     private boolean isPopular;
 
+    private String planType;
+    private Integer maxGarments;
+    private boolean hasAnalytics;
+    private boolean hasAdvancedReports;
+
     public String getName() {
         return name;
     }
@@ -109,7 +114,36 @@ public class SubscriptionModel {
     public void setPopular(boolean popular) {
         isPopular = popular;
     }
+
+    public String getPlanType() {
+        return planType;
+    }
+
+    public void setPlanType(String planType) {
+        this.planType = planType;
+    }
+
+    public Integer getMaxGarments() {
+        return maxGarments;
+    }
+
+    public void setMaxGarments(Integer maxGarments) {
+        this.maxGarments = maxGarments;
+    }
+
+    public boolean isHasAnalytics() {
+        return hasAnalytics;
+    }
+
+    public void setHasAnalytics(boolean hasAnalytics) {
+        this.hasAnalytics = hasAnalytics;
+    }
+
+    public boolean isHasAdvancedReports() {
+        return hasAdvancedReports;
+    }
+
+    public void setHasAdvancedReports(boolean hasAdvancedReports) {
+        this.hasAdvancedReports = hasAdvancedReports;
+    }
 }
-
-
-

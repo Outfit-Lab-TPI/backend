@@ -42,8 +42,9 @@ public class SubscriptionConfig {
     }
 
     @Bean
-    public GetAllSubscription getAllsubscription(SubscriptionRepository subscriptionRepository) {
-        return new GetAllSubscription(subscriptionRepository);
+    public GetAllSubscription getAllsubscription(SubscriptionRepository subscriptionRepository,
+            UserRepository userRepository) {
+        return new GetAllSubscription(subscriptionRepository, userRepository);
     }
 
     @Bean

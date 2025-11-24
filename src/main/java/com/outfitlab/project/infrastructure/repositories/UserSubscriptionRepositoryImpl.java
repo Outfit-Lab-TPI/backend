@@ -95,15 +95,21 @@ public class UserSubscriptionRepositoryImpl implements UserSubscriptionRepositor
             throw new RuntimeException("Usuario no encontrado: " + userEmail);
         }
 
+        System.out.println("🔍 DEBUG incrementCounter - Email: " + userEmail + ", UserId: " + user.getId()
+                + ", CounterType: " + counterType);
+
         switch (counterType) {
             case "combinations":
                 jpaRepository.incrementCombinationsByUserId(user.getId());
+                System.out.println("✅ Ejecutado incrementCombinationsByUserId para userId: " + user.getId());
                 break;
             case "favorites":
                 jpaRepository.incrementFavoritesByUserId(user.getId());
+                System.out.println("✅ Ejecutado incrementFavoritesByUserId para userId: " + user.getId());
                 break;
             case "3d_models":
                 jpaRepository.incrementModelsByUserId(user.getId());
+                System.out.println("✅ Ejecutado incrementModelsByUserId para userId: " + user.getId());
                 break;
         }
     }
