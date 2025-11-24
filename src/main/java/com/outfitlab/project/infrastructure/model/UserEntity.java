@@ -116,6 +116,25 @@ public class UserEntity implements UserDetails {
         );
     }
 
+    public static UserModel convertEntityUserOrAdminToModel(UserEntity entity) {
+        return new UserModel(
+                entity.getName(),
+                entity.getLastName(),
+                entity.getEmail(),
+                entity.getSatulation(),
+                entity.getSecondName(),
+                entity.getYears(),
+                entity.getPassword(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                entity.getRole(),
+                entity.isVerified(),
+                entity.isStatus(),
+                entity.getVerificationToken(),
+                entity.getUserImageUrl()
+        );
+    }
+
     public static UserEntity convertModelToEntity(UserModel model) {
         return new UserEntity(
                 model.getName(),
