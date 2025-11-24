@@ -1,4 +1,4 @@
-package com.outfitlab.project.domain.useCases.combination;
+package com.outfitlab.project.domain.useCases.combinationFavorite;
 
 import com.outfitlab.project.domain.exceptions.FavoritesException;
 import com.outfitlab.project.domain.exceptions.PageLessThanZeroException;

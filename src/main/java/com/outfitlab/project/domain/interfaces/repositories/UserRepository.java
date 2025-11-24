@@ -1,6 +1,5 @@
 package com.outfitlab.project.domain.interfaces.repositories;
 
-import com.outfitlab.project.domain.enums.Role;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.model.UserModel;
 import com.outfitlab.project.domain.model.dto.UserWithBrandsDTO;
@@ -9,6 +8,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository {
     UserModel findUserByEmail(String userEmail) throws UserNotFoundException;
@@ -32,11 +32,13 @@ public interface UserRepository {
     String getEmailUserRelatedToBrandByBrandCode(String brandCode);
 
     @Transactional
-    UserModel updateUser(String oldUserEmail, String name, String lastname, String email, String password, String newImageUrl);
+    UserModel updateUser(String name, String lastname, String email, String password, String confirmPassword, String newImageUrl);
+
+    UserModel findById(Long userId) throws UserNotFoundException;
 
     Page<UserWithBrandsDTO> getAllBrandsWithUserRelated(int page);
 
-    List<UserModel> findAllWithRoleUserAndAdmin();
-
     List<UserWithBrandsDTO> getNotApprovedBrands();
+
+    List<UserModel> findAllWithRoleUserAndAdmin();
 }

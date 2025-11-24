@@ -65,7 +65,8 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     @Override
     public PrendaModel findByGarmentCode(String garmentCode) throws GarmentNotFoundException {
         PrendaEntity entity = this.garmentJpaRepository.findByGarmentCode(garmentCode);
-        if (entity == null) throw new GarmentNotFoundException("No encontramos la prenda con el código: " + garmentCode);
+        if (entity == null)
+            throw new GarmentNotFoundException("No encontramos la prenda con el código: " + garmentCode);
         return PrendaEntity.convertToModel(entity);
     }
 
@@ -133,7 +134,8 @@ public class GarmentRepositoryImpl implements GarmentRepository {
         garmentEntity.setOcasiones(ocasionesEntities);
         garmentEntity.setClimaAdecuado(climaEntity);
 
-        if (!imageUrl.isEmpty()) garmentEntity.setImagenUrl(imageUrl); // la voy a actualizar solo si vino algo, si vino empty es pq no le actualizaron la img
+        if (!imageUrl.isEmpty())
+            garmentEntity.setImagenUrl(imageUrl); // la voy a actualizar solo si vino algo, si vino empty es pq no le actualizaron la img
 
         garmentJpaRepository.save(garmentEntity);
     }
@@ -161,6 +163,12 @@ public class GarmentRepositoryImpl implements GarmentRepository {
         return garmentJpaRepository.findAllOcasionEntities().stream()
                 .map(entity -> new OcasionModel(entity.getId(), entity.getNombre()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PrendaModel> findAll() {
+        List<PrendaEntity> entities = garmentJpaRepository.findAll();
+        return PrendaEntity.convertToListModel(entities);
     }
 
     @Override

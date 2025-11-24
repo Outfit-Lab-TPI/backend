@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.outfitlab.project.domain.enums.Role.*; // ← Usar enums
 
@@ -32,7 +33,7 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity entity = getUserByEmail(userEmail);
         if (entity == null)
             throw new UserNotFoundException("No encontramos el usuario con el email: " + userEmail);
-        return UserEntity.convertEntityToModel(entity);
+        return UserEntity.convertEntityToModelWithId(entity);
     }
 
     @Override
@@ -41,6 +42,13 @@ public class UserRepositoryImpl implements UserRepository {
         if (entity == null)
             throw userNotFoundException();
         return UserEntity.convertEntityToModel(entity);
+    }
+
+    @Override
+    public UserModel findById(Long id) throws UserNotFoundException {
+        UserEntity entity = this.userJpaRepository.findById(id)
+                .orElseThrow(this::userNotFoundException);
+        return UserEntity.convertEntityToModelWithId(entity);
     }
 
     @Override

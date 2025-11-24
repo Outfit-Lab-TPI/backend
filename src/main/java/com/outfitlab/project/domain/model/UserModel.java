@@ -5,6 +5,7 @@ import com.outfitlab.project.domain.enums.Role;
 import java.time.LocalDateTime;
 
 public class UserModel {
+    private Long id;
     private String satulation;
     private String name;
     private String secondName;
@@ -63,6 +64,7 @@ public class UserModel {
         this.brand = brand;
     }
 
+
     public UserModel(String name, String lastName, String email, String satulation, String secondName, Integer years, String password,
                      LocalDateTime createdAt, LocalDateTime updatedAt, Role role, boolean verified, boolean status,
                      String verificationToken, String userImageUrl, BrandModel brandModel) {
@@ -81,6 +83,29 @@ public class UserModel {
         this.verificationToken = verificationToken;
         this.userImg = userImageUrl;
         this.brand = brandModel;
+    }
+
+    public UserModel(long id, String name, String lastName, String email, String satulation, String secondName, Integer years, String password, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, boolean verified, boolean status, String verificationToken, String userImageUrl) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.satulation = satulation;
+        this.secondName = secondName;
+        this.years = years;
+        this.hashedPassword = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.role = role;
+        this.verified = verified;
+        this.status = status;
+        this.verificationToken = verificationToken;
+        this.userImg = userImageUrl;
+    }
+
+    public UserModel(long id, String email) {
+        this.id = id;
+        this.email = email;
     }
 
     /*
@@ -208,4 +233,6 @@ public class UserModel {
     public void setBrand(BrandModel brand) {
         this.brand = brand;
     }
+
+    public Long getId() {return id;}
 }
