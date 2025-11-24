@@ -76,7 +76,7 @@ public class UserController {
             UserModel newUser = registerUserUseCase.execute(request);
 
             // 2. Asignar plan gratuito
-            assignFreePlanToUser.execute(newUser.getEmail());
+            assignFreePlanToUser.execute(newUser.getEmail(), request.isRegisterAsBrandAsBrand());
 
             Map<String, Object> response = new HashMap<>();
             response.put("email", newUser.getEmail());
@@ -100,7 +100,7 @@ public class UserController {
             UserModel newUser = registerUserUseCase.execute(request);
 
             // 2. Asignar plan gratuito
-            assignFreePlanToUser.execute(newUser.getEmail());
+            assignFreePlanToUser.execute(newUser.getEmail(), request.isRegisterAsBrandAsBrand());
 
             // 3. Crear marca y asociarla al usuario
             String brandCode = createAndReturnBrand(
