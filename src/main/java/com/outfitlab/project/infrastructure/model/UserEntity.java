@@ -97,7 +97,7 @@ public class UserEntity implements UserDetails {
     }
 
     public static UserModel convertEntityToModel(UserEntity entity) {
-        return new UserModel(
+        UserModel model = new UserModel(
                 entity.getName(),
                 entity.getLastName(),
                 entity.getEmail(),
@@ -112,6 +112,13 @@ public class UserEntity implements UserDetails {
                 entity.isStatus(),
                 entity.getVerificationToken(),
                 entity.getUserImageUrl());
+
+        // Incluir brand si existe
+        if (entity.getBrand() != null) {
+            model.setBrand(MarcaEntity.convertToModelWithoutPrendas(entity.getBrand()));
+        }
+
+        return model;
     }
 
     public static UserEntity convertModelToEntity(UserModel model) {
