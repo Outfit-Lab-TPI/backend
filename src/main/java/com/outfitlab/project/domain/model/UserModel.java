@@ -5,6 +5,7 @@ import com.outfitlab.project.infrastructure.config.security.Role;
 import java.time.LocalDateTime;
 
 public class UserModel {
+    private Long id;
     private String satulation;
     private String name;
     private String secondName;
@@ -162,4 +163,6 @@ public class UserModel {
     public void setUserImageUrl(String userImageUrl) {
         this.userImageUrl = userImageUrl;
     }
+
+    public Long getId() {return id;}
 }

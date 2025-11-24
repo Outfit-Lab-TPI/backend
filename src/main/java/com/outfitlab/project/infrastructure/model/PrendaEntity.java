@@ -101,7 +101,7 @@ public class PrendaEntity {
                 prendaEntity.getColor().getNombre(),
                 prendaEntity.getColor().getValor());
 
-        return new PrendaModel(
+        PrendaModel model = new PrendaModel(
                 prendaEntity.getNombre(),
                 marcaModel,
                 prendaEntity.getTipo(),
@@ -111,6 +111,10 @@ public class PrendaEntity {
                 climaModel,
                 ocasionesModels
         );
+
+        model.setId(prendaEntity.getId());
+
+        return model;
     }
 
     public static PrendaEntity convertToEntity(PrendaModel prendaModel) {

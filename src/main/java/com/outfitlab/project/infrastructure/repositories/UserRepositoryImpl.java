@@ -10,6 +10,7 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepo
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.outfitlab.project.infrastructure.config.security.Role.*;
 
@@ -34,6 +35,13 @@ public class UserRepositoryImpl implements UserRepository {
     public UserModel findUserByVerificationToken(String token) throws UserNotFoundException {
         UserEntity entity = this.userJpaRepository.findByVerificationToken(token);
         if (entity == null) throw userNotFoundException();
+        return UserEntity.convertEntityToModel(entity);
+    }
+
+    @Override
+    public UserModel findById(Long id) throws UserNotFoundException {
+        UserEntity entity = this.userJpaRepository.findById(id)
+                .orElseThrow(this::userNotFoundException); // más limpio
         return UserEntity.convertEntityToModel(entity);
     }
 

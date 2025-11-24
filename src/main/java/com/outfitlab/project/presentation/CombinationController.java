@@ -1,9 +1,15 @@
 package com.outfitlab.project.presentation;
-
 import com.outfitlab.project.domain.exceptions.*;
-import com.outfitlab.project.domain.useCases.combination.AddCombinationToFavourite;
-import com.outfitlab.project.domain.useCases.combination.DeleteCombinationFromFavorite;
-import com.outfitlab.project.domain.useCases.combination.GetCombinationFavoritesForUserByEmail;
+import com.outfitlab.project.domain.model.CombinationModel;
+import com.outfitlab.project.domain.model.PrendaModel;
+import com.outfitlab.project.domain.useCases.combination.CreateCombination;
+import com.outfitlab.project.domain.useCases.combination.GetCombinationByPrendas;
+import com.outfitlab.project.domain.useCases.combinationAttempt.RegisterCombinationAttempt;
+import com.outfitlab.project.domain.useCases.combinationFavorite.AddCombinationToFavourite;
+import com.outfitlab.project.domain.useCases.combinationFavorite.DeleteCombinationFromFavorite;
+import com.outfitlab.project.domain.useCases.combinationFavorite.GetCombinationFavoritesForUserByEmail;
+import com.outfitlab.project.domain.useCases.garment.GetGarmentByCode;
+import com.outfitlab.project.presentation.dto.RegisterAttemptRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,15 +20,56 @@ import java.util.Map;
 @RequestMapping("/api/combinations")
 public class CombinationController {
 
-
     private final AddCombinationToFavourite addCombinationToFavourite;
     private final DeleteCombinationFromFavorite deleteCombinationFromFavorite;
     private final GetCombinationFavoritesForUserByEmail getCombinationFavoritesForUserByEmail;
+    private final GetGarmentByCode getGarmentByCode;
+    private final GetCombinationByPrendas getCombinationByPrendas;
+    private final CreateCombination createCombination;
+    private final RegisterCombinationAttempt registerCombinationAttempt;
 
-    public CombinationController(AddCombinationToFavourite addCombinationToFavourite, DeleteCombinationFromFavorite deleteCombinationFromFavorite, GetCombinationFavoritesForUserByEmail getCombinationFavoritesForUserByEmail){
+    public CombinationController(AddCombinationToFavourite addCombinationToFavourite,
+                                 DeleteCombinationFromFavorite deleteCombinationFromFavorite,
+                                 GetCombinationFavoritesForUserByEmail getCombinationFavoritesForUserByEmail,
+                                 GetGarmentByCode getGarmentByCode,
+                                 GetCombinationByPrendas getCombinationByPrendas,
+                                 CreateCombination createCombination,
+                                 RegisterCombinationAttempt registerCombinationAttempt
+    ){
         this.addCombinationToFavourite = addCombinationToFavourite;
         this.deleteCombinationFromFavorite = deleteCombinationFromFavorite;
         this.getCombinationFavoritesForUserByEmail = getCombinationFavoritesForUserByEmail;
+        this.getGarmentByCode = getGarmentByCode;
+        this.getCombinationByPrendas = getCombinationByPrendas;
+        this.createCombination = createCombination;
+        this.registerCombinationAttempt = registerCombinationAttempt;
+    }
+
+    @PostMapping("/attempt/register")
+    public ResponseEntity<?> registerAttempt(
+            @RequestBody RegisterAttemptRequest req
+    ) {
+        try {
+            PrendaModel sup = getGarmentByCode.execute(req.prendaSupCode());
+            PrendaModel inf = getGarmentByCode.execute(req.prendaInfCode());
+
+            CombinationModel combination;
+            try {
+                combination = getCombinationByPrendas.execute(sup.getId(), inf.getId());
+            } catch (CombinationNotFoundException e) {
+                combination = createCombination.execute(sup, inf);
+            }
+
+            var attemptId = registerCombinationAttempt.execute(
+                    req.userEmail(),
+                    combination,
+                    req.imageUrl()
+            );
+
+            return ResponseEntity.ok("Combinacion registrada con ID: " + attemptId);
+        } catch (GarmentNotFoundException e) {
+            return buildResponseEntityError(e.getMessage());
+        }
     }
 
     @GetMapping("/favorite/add")
@@ -34,7 +81,6 @@ public class CombinationController {
             String userEmail = "german@gmail.com"; //acá hay que obtenerlo de la session, NO recibirlo por parámetro sino obtenerlo por session, ahora dejo esto pq no tenemos CRUD de user.
             return ResponseEntity.ok(this.addCombinationToFavourite.execute(combinationUrl, userEmail));
         } catch (PlanLimitExceededException e) {
-            // Manejo específico para límites de plan
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", e.getMessage());
             errorResponse.put("limitType", e.getLimitType());
@@ -46,7 +92,6 @@ public class CombinationController {
             return buildResponseEntityError(e.getMessage());
         }
     }
-
 
     @GetMapping("/favorite/delete")
     public ResponseEntity<?> deleteCombinationFromFavorite(@RequestParam String combinationUrl){
@@ -60,7 +105,6 @@ public class CombinationController {
             return buildResponseEntityError(e.getMessage());
         }
     }
-
 
     @GetMapping("/favorite")
     public ResponseEntity<?> getFavorites(@RequestParam(defaultValue = "0") int page){

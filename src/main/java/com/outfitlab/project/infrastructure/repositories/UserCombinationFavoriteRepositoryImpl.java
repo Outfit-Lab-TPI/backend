@@ -2,7 +2,6 @@ package com.outfitlab.project.infrastructure.repositories;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.interfaces.repositories.UserCombinationFavoriteRepository;
-import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.UserCombinationFavoriteModel;
 import com.outfitlab.project.domain.model.dto.PageDTO;
 import com.outfitlab.project.infrastructure.model.PrendaEntity;
@@ -33,6 +32,7 @@ public class UserCombinationFavoriteRepositoryImpl implements UserCombinationFav
         return UserCombinationFavoriteEntity.convertEntityToModelWithoutUser(entity);
     }
 
+
     @Override
     public UserCombinationFavoriteEntity addToFavorite(String combinationUrl, String userEmail) throws UserNotFoundException {
         UserEntity user = findUserByEmail(userEmail);
@@ -41,6 +41,7 @@ public class UserCombinationFavoriteRepositoryImpl implements UserCombinationFav
         return this.userCombinationFavoriteJpaRepository.save(new UserCombinationFavoriteEntity(user,combinationUrl));
     }
 
+
     @Override
     public void deleteFromFavorites(String comninationUrl, String userEmail) throws UserNotFoundException {
         UserEntity user = findUserByEmail(userEmail);
@@ -48,6 +49,7 @@ public class UserCombinationFavoriteRepositoryImpl implements UserCombinationFav
 
         this.userCombinationFavoriteJpaRepository.delete(this.userCombinationFavoriteJpaRepository.findBycombinationUrlAndUser_Email(comninationUrl, user.getEmail()));
     }
+
 
     @Override
     public PageDTO<UserCombinationFavoriteModel> getCombinationFavoritesForUserByEmail(String userEmail, int page) throws UserNotFoundException, FavoritesException {
@@ -67,6 +69,7 @@ public class UserCombinationFavoriteRepositoryImpl implements UserCombinationFav
                 combinationPage.isLast()
         );
     }
+
 
     private UserEntity findUserByEmail(String userEmail) {
         return this.userJpaRepository.findByEmail(userEmail);

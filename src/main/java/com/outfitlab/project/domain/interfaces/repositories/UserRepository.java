@@ -5,6 +5,7 @@ import com.outfitlab.project.domain.model.UserModel;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository {
     UserModel findUserByEmail(String userEmail) throws UserNotFoundException;
@@ -29,4 +30,6 @@ public interface UserRepository {
 
     @Transactional
     void updateUser(String name, String lastname, String email, String password, String confirmPassword, String newImageUrl);
+
+    UserModel findById(Long userId) throws UserNotFoundException;
 }
