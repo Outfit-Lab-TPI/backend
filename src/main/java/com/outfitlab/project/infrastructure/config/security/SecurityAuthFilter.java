@@ -2,6 +2,9 @@ package com.outfitlab.project.infrastructure.config.security;
 
 import com.outfitlab.project.infrastructure.config.security.jwt.JwtService;
 import com.outfitlab.project.infrastructure.repositories.interfaces.TokenRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,25 +45,30 @@ public class SecurityAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        userUsername = jwtService.extractUsername(jwtToken);
-        if(userUsername != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userUsername);
+        try {
+            userUsername = jwtService.extractUsername(jwtToken);
+            if(userUsername != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userUsername);
 
-            var isTokenValid = tokenRepository.findByToken(jwtToken)
-                    .map(token -> !token.getExpired() && !token.getRevoked())
-                    .orElse(false);
+                var isTokenValid = tokenRepository.findByToken(jwtToken)
+                        .map(token -> !token.getExpired() && !token.getRevoked())
+                        .orElse(false);
 
-            if(isTokenValid && jwtService.isTokenValid(jwtToken, userDetails) && !jwtService.isTokenExpired(jwtToken)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
+                if(isTokenValid && jwtService.isTokenValid(jwtToken, userDetails) && !jwtService.isTokenExpired(jwtToken)){
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException | SignatureException | MalformedJwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
-        filterChain.doFilter(request, response);
     }
 }
