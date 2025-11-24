@@ -22,22 +22,24 @@ public class RegisterCombinationAttempt {
     }
 
     public Long execute(String userEmail, CombinationModel combination, String imageUrl) {
-        UserModel user = null;
-
-        if (userEmail != null) {
-            try {
-                user = userRepository.findUserByEmail(userEmail);
-            } catch (UserNotFoundException ignored) {
-            }
+        if (userEmail == null) {
+            throw new IllegalArgumentException("El email del usuario no puede ser null");
         }
 
-        var attempt = new CombinationAttemptModel(
+        UserModel user = userRepository.findUserByEmail(userEmail);
+
+        if (combination == null || combination.getId() == null) {
+            throw new IllegalArgumentException("La combinación debe existir y tener un ID válido");
+        }
+
+        CombinationAttemptModel attempt = new CombinationAttemptModel(
                 user,
                 combination,
                 LocalDateTime.now(),
                 imageUrl
         );
-
+        
         return attemptRepository.save(attempt);
     }
+
 }

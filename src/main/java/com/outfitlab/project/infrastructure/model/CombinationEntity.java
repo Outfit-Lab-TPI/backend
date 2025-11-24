@@ -54,4 +54,14 @@ public class CombinationEntity {
         model.setId(this.id);
         return model;
     }
+
+    public CombinationEntity fromModel(CombinationModel model) {
+        PrendaEntity superior = PrendaEntity.convertToEntity(model.getPrendaSuperior());
+        PrendaEntity inferior = PrendaEntity.convertToEntity(model.getPrendaInferior());
+
+        CombinationEntity entity = new CombinationEntity(superior, inferior);
+        entity.setId(model.getId());
+        return entity;
+    }
+
 }

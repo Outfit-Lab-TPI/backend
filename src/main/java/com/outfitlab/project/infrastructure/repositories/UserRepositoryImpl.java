@@ -33,7 +33,7 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity entity = getUserByEmail(userEmail);
         if (entity == null)
             throw new UserNotFoundException("No encontramos el usuario con el email: " + userEmail);
-        return UserEntity.convertEntityToModel(entity);
+        return UserEntity.convertEntityToModelWithId(entity);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public UserModel findById(Long id) throws UserNotFoundException {
         UserEntity entity = this.userJpaRepository.findById(id)
-                .orElseThrow(this::userNotFoundException); // más limpio
-        return UserEntity.convertEntityToModel(entity);
+                .orElseThrow(this::userNotFoundException);
+        return UserEntity.convertEntityToModelWithId(entity);
     }
 
     @Override

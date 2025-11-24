@@ -69,6 +69,24 @@ public class UserModel {
         this.email = email;
     }
 
+    public UserModel(long id, String name, String lastName, String email, String satulation, String secondName, Integer years, String password, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, boolean verified, boolean status, String verificationToken, String userImageUrl) {
+        this.id = id;
+        this.satulation = satulation;
+        this.name = name;
+        this.secondName = secondName;
+        this.lastName = lastName;
+        this.years = years;
+        this.email = email;
+        this.hashedPassword = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.role = role;
+        this.verified = verified;
+        this.status = status;
+        this.verificationToken = verificationToken;
+        this.userImg = userImageUrl;
+    }
+
     /*
      * public String getPassword() {
      * return "";

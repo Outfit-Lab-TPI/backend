@@ -2,9 +2,7 @@ package com.outfitlab.project.infrastructure.repositories;
 
 import com.outfitlab.project.domain.interfaces.repositories.CombinationAttemptRepository;
 import com.outfitlab.project.domain.model.*;
-import com.outfitlab.project.infrastructure.model.ColorEntity;
-import com.outfitlab.project.infrastructure.model.CombinationAttemptEntity;
-import com.outfitlab.project.infrastructure.model.MarcaEntity;
+import com.outfitlab.project.infrastructure.model.*;
 import com.outfitlab.project.infrastructure.repositories.interfaces.CombinationAttemptJpaRepository;
 import com.outfitlab.project.infrastructure.repositories.interfaces.CombinationJpaRepository;
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
@@ -32,20 +30,37 @@ public class CombinationAttemptRepositoryImpl implements CombinationAttemptRepos
 
     @Override
     public Long save(CombinationAttemptModel model) {
-        var userEntity = model.getUser() != null ?
-                userJpaRepository.findById(model.getUser().getId())
-                        .orElseThrow(() -> new RuntimeException("User not found")) : null;
+        var userEntity = model.getUser() != null
+                ? userJpaRepository.findById(model.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                : null;
 
-        var combinationEntity = combinationJpaRepository.findById(model.getCombination().getId())
-                .orElseThrow(() -> new RuntimeException("Combination not found"));
+        CombinationEntity combinationEntity;
 
-        var entity = new CombinationAttemptEntity(
+        if (model.getCombination().getId() != null) {
+            combinationEntity = combinationJpaRepository.findById(model.getCombination().getId())
+                    .orElseThrow(() -> new RuntimeException("Combination not found"));
+        } else {
+            var supId = model.getCombination().getPrendaSuperior().getId();
+            var infId = model.getCombination().getPrendaInferior().getId();
+
+            combinationEntity = combinationJpaRepository.findByPrendas(supId, infId)
+                    .orElseGet(() -> {
+                        CombinationEntity newCombination = new CombinationEntity(
+                                PrendaEntity.convertToEntity(model.getCombination().getPrendaSuperior()),
+                                PrendaEntity.convertToEntity(model.getCombination().getPrendaInferior())
+                        );
+                        return combinationJpaRepository.save(newCombination);
+                    });
+        }
+
+        var attemptEntity = new CombinationAttemptEntity(
                 userEntity,
                 combinationEntity,
                 model.getImageUrl()
         );
 
-        return attemptJpaRepository.save(entity).getId();
+        return attemptJpaRepository.save(attemptEntity).getId();
     }
 
     @Override
@@ -69,7 +84,6 @@ public class CombinationAttemptRepositoryImpl implements CombinationAttemptRepos
         return entities.stream().map(this::mapToModel).toList();
     }
 
-    // --- Método privado para mapear entity -> model ---
     private CombinationAttemptModel mapToModel(CombinationAttemptEntity entity) {
         PrendaModel sup = new PrendaModel(
                 entity.getCombination().getPrendaSuperior().getId(),
