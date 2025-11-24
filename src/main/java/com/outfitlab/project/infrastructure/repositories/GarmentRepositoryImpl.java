@@ -72,6 +72,7 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     @Override
     public void createGarment(
             String name,
+            String garmentCode,
             String type,
             String colorNombre,
             String brandCode,
@@ -79,23 +80,27 @@ public class GarmentRepositoryImpl implements GarmentRepository {
             String climaNombre,
             List<String> ocasionesNombres
     ) {
-        System.out.println(brandCode);
         MarcaEntity brandEntity = this.brandJpaRepository.findByCodigoMarca(brandCode);
-        System.out.println("ES NULL ?????? ----------" + brandEntity + " ---- NOSE: --" + brandEntity == null );
+
         if (brandEntity == null) throw new GarmentNotFoundException("No encontramos la brand: " + brandCode);
+
         ClimaEntity climaEntity = this.climaJpaRepository.findClimaEntityByNombre(climaNombre)
                 .orElseThrow(() -> new IllegalArgumentException("Clima no válido: " + climaNombre));
+
         ColorEntity colorEntity = this.colorJpaRepository.findColorEntityByNombre(colorNombre)
                 .orElseThrow(() -> new IllegalArgumentException("Color no válido: " + colorNombre));
+
         Set<OcasionEntity> ocasionesEntities = ocasionesNombres.stream()
                 .map(nombre -> this.ocacionJpaRepository.findOcasionEntityByNombre(nombre)
                         .orElseThrow(() -> new IllegalArgumentException("Ocasión no válida: " + nombre)))
                 .collect(Collectors.toSet());
+
         this.garmentJpaRepository.save(new PrendaEntity(
                 name,
                 brandEntity,
                 type,
                 imageUrl,
+                garmentCode,
                 colorEntity,
                 climaEntity,
                 ocasionesEntities

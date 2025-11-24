@@ -19,6 +19,7 @@ public interface GarmentRepository {
 
     void createGarment(
             String name,
+            String garmentCode,
             String type,
             String color,
             String brandCode,

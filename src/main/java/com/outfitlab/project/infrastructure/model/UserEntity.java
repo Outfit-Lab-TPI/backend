@@ -111,7 +111,9 @@ public class UserEntity implements UserDetails {
                 entity.isVerified(),
                 entity.isStatus(),
                 entity.getVerificationToken(),
-                entity.getUserImageUrl());
+                entity.getUserImageUrl(),
+                MarcaEntity.convertToModelWithoutPrendas(entity.getBrand())
+        );
     }
 
     public static UserEntity convertModelToEntity(UserModel model) {
