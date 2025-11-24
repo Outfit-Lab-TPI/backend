@@ -78,6 +78,7 @@ public class PrendaEntity {
 
     public PrendaEntity(String name, MarcaEntity brandEntity, String type, String imageUrl, ColorEntity color, ClimaEntity climaEntity, Set<OcasionEntity> ocasionesEntities) {
         this.nombre = name;
+        this.marca = brandEntity;
         this.tipo = type;
         this.imagenUrl = imageUrl;
         this.color = color;
@@ -88,20 +89,27 @@ public class PrendaEntity {
     public static PrendaModel convertToModel(PrendaEntity prendaEntity) {
         BrandModel marcaModel = MarcaEntity.convertToModelWithoutPrendas(prendaEntity.getMarca());
 
-        ClimaModel climaModel = new ClimaModel(
-                prendaEntity.getClimaAdecuado().getId(),
-                prendaEntity.getClimaAdecuado().getNombre()
-        );
+        ClimaModel climaModel = null;
+        if (prendaEntity.getClimaAdecuado() != null) {
+            climaModel = new ClimaModel(
+                    prendaEntity.getClimaAdecuado().getId(),
+                    prendaEntity.getClimaAdecuado().getNombre()
+            );
+        } else {
+            System.err.println("Prenda sin clima: " + prendaEntity.getId() + " - " + prendaEntity.getNombre());
+        }
 
-        Set<OcasionModel> ocasionesModels = prendaEntity.getOcasiones().stream()
+        Set<OcasionModel> ocasionesModels = prendaEntity.getOcasiones() != null
+                ? prendaEntity.getOcasiones().stream()
                 .map(ocasionEntity -> new OcasionModel(ocasionEntity.getId(), ocasionEntity.getNombre()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet())
+                : Set.of();
 
-        ColorModel colorModel = new ColorModel(prendaEntity.getColor().getId(),
-                prendaEntity.getColor().getNombre(),
-                prendaEntity.getColor().getValor());
+        ColorModel colorModel = prendaEntity.getColor() != null
+                ? new ColorModel(prendaEntity.getColor().getId(), prendaEntity.getColor().getNombre(), prendaEntity.getColor().getValor())
+                : null;
 
-        return new PrendaModel(
+        PrendaModel model = new PrendaModel(
                 prendaEntity.getNombre(),
                 marcaModel,
                 prendaEntity.getTipo(),
@@ -111,7 +119,11 @@ public class PrendaEntity {
                 climaModel,
                 ocasionesModels
         );
+
+        model.setId(prendaEntity.getId());
+        return model;
     }
+
 
     public static PrendaEntity convertToEntity(PrendaModel prendaModel) {
         MarcaEntity entityMarca = MarcaEntity.convertToEntityWithoutPrendas(prendaModel.getMarca());

@@ -1,29 +1,26 @@
 package com.outfitlab.project.infrastructure.config;
 
 import com.outfitlab.project.domain.interfaces.port.GeminiClient;
-import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
+import com.outfitlab.project.domain.interfaces.repositories.*;
 import com.outfitlab.project.domain.useCases.garment.GetGarmentRecomendationByText;
-import com.outfitlab.project.infrastructure.repositories.GeminiClientImpl;
+import com.outfitlab.project.infrastructure.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.outfitlab.project.infrastructure.repositories.interfaces.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.outfitlab.project.domain.interfaces.repositories.BrandRepository;
-import com.outfitlab.project.domain.interfaces.repositories.UserGarmentFavoriteRepository;
 import com.outfitlab.project.domain.useCases.garment.*;
-import com.outfitlab.project.infrastructure.repositories.GarmentRepositoryImpl;
-import com.outfitlab.project.infrastructure.repositories.UserGarmentFavoriteRepositoryImpl;
-import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepository;
-import com.outfitlab.project.infrastructure.repositories.interfaces.GarmentJpaRepository;
-import com.outfitlab.project.infrastructure.repositories.interfaces.UserGarmentFavoriteJpaRepository;
-import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 
 @Configuration
 public class GarmentConfig {
 
     @Bean
-    public GarmentRepository garmentRepository(GarmentJpaRepository jpaRepository, BrandJpaRepository brandJpaRepository) {return new GarmentRepositoryImpl(jpaRepository, brandJpaRepository);}
+    public GarmentRepository garmentRepository(GarmentJpaRepository jpaRepository, BrandJpaRepository brandJpaRepository,
+                                               ClimaJpaRepository climaJpaRepository, ColorJpaRepository colorJpaRepository,
+                                               OcacionJpaRepository ocacionJpaRepository) {
+        return new GarmentRepositoryImpl(jpaRepository, brandJpaRepository, colorJpaRepository, climaJpaRepository, ocacionJpaRepository);
+    }
 
     @Bean
     public UserGarmentFavoriteRepository userGarmentFavoriteRepository(UserGarmentFavoriteJpaRepository jpaRepository,

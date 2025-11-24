@@ -2,7 +2,8 @@ package com.outfitlab.project.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.outfitlab.project.domain.model.UserModel;
-import com.outfitlab.project.infrastructure.config.security.Role;
+import com.outfitlab.project.domain.enums.Role;
+import com.outfitlab.project.domain.model.dto.UserWithBrandsDTO;
 import com.outfitlab.project.infrastructure.config.security.jwt.Token;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -60,9 +61,11 @@ public class UserEntity implements UserDetails {
     private boolean brandApproved;
     private String userImageUrl;
 
-    public UserEntity() {}
+    public UserEntity() {
+    }
 
-    public UserEntity(String name, String lastName, String email, String satulation, String secondName, Integer years, String password) {
+    public UserEntity(String name, String lastName, String email, String satulation, String secondName, Integer years,
+            String password) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
@@ -81,8 +84,8 @@ public class UserEntity implements UserDetails {
         this.verified = false;
     }
 
-    public UserEntity(String name, String lastName, String email, String satulation, String secondName, Integer years, String hashedPassword, String userImageUrl) {
-
+    public UserEntity(String name, String lastName, String email, String satulation, String secondName, Integer years,
+            String hashedPassword, String userImageUrl) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
@@ -91,10 +94,34 @@ public class UserEntity implements UserDetails {
         this.years = years;
         this.password = hashedPassword;
         this.userImageUrl = userImageUrl;
-
     }
 
     public static UserModel convertEntityToModel(UserEntity entity) {
+        UserModel model = new UserModel(
+                entity.getName(),
+                entity.getLastName(),
+                entity.getEmail(),
+                entity.getSatulation(),
+                entity.getSecondName(),
+                entity.getYears(),
+                entity.getPassword(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                entity.getRole(),
+                entity.isVerified(),
+                entity.isStatus(),
+                entity.getVerificationToken(),
+                entity.getUserImageUrl());
+
+        // Incluir brand si existe (null-safe)
+        if (entity.getBrand() != null) {
+            model.setBrand(MarcaEntity.convertToModelWithoutPrendas(entity.getBrand()));
+        }
+
+        return model;
+    }
+
+    public static UserModel convertEntityUserOrAdminToModel(UserEntity entity) {
         return new UserModel(
                 entity.getName(),
                 entity.getLastName(),
@@ -109,8 +136,26 @@ public class UserEntity implements UserDetails {
                 entity.isVerified(),
                 entity.isStatus(),
                 entity.getVerificationToken(),
-                entity.getUserImageUrl()
-        );
+                entity.getUserImageUrl());
+    }
+
+    public static UserModel convertEntityToModelWithId(UserEntity entity) {
+        return new UserModel(
+                entity.getId(),
+                entity.getName(),
+                entity.getLastName(),
+                entity.getEmail(),
+                entity.getSatulation(),
+                entity.getSecondName(),
+                entity.getYears(),
+                entity.getPassword(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                entity.getRole(),
+                entity.isVerified(),
+                entity.isStatus(),
+                entity.getVerificationToken(),
+                entity.getUserImageUrl());
     }
 
     public static UserEntity convertModelToEntity(UserModel model) {
@@ -122,8 +167,20 @@ public class UserEntity implements UserDetails {
                 model.getSecondName(),
                 model.getYears(),
                 model.getHashedPassword(),
-                model.getUserImageUrl()
-        );
+                model.getUserImg());
+    }
+
+    public static UserWithBrandsDTO convertEntityToModelWithBrand(UserEntity entity) {
+        return new UserWithBrandsDTO(
+                entity.getEmail(),
+                entity.getLastName(),
+                entity.getName(),
+                entity.getRole(),
+                entity.isStatus(),
+                entity.isVerified(),
+                entity.isBrandApproved(),
+                entity.getUserImageUrl(),
+                MarcaEntity.convertToModelWithoutPrendas(entity.getBrand()));
     }
 
     @PrePersist
@@ -141,6 +198,7 @@ public class UserEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name().toString()));
     }
+
     @Override
     public String getUsername() {
         return this.email;
@@ -150,6 +208,7 @@ public class UserEntity implements UserDetails {
     public String getPassword() {
         return this.password;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();

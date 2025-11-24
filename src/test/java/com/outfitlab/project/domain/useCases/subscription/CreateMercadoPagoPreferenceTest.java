@@ -18,14 +18,14 @@ public class CreateMercadoPagoPreferenceTest {
 
     @BeforeEach
     void setUp() {
-        createPreferenceUseCase = new CreateMercadoPagoPreference();
+        String webhookBaseUrl = "http://localhost:8080";
+        String frontendBaseUrl = "http://localhost:5173";
+        createPreferenceUseCase = new CreateMercadoPagoPreference(webhookBaseUrl, frontendBaseUrl);
     }
 
     @Test
     public void givenNullPriceWhenExecuteThenThrowMPApiException() {
 
-        assertThrows(MPApiException.class, () ->
-                createPreferenceUseCase.execute(PLAN_ID, USER_EMAIL, null, CURRENCY)
-        );
+        assertThrows(MPApiException.class, () -> createPreferenceUseCase.execute(PLAN_ID, USER_EMAIL, null, CURRENCY));
     }
 }

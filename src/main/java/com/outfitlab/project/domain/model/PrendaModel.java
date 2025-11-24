@@ -3,7 +3,7 @@ package com.outfitlab.project.domain.model;
 import java.util.Set;
 
 public class PrendaModel {
-
+    private Long id;
     private String nombre;
     private BrandModel marca;
     private String tipo;
@@ -25,6 +25,18 @@ public class PrendaModel {
         this.climaAdecuado = climaAdecuado;
         this.ocasiones = ocasiones;
     }
+
+
+    public PrendaModel(Long id, String nombre, String imagenUrl, BrandModel marca) {
+        this.id = id;
+        this.nombre = nombre;
+        this.imagenUrl = imagenUrl;
+        this.marca = marca;
+    }
+
+    public Long getId() {return id;}
+
+    public void setId(Long id) {this.id = id;}
 
     public String getGarmentCode() {
         return garmentCode;
