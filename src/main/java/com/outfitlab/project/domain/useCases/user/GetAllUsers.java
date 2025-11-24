@@ -5,6 +5,8 @@ import com.outfitlab.project.presentation.dto.UserDTO;
 
 import java.util.List;
 
+import static com.outfitlab.project.domain.enums.Role.USER;
+
 public class GetAllUsers {
 
     private final UserRepository userRepository;
@@ -14,7 +16,7 @@ public class GetAllUsers {
     }
 
     public List<UserDTO> execute(){
-        return this.userRepository.findAll()
+        return this.userRepository.findAllWithRoleUserAndAdmin()
                 .stream().map(UserDTO::convertToDTO)
                 .toList();
     }

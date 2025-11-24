@@ -25,30 +25,37 @@ public class UserGarmentFavoriteRepositoryImpl implements UserGarmentFavoriteRep
     private final GarmentJpaRepository garmentJpaRepository;
 
     public UserGarmentFavoriteRepositoryImpl(UserGarmentFavoriteJpaRepository userGarmentFavoriteJpaRepository,
-                                             UserJpaRepository userJpaRepository,
-                                             GarmentJpaRepository garmentJpaRepository) {
+            UserJpaRepository userJpaRepository,
+            GarmentJpaRepository garmentJpaRepository) {
         this.userGarmentFavoriteJpaRepository = userGarmentFavoriteJpaRepository;
         this.userJpaRepository = userJpaRepository;
         this.garmentJpaRepository = garmentJpaRepository;
     }
 
     @Override
-    public UserGarmentFavoriteModel findByGarmentCodeAndUserEmail(String garmentCode, String userEmail) throws UserGarmentFavoriteNotFoundException {
-        UserGarmentFavoriteEntity entity = this.userGarmentFavoriteJpaRepository.findByGarment_GarmentCodeAndUser_Email(garmentCode, userEmail);
-        if (entity == null) throw new UserGarmentFavoriteNotFoundException("El usuario no tiene la prenda: " + garmentCode + " como favorito.");
+    public UserGarmentFavoriteModel findByGarmentCodeAndUserEmail(String garmentCode, String userEmail)
+            throws UserGarmentFavoriteNotFoundException {
+        UserGarmentFavoriteEntity entity = this.userGarmentFavoriteJpaRepository
+                .findByGarment_GarmentCodeAndUser_Email(garmentCode, userEmail);
+        if (entity == null)
+            throw new UserGarmentFavoriteNotFoundException(
+                    "El usuario no tiene la prenda: " + garmentCode + " como favorito.");
 
         return UserGarmentFavoriteEntity.convertEntityToModelWithoutUser(entity);
     }
 
     @Override
-    public UserGarmentFavoriteEntity addToFavorite(String garmentCode, String userEmail) throws UserNotFoundException, GarmentNotFoundException {
+    public UserGarmentFavoriteEntity addToFavorite(String garmentCode, String userEmail)
+            throws UserNotFoundException, GarmentNotFoundException {
         UserEntity user = findUserByEmail(userEmail);
         PrendaEntity garment = findGarmentByCode(garmentCode);
 
-        if (user == null) throw new UserNotFoundException("No encontramos un usuario con el email: " + userEmail);
-        if (garment == null) throw new GarmentNotFoundException("No encontramos una prenda con el código: " + garmentCode);
+        if (user == null)
+            throw new UserNotFoundException("No encontramos un usuario con el email: " + userEmail);
+        if (garment == null)
+            throw new GarmentNotFoundException("No encontramos una prenda con el código: " + garmentCode);
 
-        return this.userGarmentFavoriteJpaRepository.save(new UserGarmentFavoriteEntity(user,garment));
+        return this.userGarmentFavoriteJpaRepository.save(new UserGarmentFavoriteEntity(user, garment));
     }
 
     private PrendaEntity findGarmentByCode(String garmentCode) {
@@ -57,23 +64,31 @@ public class UserGarmentFavoriteRepositoryImpl implements UserGarmentFavoriteRep
     }
 
     @Override
-    public void deleteFromFavorites(String garmentCode, String userEmail) throws UserNotFoundException, GarmentNotFoundException {
+    public void deleteFromFavorites(String garmentCode, String userEmail)
+            throws UserNotFoundException, GarmentNotFoundException {
         UserEntity user = findUserByEmail(userEmail);
         PrendaEntity garment = findGarmentByCode(garmentCode);
 
-        if (user == null) throw new UserNotFoundException("No encontramos un usuario con el email: " + userEmail);
-        if (garment == null) throw new GarmentNotFoundException("No encontramos una prenda con el código: " + garmentCode);
+        if (user == null)
+            throw new UserNotFoundException("No encontramos un usuario con el email: " + userEmail);
+        if (garment == null)
+            throw new GarmentNotFoundException("No encontramos una prenda con el código: " + garmentCode);
 
-        this.userGarmentFavoriteJpaRepository.delete(this.userGarmentFavoriteJpaRepository.findByGarmentAndUser(garment, user));
+        this.userGarmentFavoriteJpaRepository
+                .delete(this.userGarmentFavoriteJpaRepository.findByGarmentAndUser(garment, user));
     }
 
     @Override
-    public PageDTO<PrendaModel> getGarmentsFavoritesForUserByEmail(String userEmail, int page) throws UserNotFoundException, FavoritesException {
+    public PageDTO<PrendaModel> getGarmentsFavoritesForUserByEmail(String userEmail, int page)
+            throws UserNotFoundException, FavoritesException {
         UserEntity user = findUserByEmail(userEmail);
-        if (user == null) throw new UserNotFoundException("No encontramos un usuario con el email: " + userEmail);
+        if (user == null)
+            throw new UserNotFoundException("No encontramos un usuario con el email: " + userEmail);
 
-        Page<UserGarmentFavoriteEntity> favorites = this.userGarmentFavoriteJpaRepository.findFavoritesByUserEmail(userEmail, PageRequest.of(page, PAGE_SIZE));
-        if (favorites.isEmpty()) throw new FavoritesException("El usuario no tiene prendas favoritas.");
+        Page<UserGarmentFavoriteEntity> favorites = this.userGarmentFavoriteJpaRepository
+                .findFavoritesByUserEmail(userEmail, PageRequest.of(page, PAGE_SIZE));
+        if (favorites.isEmpty())
+            throw new FavoritesException("El usuario no tiene prendas favoritas.");
 
         Page<PrendaModel> garmentPage = favorites.map(fav -> PrendaEntity.convertToModel(fav.getGarment()));
         return new PageDTO<>(
@@ -82,8 +97,7 @@ public class UserGarmentFavoriteRepositoryImpl implements UserGarmentFavoriteRep
                 garmentPage.getSize(),
                 garmentPage.getTotalElements(),
                 garmentPage.getTotalPages(),
-                garmentPage.isLast()
-        );
+                garmentPage.isLast());
     }
 
     private UserEntity findUserByEmail(String userEmail) {

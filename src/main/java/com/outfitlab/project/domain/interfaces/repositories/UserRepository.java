@@ -29,7 +29,7 @@ public interface UserRepository {
     String getEmailUserRelatedToBrandByBrandCode(String brandCode);
 
     @Transactional
-    void updateUser(String name, String lastname, String email, String password, String confirmPassword, String newImageUrl);
+    UserModel updateUser(String name, String lastname, String email, String password, String confirmPassword, String newImageUrl);
 
     UserModel findById(Long userId) throws UserNotFoundException;
 }

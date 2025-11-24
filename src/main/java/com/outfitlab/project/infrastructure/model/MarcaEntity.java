@@ -37,13 +37,9 @@ public class MarcaEntity {
     @JsonManagedReference
     private List<PrendaEntity> prendas = new ArrayList<>();
 
-    public MarcaEntity(){}
+    private String urlSite;
 
-    public MarcaEntity(String codigoMarca, String nombre, String logoUrl) {
-        this.codigoMarca = codigoMarca;
-        this.nombre = nombre;
-        this.logoUrl = logoUrl;
-    }
+    public MarcaEntity(){}
 
     public MarcaEntity(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.codigoMarca = codigoMarca;
@@ -51,6 +47,13 @@ public class MarcaEntity {
         this.logoUrl = logoUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public MarcaEntity(String codigoMarca, String nombre, String logoUrl, String urlSite) {
+        this.codigoMarca = codigoMarca;
+        this.nombre = nombre;
+        this.logoUrl = logoUrl;
+        this.urlSite = urlSite;
     }
 
     @PrePersist
@@ -86,8 +89,7 @@ public class MarcaEntity {
                 model.getCodigoMarca(),
                 model.getNombre(),
                 model.getLogoUrl(),
-                model.getCreatedAt(),
-                model.getUpdatedAt()
+                model.getUrlSite()
         );
     }
 

@@ -39,6 +39,12 @@ public class BrandModel {
         this.logoUrl = logoUrl;
     }
 
+    public BrandModel(String codigoMarca, String nombre, String logoUrl) {
+        this.codigoMarca = codigoMarca;
+        this.nombre = nombre;
+        this.logoUrl = logoUrl;
+    }
+
     public String getCodigoMarca() {
         return codigoMarca;
     }

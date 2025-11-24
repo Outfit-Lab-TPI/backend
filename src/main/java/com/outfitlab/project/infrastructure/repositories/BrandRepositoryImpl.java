@@ -33,7 +33,7 @@ public class BrandRepositoryImpl implements BrandRepository {
 
     @Override
     public String createBrand(BrandModel model) {
-        return this.jpaMarcaRepository.save(new MarcaEntity(model.getCodigoMarca(), model.getNombre(), model.getLogoUrl()))
+        return this.jpaMarcaRepository.save(new MarcaEntity(model.getCodigoMarca(), model.getNombre(), model.getLogoUrl(), model.getUrlSite()))
                 .getCodigoMarca();
     }
 }
