@@ -121,7 +121,6 @@ docker compose up --build
 
 ---
 
-**Status**: ✅ Listo para el deploy rey
 # Variables de entorno requeridas
 
 | Variable | Descripción | Ejemplo |

@@ -139,6 +139,25 @@ public class UserEntity implements UserDetails {
                 entity.getUserImageUrl());
     }
 
+    public static UserModel convertEntityToModelWithId(UserEntity entity) {
+        return new UserModel(
+                entity.getId(),
+                entity.getName(),
+                entity.getLastName(),
+                entity.getEmail(),
+                entity.getSatulation(),
+                entity.getSecondName(),
+                entity.getYears(),
+                entity.getPassword(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                entity.getRole(),
+                entity.isVerified(),
+                entity.isStatus(),
+                entity.getVerificationToken(),
+                entity.getUserImageUrl());
+    }
+
     public static UserEntity convertModelToEntity(UserModel model) {
         return new UserEntity(
                 model.getName(),

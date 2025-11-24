@@ -1,4 +1,4 @@
-package com.outfitlab.project.domain.useCases.combination;
+package com.outfitlab.project.domain.useCases.combinationFavorite;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.interfaces.repositories.UserCombinationFavoriteRepository;
@@ -34,7 +34,7 @@ public class AddCombinationToFavourite {
         
         // Incrementar contador de favoritos
         incrementUsageCounter.execute(userEmail, "favorites");
-        
+
         return "Combinación añadida a favoritos.";
     }
 

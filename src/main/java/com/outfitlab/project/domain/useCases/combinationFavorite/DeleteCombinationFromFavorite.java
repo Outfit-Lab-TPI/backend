@@ -1,6 +1,5 @@
-package com.outfitlab.project.domain.useCases.combination;
+package com.outfitlab.project.domain.useCases.combinationFavorite;
 
-import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserCombinationFavoriteNotFoundException;
 import com.outfitlab.project.domain.exceptions.UserNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.UserCombinationFavoriteRepository;

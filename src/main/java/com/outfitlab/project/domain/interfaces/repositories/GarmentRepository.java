@@ -40,5 +40,7 @@ public interface GarmentRepository {
 
     List<OcasionModel> findAllOcasiones();
 
+    List<PrendaModel> findAll();
+
     List<ColorModel> findAllColores();
 }
