@@ -12,4 +12,6 @@ public interface GarmentRecomendationRepository {
     void deleteRecomendationsByGarmentCode(String garmentCode);
 
     void createSugerenciasByGarmentCode(String garmentCode, String type, List<String> sugerencias);
+
+    void deleteRecomendationByGarmentsCode(String garmentCodePrimary, String garmentCodeSecondary, String type);
 }
