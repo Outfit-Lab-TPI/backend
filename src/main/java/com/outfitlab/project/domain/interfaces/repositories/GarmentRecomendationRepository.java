@@ -9,4 +9,7 @@ public interface GarmentRecomendationRepository {
 
     List<GarmentRecomendationModel> findRecomendationsByGarmentCode(String garmentCode) throws GarmentNotFoundException;
 
+    void deleteRecomendationsByGarmentCode(String garmentCode);
+
+    void createSugerenciasByGarmentCode(String garmentCode, String type, List<String> sugerencias);
 }

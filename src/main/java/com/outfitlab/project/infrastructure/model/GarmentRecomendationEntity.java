@@ -1,11 +1,12 @@
 package com.outfitlab.project.infrastructure.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.outfitlab.project.domain.model.GarmentRecomendationModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
@@ -20,11 +21,13 @@ public class GarmentRecomendationEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topGarment_id", nullable = false)
     @JsonIgnoreProperties({"marca", "hibernateLazyInitializer", "handler"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private PrendaEntity topGarment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bottomGarment_id", nullable = false)
     @JsonIgnoreProperties({"marca", "hibernateLazyInitializer", "handler"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private PrendaEntity bottomGarment;
 
     public GarmentRecomendationEntity() {}

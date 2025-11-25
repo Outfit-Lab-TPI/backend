@@ -53,8 +53,10 @@ public class DashboardController {
     }
 
     @GetMapping("/color-conversion")
-    public ResponseEntity<List<ColorConversion>> getColorConversion() {
-        List<ColorConversion> colorConversion = getColorConversion.execute();
+    public ResponseEntity<List<ColorConversion>> getColorConversion(
+            @RequestParam(required = false) String brandCode
+    ) {
+        List<ColorConversion> colorConversion = getColorConversion.execute(brandCode);
         return ResponseEntity.ok(colorConversion);
     }
 

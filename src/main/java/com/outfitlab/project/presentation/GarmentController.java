@@ -1,12 +1,18 @@
 package com.outfitlab.project.presentation;
 
 import com.outfitlab.project.domain.exceptions.*;
+import com.outfitlab.project.domain.helper.CodeFormatter;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.PrendaModel;
 import com.outfitlab.project.domain.model.dto.GarmentDTO;
 import com.outfitlab.project.domain.useCases.bucketImages.DeleteImage;
+import com.outfitlab.project.domain.useCases.combination.DeleteAllCombinationRelatedToGarment;
+import com.outfitlab.project.domain.useCases.combinationAttempt.DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment;
 import com.outfitlab.project.domain.useCases.garment.*;
 import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
+import com.outfitlab.project.domain.useCases.recomendations.CreateSugerenciasByGarmentsCode;
+import com.outfitlab.project.domain.useCases.recomendations.DeleteAllPrendaOcacionRelatedToGarment;
+import com.outfitlab.project.domain.useCases.recomendations.DeleteGarmentRecomentationsRelatedToGarment;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
 import com.outfitlab.project.presentation.dto.GarmentRequestDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +41,22 @@ public class GarmentController {
     private final GetGarmentByCode getGarmentByCode;
     private final DeleteImage deleteImage;
     private final UpdateGarment updateGarment;
+    private final DeleteGarmentRecomentationsRelatedToGarment deleteGarmentRecomentationsRelatedToGarment;
+    private final DeleteAllFavoritesRelatedToGarment deleteAllFavoritesRelatedToGarment;
+    private final DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment;
+    private final DeleteAllCombinationRelatedToGarment deleteAllCombinationRelatedToGarment;
+    private final DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment;
+    private final CreateSugerenciasByGarmentsCode createSugerenciasByGarmentsCode;
 
     public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite,
                              DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail,
                              CreateGarment createGarment, SaveImage saveImage, DeleteGarment deleteGarment, GarmentRepository garmentRepository,
-                             GetGarmentByCode getGarmentByCode, DeleteImage deleteImage, UpdateGarment updateGarment) {
+                             GetGarmentByCode getGarmentByCode, DeleteImage deleteImage, UpdateGarment updateGarment,
+                             DeleteGarmentRecomentationsRelatedToGarment deleteGarmentRecomentationsRelatedToGarment,
+                             DeleteAllFavoritesRelatedToGarment deleteAllFavoritesRelatedToGarment, DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment,
+                             DeleteAllCombinationRelatedToGarment deleteAllCombinationRelatedToGarment,
+                             DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment,
+                             CreateSugerenciasByGarmentsCode createSugerenciasByGarmentsCode) {
         this.getGarmentsByType = getGarmentsByType;
         this.addGarmentToFavourite = addGarmentToFavourite;
         this.deleteGarmentFromFavorite = deleteGarmentFromFavorite;
@@ -50,6 +67,12 @@ public class GarmentController {
         this.getGarmentByCode = getGarmentByCode;
         this.deleteImage = deleteImage;
         this.updateGarment = updateGarment;
+        this.deleteGarmentRecomentationsRelatedToGarment = deleteGarmentRecomentationsRelatedToGarment;
+        this.deleteAllFavoritesRelatedToGarment = deleteAllFavoritesRelatedToGarment;
+        this.deleteAllPrendaOcacionRelatedToGarment = deleteAllPrendaOcacionRelatedToGarment;
+        this.deleteAllCombinationRelatedToGarment = deleteAllCombinationRelatedToGarment;
+        this.deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment = deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment;
+        this.createSugerenciasByGarmentsCode = createSugerenciasByGarmentsCode;
     }
 
     @GetMapping("/{typeOfGarment}")
@@ -133,9 +156,12 @@ public class GarmentController {
                     brandCode,
                     saveImageAndGetUrl(request.getImagen(), "garment_images"),
                     request.getClimaNombre(),
-                    request.getOcasionesNombres()
+                    request.getOcasionesNombres(),
+                    request.getGenero()
             );
 
+            String newGarmentCode = CodeFormatter.execute(request.getNombre());
+            this.createSugerenciasByGarmentsCode.execute(newGarmentCode,request.getTipo(), request.getSugerencias());
             return ResponseEntity.ok("Prenda creada correctamente.");
         }catch (BrandsNotFoundException e){
             return buildResponseEntityError(e.getMessage());
@@ -162,9 +188,11 @@ public class GarmentController {
                     brandCode,
                     checkIfImageIsEmptyToSaveAndGetUrl(request),
                     request.getClimaNombre(),
-                    request.getOcasionesNombres()
+                    request.getOcasionesNombres(),
+                    request.getGenero()
             );
 
+            this.createSugerenciasByGarmentsCode.execute(garmentCode,request.getTipo(), request.getSugerencias());
             deleteImage(oldImageUrl);
 
             return ResponseEntity.ok("Prenda actualizada correctamente.");
@@ -177,23 +205,29 @@ public class GarmentController {
 
     @DeleteMapping("/delete/{garmentCode}")
     public ResponseEntity<?> deleteGarment(@PathVariable String garmentCode, @AuthenticationPrincipal UserDetails user) {
-        String brandCode;
         try{
-            PrendaModel garment = this.getGarmentByCode.execute(garmentCode);
-            brandCode = garment.getMarca().getCodigoMarca();
-
-            tryToDeleteGarmentAndImage(garmentCode, brandCode);
+            tryToDeleteGarmentAndImage(garmentCode);
             return ResponseEntity.ok("Prenda eliminada correctamente.");
         }catch (GarmentNotFoundException | BrandsNotFoundException | DeleteGarmentException e){
             return buildResponseEntityError(e.getMessage());
         }
     }
 
-        private void tryToDeleteGarmentAndImage(String garmentCode, String brandCode) {
+    private void tryToDeleteGarmentAndImage(String garmentCode) {
         PrendaModel garment = this.getGarmentByCode.execute(garmentCode);
 
         deleteImage(garment.getImagenUrl());
-        this.deleteGarment.execute(garment, brandCode);
+        deleteAllRelatedRecordsToGarment(garment);
+
+        this.deleteGarment.execute(garment, garment.getMarca().getCodigoMarca());
+    }
+
+    private void deleteAllRelatedRecordsToGarment(PrendaModel garment) {
+        this.deleteGarmentRecomentationsRelatedToGarment.execute(garment.getGarmentCode());
+        this.deleteAllFavoritesRelatedToGarment.execute(garment.getGarmentCode());
+        this.deleteAllPrendaOcacionRelatedToGarment.execute(garment.getGarmentCode());
+        this.deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment.execute(garment.getGarmentCode());
+        this.deleteAllCombinationRelatedToGarment.execute(garment.getGarmentCode());
     }
 
     private ResponseEntity<?> buildResponseEntityError(String message){

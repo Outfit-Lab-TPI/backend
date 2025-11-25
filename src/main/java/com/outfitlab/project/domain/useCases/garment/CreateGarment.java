@@ -12,7 +12,7 @@ public class CreateGarment {
         this.garmentRepository = garmentRepository;
     }
 
-    public void execute(String name, String type, String color, String brandCode, String imageUrl, String climaNombre,  List<String> ocasionesNombres) {
+    public void execute(String name, String type, String color, String brandCode, String imageUrl, String climaNombre,  List<String> ocasionesNombres, String genero) {
         this.garmentRepository.createGarment(
                 name,
                 formatGarmentCode(name),
@@ -21,7 +21,8 @@ public class CreateGarment {
                 brandCode,
                 imageUrl,
                 climaNombre,
-                ocasionesNombres
+                ocasionesNombres,
+                genero
         );
     }
 

@@ -10,4 +10,6 @@ public interface CombinationRepository {
     Optional<CombinationModel> findByPrendas(Long prendaSuperiorId, Long prendaInferiorId);
 
     CombinationModel save(CombinationModel combinationModel);
+
+    void deleteAllByGarmentcode(String garmentCode);
 }

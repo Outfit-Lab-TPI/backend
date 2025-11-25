@@ -3,6 +3,7 @@ package com.outfitlab.project.infrastructure.config;
 import com.outfitlab.project.domain.interfaces.port.GeminiClient;
 import com.outfitlab.project.domain.interfaces.repositories.*;
 import com.outfitlab.project.domain.useCases.garment.GetGarmentRecomendationByText;
+import com.outfitlab.project.domain.useCases.recomendations.DeleteAllPrendaOcacionRelatedToGarment;
 import com.outfitlab.project.infrastructure.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -32,6 +33,16 @@ public class GarmentConfig {
     @Bean
     public AddGarmentToFavorite addGarmentToFavourite(UserGarmentFavoriteRepository userGarmentFavoriteRepository){
         return new AddGarmentToFavorite(userGarmentFavoriteRepository);
+    }
+
+    @Bean
+    public DeleteAllFavoritesRelatedToGarment deleteAllFavoritesRelatedToGarment(UserGarmentFavoriteRepository userGarmentFavoriteRepository){
+        return new DeleteAllFavoritesRelatedToGarment(userGarmentFavoriteRepository);
+    }
+
+    @Bean
+    public DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment(PrendaOcacionRepository prendaOcacionRepository){
+        return new DeleteAllPrendaOcacionRelatedToGarment(prendaOcacionRepository);
     }
 
     @Bean
