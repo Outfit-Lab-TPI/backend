@@ -211,6 +211,7 @@ public class TripoRepositoryImpl implements TripoRepository {
 
     private void checkIfStatusResponseIsOk(ResponseEntity<String> taskResponse) throws ErrorGenerateGlbException {
         if (!taskResponse.getStatusCode().is2xxSuccessful()) {
+            log.warn("Tripo task creation failed. status={} body={}", taskResponse.getStatusCode(), taskResponse.getBody());
             throw new ErrorGenerateGlbException("Error al crear task para generar el GLB: " + taskResponse.getBody());
         }
     }

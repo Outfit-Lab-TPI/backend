@@ -2,10 +2,11 @@ package com.outfitlab.project.infrastructure.gateways;
 
 import com.outfitlab.project.domain.interfaces.gateways.GmailGateway;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-
+@Slf4j
 public class GmailGatewayImpl implements GmailGateway {
 
     private final JavaMailSender mailSender;
@@ -27,10 +28,11 @@ public class GmailGatewayImpl implements GmailGateway {
             helper.setSubject(subject);
             helper.setText(body, true);
 
+            log.info("Enviando email SMTP to={} subject={}", toEmail, subject);
             mailSender.send(message);
-            System.out.println("Correo de suscripción enviado a: " + toEmail);
+            log.info("Correo de suscripción enviado a {}", toEmail);
         } catch (jakarta.mail.MessagingException e) {
-            System.err.println("ERROR al enviar correo a " + toEmail + ": " + e.getMessage());
+            log.error("ERROR al enviar correo a {}: {}", toEmail, e.getMessage(), e);
         }
     }
 }
