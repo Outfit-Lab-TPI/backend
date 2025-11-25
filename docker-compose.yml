@@ -55,8 +55,11 @@ services:
       - FRONTEND_ORIGINS=${FRONTEND_ORIGINS:-http://localhost:5173,https://*.vercel.app}
       
       # Gmail/Email Configuration
+      - SPRING_MAIL_HOST=${SPRING_MAIL_HOST:-smtp.gmail.com}
+      - SPRING_MAIL_PORT=${SPRING_MAIL_PORT:-587}
       - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME:-tpi8bits@gmail.com}
       - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
+      - SPRING_MAIL_FROM=${SPRING_MAIL_FROM:-tpi8bits@gmail.com}
     
     restart: unless-stopped
     networks:

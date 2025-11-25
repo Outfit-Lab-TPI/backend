@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class GarmentRepositoryImpl implements GarmentRepository {
 
-    private final int PAGE_SIZE = 10;
+    private final int PAGE_SIZE = 20;
     private final GarmentJpaRepository garmentJpaRepository;
     private final BrandJpaRepository brandJpaRepository;
     private final ColorJpaRepository colorJpaRepository;
@@ -79,7 +79,8 @@ public class GarmentRepositoryImpl implements GarmentRepository {
             String brandCode,
             String imageUrl,
             String climaNombre,
-            List<String> ocasionesNombres
+            List<String> ocasionesNombres,
+            String genero
     ) {
         MarcaEntity brandEntity = this.brandJpaRepository.findByCodigoMarca(brandCode);
 
@@ -104,7 +105,8 @@ public class GarmentRepositoryImpl implements GarmentRepository {
                 garmentCode,
                 colorEntity,
                 climaEntity,
-                ocasionesEntities
+                ocasionesEntities,
+                genero
         ));
     }
 
@@ -114,7 +116,7 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     }
 
     @Override
-    public void updateGarment(String name, String type, String colorNombre, String event, String garmentCode, String imageUrl, String newGarmentCode, String climaNombre, List<String> ocasionesNombres) {
+    public void updateGarment(String name, String type, String colorNombre, String event, String garmentCode, String imageUrl, String newGarmentCode, String climaNombre, List<String> ocasionesNombres, String genero) {
         PrendaEntity garmentEntity = this.garmentJpaRepository.findByGarmentCode(garmentCode);
         if (garmentEntity == null) throw new GarmentNotFoundException("No encontramos la prenda: " + garmentCode);
         ColorEntity colorEntity = this.colorJpaRepository.findColorEntityByNombre(colorNombre)
@@ -133,6 +135,7 @@ public class GarmentRepositoryImpl implements GarmentRepository {
         garmentEntity.setGarmentCode(newGarmentCode);
         garmentEntity.setOcasiones(ocasionesEntities);
         garmentEntity.setClimaAdecuado(climaEntity);
+        garmentEntity.setGenero(genero.toLowerCase());
 
         if (!imageUrl.isEmpty())
             garmentEntity.setImagenUrl(imageUrl); // la voy a actualizar solo si vino algo, si vino empty es pq no le actualizaron la img

@@ -5,7 +5,9 @@ import com.outfitlab.project.domain.interfaces.repositories.CombinationRepositor
 import com.outfitlab.project.domain.interfaces.repositories.UserCombinationFavoriteRepository;
 import com.outfitlab.project.domain.interfaces.repositories.UserRepository;
 import com.outfitlab.project.domain.useCases.combination.CreateCombination;
+import com.outfitlab.project.domain.useCases.combination.DeleteAllCombinationRelatedToGarment;
 import com.outfitlab.project.domain.useCases.combination.GetCombinationByPrendas;
+import com.outfitlab.project.domain.useCases.combinationAttempt.DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment;
 import com.outfitlab.project.domain.useCases.combinationAttempt.RegisterCombinationAttempt;
 import com.outfitlab.project.domain.useCases.combinationFavorite.AddCombinationToFavourite;
 import com.outfitlab.project.domain.useCases.combinationFavorite.DeleteCombinationFromFavorite;
@@ -43,6 +45,16 @@ public class CombinationConfig {
     @Bean
     public DeleteCombinationFromFavorite deleteCombinationFromFavorite(UserCombinationFavoriteRepository userCombinationFavoriteRepository){
         return new DeleteCombinationFromFavorite(userCombinationFavoriteRepository);
+    }
+
+    @Bean
+    public DeleteAllCombinationRelatedToGarment deleteAllCombinationRelatedToGarment(CombinationRepository combinationRepository){
+        return new DeleteAllCombinationRelatedToGarment(combinationRepository);
+    }
+
+    @Bean
+    public DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment(CombinationAttemptRepository combinationAttemptRepository){
+        return new DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment(combinationAttemptRepository);
     }
 
     @Bean

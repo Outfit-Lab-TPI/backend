@@ -13,4 +13,6 @@ public interface CombinationAttemptRepository {
     List<CombinationAttemptModel> findLastNDays(int i);
 
     List<CombinationAttemptModel> findAll();
+
+    void deleteAllByAttempsReltedToCombinationRelatedToGarments(String garmentCode);
 }

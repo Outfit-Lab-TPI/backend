@@ -19,7 +19,7 @@ import org.springframework.data.domain.PageRequest;
 
 public class UserGarmentFavoriteRepositoryImpl implements UserGarmentFavoriteRepository {
 
-    private final int PAGE_SIZE = 10;
+    private final int PAGE_SIZE = 20;
     private final UserGarmentFavoriteJpaRepository userGarmentFavoriteJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final GarmentJpaRepository garmentJpaRepository;
@@ -98,6 +98,11 @@ public class UserGarmentFavoriteRepositoryImpl implements UserGarmentFavoriteRep
                 garmentPage.getTotalElements(),
                 garmentPage.getTotalPages(),
                 garmentPage.isLast());
+    }
+
+    @Override
+    public void deleteFavoritesRelatedToGarment(String garmentCode) {
+        this.userGarmentFavoriteJpaRepository.deleteAllByGarmentCode(garmentCode);
     }
 
     private UserEntity findUserByEmail(String userEmail) {

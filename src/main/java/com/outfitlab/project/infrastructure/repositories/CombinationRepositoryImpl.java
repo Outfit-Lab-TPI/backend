@@ -37,6 +37,11 @@ public class CombinationRepositoryImpl implements CombinationRepository {
         return entityToModel(saved);
     }
 
+    @Override
+    public void deleteAllByGarmentcode(String garmentCode) {
+        this.jpaRepository.deleteAllByGarmentCode(garmentCode);
+    }
+
     private CombinationModel entityToModel(CombinationEntity entity) {
         CombinationModel model = new CombinationModel(
                 PrendaEntity.convertToModel(entity.getPrendaSuperior()),

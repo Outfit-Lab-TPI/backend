@@ -46,12 +46,12 @@ public class LoginUser {
                             loginDTO.getEmail(),
                             loginDTO.getPassword()));
         } catch (AuthenticationException ex) {
-            throw new UserNotFoundException("Email o contraseña incorrecta. Vuelva a intentarlo.");
+            throw new UserNotFoundException("Email o contraseña incorrecta, vuelva a intentarlo.");
         }
 
         UserEntity userEntity = userJpaRepository.findByEmail(loginDTO.getEmail());
         if (!userEntity.isVerified()) {
-            throw new UserNotFoundException("La cuenta no ha sido verificada. Revisa tu correo electrónico.");
+            throw new UserNotFoundException("La cuenta aún no ha sido verificada. Puedes consultar el estado de la gesión en soporte@outfitlab.com.");
         }
 
         var user = userJpaRepository.getByEmail(loginDTO.getEmail())

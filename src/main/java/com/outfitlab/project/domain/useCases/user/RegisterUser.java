@@ -53,7 +53,7 @@ public class RegisterUser {
 
         String verificationToken = UUID.randomUUID().toString();
 
-        String verificationLink = baseUrl + "/api/users/verify?token=" + verificationToken;
+        String verificationLink = baseUrl + "/users/verify?token=" + verificationToken;
 
         UserEntity userEntity = new UserEntity(
                 request.getName(),

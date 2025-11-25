@@ -18,10 +18,10 @@ public class UpdateGarment {
         this.brandRepository = brandRepository;
     }
 
-    public void execute(String name, String type, String color, String event, String garmentCode, String brandCode, String imageUrl, String clima,  List<String> ocasionesNombres) {
+    public void execute(String name, String type, String color, String event, String garmentCode, String brandCode, String imageUrl, String clima,  List<String> ocasionesNombres, String genero) {
         checkIfBrandExists(brandCode);
         checkIfCanUpdateGarment(this.garmentRepository.findByGarmentCode(garmentCode), brandCode);
-        this.garmentRepository.updateGarment(name, type, color, event, garmentCode, imageUrl, this.formatGarmentCode(name), clima, ocasionesNombres);
+        this.garmentRepository.updateGarment(name, type, color, event, garmentCode, imageUrl, this.formatGarmentCode(name), clima, ocasionesNombres, genero);
     }
 
     private static void checkIfCanUpdateGarment(PrendaModel garment, String brandCode) {
