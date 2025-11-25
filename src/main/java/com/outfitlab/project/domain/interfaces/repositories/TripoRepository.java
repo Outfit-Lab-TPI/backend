@@ -2,6 +2,7 @@ package com.outfitlab.project.domain.interfaces.repositories;
 
 import com.outfitlab.project.domain.exceptions.*;
 import com.outfitlab.project.domain.model.TripoModel;
+import com.outfitlab.project.domain.model.TripoTaskStatusResult;
 
 import java.util.Map;
 
@@ -15,6 +16,8 @@ public interface TripoRepository {
     String requestGenerateGlbToTripo(Map<String, Object> uploadData) throws ErrorReadJsonException, ErrorGenerateGlbException;
 
     String requestStatusGlbTripo(String taskId) throws ErrorReadJsonException, ErrorWhenSleepException, ErrorGlbGenerateTimeExpiredException, ErrorGenerateGlbException;
+
+    TripoTaskStatusResult fetchTaskStatus(String taskId) throws ErrorReadJsonException;
 
     TripoModel save(TripoModel tripoModel);
 

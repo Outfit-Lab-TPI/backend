@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import com.outfitlab.project.domain.model.TripoTaskStatusResult;
 
 @Slf4j
 public class TripoRepositoryImpl implements TripoRepository {
@@ -135,6 +136,27 @@ public class TripoRepositoryImpl implements TripoRepository {
         }
 
         throw new ErrorGlbGenerateTimeExpiredException("Se agotó el tiempo de espera para la generación del GLB. El estatus sigue pendiente.");
+    }
+
+    @Override
+    public TripoTaskStatusResult fetchTaskStatus(String taskId) throws ErrorReadJsonException {
+        HttpEntity<Void> entityWithTaskHeaders = new HttpEntity<>(getHttpHeaders(MediaType.APPLICATION_JSON));
+        ResponseEntity<String> statusResponse = requestTripoTaskStatus(taskId, entityWithTaskHeaders);
+
+        try {
+            JsonNode statusJson = mapper.readTree(statusResponse.getBody());
+            String status = statusJson.path("data").path("status").asText();
+
+            JsonNode modelNode = statusJson.path("data").path("result").path("pbr_model").path("url");
+            String modelUrl = modelNode.isMissingNode() || modelNode.isNull() ? null : modelNode.asText();
+
+            JsonNode errorNode = statusJson.path("data").path("error");
+            String errorMessage = errorNode.isMissingNode() || errorNode.isNull() ? null : errorNode.asText();
+
+            return new TripoTaskStatusResult(status, modelUrl, errorMessage);
+        } catch (JsonProcessingException e) {
+            throw new ErrorReadJsonException("Hubo un error al leer la respuesta del status de Tripo: " + e.getMessage());
+        }
     }
 
 

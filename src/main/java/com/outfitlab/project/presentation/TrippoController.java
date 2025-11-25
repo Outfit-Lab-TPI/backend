@@ -34,8 +34,6 @@ public class TrippoController {
     private final GenerateImageToModelTrippo generateImageToModelTrippo;
     private final FindTripoModelByTaskid findTripoModelByTaskid;
     private final UploadImageToTripo uploadImageToTripo;
-    private final UpdateTripoModel updateTripoModel;
-    private final CheckTaskStatus checkTaskStatus;
     private final SaveTripoModel saveTripoModel;
     private final SaveImage uploadImageToAws;
     private final CheckUserPlanLimit checkUserPlanLimit;
@@ -54,14 +52,12 @@ public class TrippoController {
 
             TripoModelDTO tripoModelDTO = createTripoModelDTO(taskId, uploadData);
 
-            this.saveTripoModel.execute(TripoModelDTO.convertToModel(tripoModelDTO));
-            log.info("Modelo guardado en BD con taskId: {}", taskId);
-
-            tripoModelDTO.setTripoModelUrl(this.checkTaskStatus.execute(taskId));
-            tripoModelDTO.setStatus(TripoModel.ModelStatus.COMPLETED);
+            TripoModel savedModel = this.saveTripoModel.execute(TripoModelDTO.convertToModel(tripoModelDTO));
+            log.info("Modelo guardado en BD con taskId: {} (status PENDING)", taskId);
 
             return ResponseEntity
-                    .ok(buildResponse(this.updateTripoModel.execute(TripoModelDTO.convertToModel(tripoModelDTO))));
+                    .accepted()
+                    .body(buildResponse(savedModel));
         } catch (ErroBytesException | ErrorReadJsonException | ErrorUploadImageToTripoException | FileEmptyException
                 | ErrorGenerateGlbException | ErrorGlbGenerateTimeExpiredException | ErrorWhenSleepException
                 | ErrorTripoEntityNotFoundException e) {
