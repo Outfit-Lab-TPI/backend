@@ -14,6 +14,7 @@ public class GarmentRequestDTO {
     private String climaNombre;
     private List<String> ocasionesNombres;
     private String codigoMarca;
+    private String genero;
 
     public String getNombre() {
         return nombre;
@@ -76,6 +77,14 @@ public class GarmentRequestDTO {
     }
     public void setCodigoMarca(String codigoMarca) {
         this.codigoMarca = codigoMarca;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
     }
 
     @Override

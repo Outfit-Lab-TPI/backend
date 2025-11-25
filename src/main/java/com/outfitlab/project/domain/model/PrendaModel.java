@@ -12,6 +12,7 @@ public class PrendaModel {
     private ColorModel color;
     private ClimaModel climaAdecuado;
     private Set<OcasionModel> ocasiones;
+    private String genero;
 
     public PrendaModel() {}
 
@@ -32,6 +33,18 @@ public class PrendaModel {
         this.nombre = nombre;
         this.imagenUrl = imagenUrl;
         this.marca = marca;
+    }
+
+    public PrendaModel(String nombre, BrandModel marcaModel, String tipo, String imagenUrl, String garmentCode, ColorModel colorModel, ClimaModel climaModel, Set<OcasionModel> ocasionesModels, String genero) {
+        this.nombre = nombre;
+        this.marca = marcaModel;
+        this.tipo = tipo;
+        this.imagenUrl = imagenUrl;
+        this.garmentCode = garmentCode;
+        this.color = colorModel;
+        this.climaAdecuado = climaModel;
+        this.ocasiones = ocasionesModels;
+        this.genero = genero;
     }
 
     public Long getId() {return id;}
@@ -99,5 +112,13 @@ public class PrendaModel {
 
     public void setOcasiones(Set<OcasionModel> ocasiones) {
         this.ocasiones = ocasiones;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
     }
 }

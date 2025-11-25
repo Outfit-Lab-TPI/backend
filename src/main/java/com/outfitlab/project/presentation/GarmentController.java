@@ -133,7 +133,8 @@ public class GarmentController {
                     brandCode,
                     saveImageAndGetUrl(request.getImagen(), "garment_images"),
                     request.getClimaNombre(),
-                    request.getOcasionesNombres()
+                    request.getOcasionesNombres(),
+                    request.getGenero()
             );
 
             return ResponseEntity.ok("Prenda creada correctamente.");
@@ -162,7 +163,8 @@ public class GarmentController {
                     brandCode,
                     checkIfImageIsEmptyToSaveAndGetUrl(request),
                     request.getClimaNombre(),
-                    request.getOcasionesNombres()
+                    request.getOcasionesNombres(),
+                    request.getGenero()
             );
 
             deleteImage(oldImageUrl);
