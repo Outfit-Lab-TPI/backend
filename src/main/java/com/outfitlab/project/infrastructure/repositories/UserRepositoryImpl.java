@@ -11,9 +11,7 @@ import com.outfitlab.project.infrastructure.repositories.interfaces.BrandJpaRepo
 import com.outfitlab.project.infrastructure.repositories.interfaces.UserJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
 import java.util.List;
-import java.util.Optional;
 
 import static com.outfitlab.project.domain.enums.Role.*; // ← Usar enums
 
