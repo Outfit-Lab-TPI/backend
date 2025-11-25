@@ -35,7 +35,7 @@ public class SubscriptionEntity {
 
     private boolean isPopular;
 
-    @Column(name = "plan_type", nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'USER'")
+    @Column(name = "plan_type", nullable = false)
     private String planType = "USER";
 
     @Column(name = "max_garments")

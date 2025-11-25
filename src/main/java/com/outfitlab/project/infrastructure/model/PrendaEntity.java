@@ -55,6 +55,8 @@ public class PrendaEntity {
     )
     private Set<OcasionEntity> ocasiones;
 
+    private String genero = "hombre";
+
     public PrendaEntity(){}
 
     public PrendaEntity(String nombre, MarcaEntity marca, String tipo, String imagenUrl, String garmentCode, ColorEntity color, ClimaEntity climaAdecuado, Set<OcasionEntity> ocasiones) {
@@ -84,6 +86,18 @@ public class PrendaEntity {
         this.color = color;
         this.climaAdecuado = climaEntity;
         this.ocasiones = ocasionesEntities;
+    }
+
+    public PrendaEntity(String name, MarcaEntity brandEntity, String type, String imageUrl, String garmentCode, ColorEntity colorEntity, ClimaEntity climaEntity, Set<OcasionEntity> ocasionesEntities, String genero) {
+        this.nombre = name;
+        this.marca = brandEntity;
+        this.tipo = type;
+        this.imagenUrl = imageUrl;
+        this.garmentCode = garmentCode;
+        this.color = colorEntity;
+        this.climaAdecuado = climaEntity;
+        this.ocasiones = ocasionesEntities;
+        this.genero = genero;
     }
 
     public static PrendaModel convertToModel(PrendaEntity prendaEntity) {
@@ -117,7 +131,8 @@ public class PrendaEntity {
                 prendaEntity.getGarmentCode(),
                 colorModel,
                 climaModel,
-                ocasionesModels
+                ocasionesModels,
+                prendaEntity.getGenero()
         );
 
         model.setId(prendaEntity.getId());
