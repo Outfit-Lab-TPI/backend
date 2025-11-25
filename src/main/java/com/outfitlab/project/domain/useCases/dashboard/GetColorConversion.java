@@ -17,18 +17,24 @@ public class GetColorConversion {
         this.combinationAttemptRepository = combinationAttemptRepository;
     }
 
-    public List<ColorConversion> execute() {
+    public List<ColorConversion> execute(String brandCode) {
         List<CombinationAttemptModel> attempts = combinationAttemptRepository.findAll();
         Map<String, Integer> colorMap = new HashMap<>();
 
         for (CombinationAttemptModel a : attempts) {
-            // Color de la prenda superior
-            String colorSup = a.getCombination().getPrendaSuperior().getColor().getNombre();
-            colorMap.put(colorSup, colorMap.getOrDefault(colorSup, 0) + 1);
+            Set<String> colores = new HashSet<>();
 
-            // Color de la prenda inferior
-            String colorInf = a.getCombination().getPrendaInferior().getColor().getNombre();
-            colorMap.put(colorInf, colorMap.getOrDefault(colorInf, 0) + 1);
+            if (a.getCombination().getPrendaSuperior().getMarca().getCodigoMarca().equals(brandCode)) {
+                colores.add(a.getCombination().getPrendaSuperior().getColor().getNombre());
+            }
+
+            if (a.getCombination().getPrendaInferior().getMarca().getCodigoMarca().equals(brandCode)) {
+                colores.add(a.getCombination().getPrendaInferior().getColor().getNombre());
+            }
+
+            for (String color : colores) {
+                colorMap.put(color, colorMap.getOrDefault(color, 0) + 1);
+            }
         }
 
         return colorMap.entrySet().stream()
@@ -39,6 +45,7 @@ public class GetColorConversion {
                         0.0     // conversion siempre 0
                 ))
                 .sorted((a, b) -> Integer.compare(b.pruebas(), a.pruebas()))
-                .collect(Collectors.toList());
+                .toList();
     }
+
 }
