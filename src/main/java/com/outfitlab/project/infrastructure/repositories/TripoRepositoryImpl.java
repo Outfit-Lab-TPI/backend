@@ -16,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,7 +62,13 @@ public class TripoRepositoryImpl implements TripoRepository {
         uploadResult.put("originalFilename", originalFilename);
         uploadResult.put("fileExtension", getFileExtension(originalFilename));
 
-        ResponseEntity<String> response = generateRequestToUploadImageToTripo(imageFile, originalFilename);
+        ResponseEntity<String> response;
+        try {
+            response = generateRequestToUploadImageToTripo(imageFile, originalFilename);
+        } catch (HttpStatusCodeException e) {
+            log.warn("Tripo upload failed. status={} body={}", e.getStatusCode(), e.getResponseBodyAsString());
+            throw new ErrorUploadImageToTripoException("Tripo devolvió " + e.getStatusCode() + ": " + e.getResponseBodyAsString());
+        }
         checkIfResponseIsOk(response);
         uploadResult.put("imageToken", tryGetImageToken(response));
 
@@ -76,7 +83,13 @@ public class TripoRepositoryImpl implements TripoRepository {
         String taskBody = tryGetTaskBody(mapper, bodyMap);
 
         HttpEntity<String> taskEntity = new HttpEntity<>(taskBody, taskHeaders);
-        ResponseEntity<String> taskResponse = restTemplate.postForEntity(taskUrl, taskEntity, String.class);
+        ResponseEntity<String> taskResponse;
+        try {
+            taskResponse = restTemplate.postForEntity(taskUrl, taskEntity, String.class);
+        } catch (HttpStatusCodeException e) {
+            log.warn("Tripo task creation failed. status={} body={}", e.getStatusCode(), e.getResponseBodyAsString());
+            throw new ErrorGenerateGlbException("Tripo devolvió " + e.getStatusCode() + ": " + e.getResponseBodyAsString());
+        }
         checkIfStatusResponseIsOk(taskResponse);
 
         return tryGetTaskIdFromResponse(mapper, taskResponse);
