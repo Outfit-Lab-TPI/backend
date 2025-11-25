@@ -121,7 +121,6 @@ docker compose up --build
 
 ---
 
-**Status**: ✅ Listo para el deploy rey
 # Variables de entorno requeridas
 
 | Variable | Descripción | Ejemplo |
@@ -143,6 +142,7 @@ docker compose up --build
 | `SPRING_MAIL_PORT` | Puerto SMTP | `587` |
 | `SPRING_MAIL_USERNAME` | Cuenta SMTP | `tpi8bits@gmail.com` |
 | `SPRING_MAIL_PASSWORD` | Password/Token SMTP | `xxxx` |
+| `SPRING_MAIL_FROM` | Email remitente (usa username por defecto) | `remitente@tudominio.com` |
 | `MAX_FILE_SIZE` / `MAX_REQUEST_SIZE` | Límites upload | `50MB` |
 | `LOG_LEVEL_ROOT` / `LOG_LEVEL_OUTFITLAB` | Logging | `INFO` / `DEBUG` |
 | `SERVER_PORT` | Puerto interno | `8080` |
