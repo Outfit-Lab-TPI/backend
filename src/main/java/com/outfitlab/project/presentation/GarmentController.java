@@ -10,6 +10,7 @@ import com.outfitlab.project.domain.useCases.combination.DeleteAllCombinationRel
 import com.outfitlab.project.domain.useCases.combinationAttempt.DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment;
 import com.outfitlab.project.domain.useCases.garment.*;
 import com.outfitlab.project.domain.useCases.bucketImages.SaveImage;
+import com.outfitlab.project.domain.useCases.recomendations.CreateSugerenciasByGarmentsCode;
 import com.outfitlab.project.domain.useCases.recomendations.DeleteAllPrendaOcacionRelatedToGarment;
 import com.outfitlab.project.domain.useCases.recomendations.DeleteGarmentRecomentationsRelatedToGarment;
 import com.outfitlab.project.presentation.dto.AllGarmentsResponse;
@@ -45,6 +46,7 @@ public class GarmentController {
     private final DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment;
     private final DeleteAllCombinationRelatedToGarment deleteAllCombinationRelatedToGarment;
     private final DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment;
+    private final CreateSugerenciasByGarmentsCode createSugerenciasByGarmentsCode;
 
     public GarmentController(GetGarmentsByType getGarmentsByType, AddGarmentToFavorite addGarmentToFavourite,
                              DeleteGarmentFromFavorite deleteGarmentFromFavorite, GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail,
@@ -53,7 +55,8 @@ public class GarmentController {
                              DeleteGarmentRecomentationsRelatedToGarment deleteGarmentRecomentationsRelatedToGarment,
                              DeleteAllFavoritesRelatedToGarment deleteAllFavoritesRelatedToGarment, DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment,
                              DeleteAllCombinationRelatedToGarment deleteAllCombinationRelatedToGarment,
-                             DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment) {
+                             DeleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment,
+                             CreateSugerenciasByGarmentsCode createSugerenciasByGarmentsCode) {
         this.getGarmentsByType = getGarmentsByType;
         this.addGarmentToFavourite = addGarmentToFavourite;
         this.deleteGarmentFromFavorite = deleteGarmentFromFavorite;
@@ -69,6 +72,7 @@ public class GarmentController {
         this.deleteAllPrendaOcacionRelatedToGarment = deleteAllPrendaOcacionRelatedToGarment;
         this.deleteAllCombinationRelatedToGarment = deleteAllCombinationRelatedToGarment;
         this.deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment = deleteAllCombinationAttempsRelatedToCombinationsRelatedToGarment;
+        this.createSugerenciasByGarmentsCode = createSugerenciasByGarmentsCode;
     }
 
     @GetMapping("/{typeOfGarment}")
@@ -156,6 +160,8 @@ public class GarmentController {
                     request.getGenero()
             );
 
+            String newGarmentCode = CodeFormatter.execute(request.getNombre());
+            this.createSugerenciasByGarmentsCode.execute(newGarmentCode,request.getTipo(), request.getSugerencias());
             return ResponseEntity.ok("Prenda creada correctamente.");
         }catch (BrandsNotFoundException e){
             return buildResponseEntityError(e.getMessage());
@@ -186,6 +192,7 @@ public class GarmentController {
                     request.getGenero()
             );
 
+            this.createSugerenciasByGarmentsCode.execute(garmentCode,request.getTipo(), request.getSugerencias());
             deleteImage(oldImageUrl);
 
             return ResponseEntity.ok("Prenda actualizada correctamente.");

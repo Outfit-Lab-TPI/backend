@@ -15,6 +15,7 @@ public class GarmentRequestDTO {
     private List<String> ocasionesNombres;
     private String codigoMarca;
     private String genero;
+    private List<String> sugerencias;
 
     public String getNombre() {
         return nombre;
@@ -87,6 +88,14 @@ public class GarmentRequestDTO {
         this.genero = genero;
     }
 
+    public List<String> getSugerencias() {
+        return sugerencias;
+    }
+
+    public void setSugerencias(List<String> sugerencias) {
+        this.sugerencias = sugerencias;
+    }
+
     @Override
     public String toString() {
         return "GarmentRequestDTO{" +
@@ -98,6 +107,8 @@ public class GarmentRequestDTO {
                 ", climaNombre='" + climaNombre + '\'' +
                 ", ocasionesNombres=" + ocasionesNombres +
                 ", codigoMarca='" + codigoMarca + '\'' +
+                ", genero='" + genero + '\'' +
+                ", sugerencias=" + sugerencias +
                 '}';
     }
 }

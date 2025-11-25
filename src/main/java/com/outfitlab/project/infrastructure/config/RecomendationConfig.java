@@ -32,6 +32,11 @@ public class RecomendationConfig {
     }
 
     @Bean
+    public CreateSugerenciasByGarmentsCode createSugerenciasByGarmentsCode(GarmentRecomendationRepository garmentRecomendationRepository){
+        return new CreateSugerenciasByGarmentsCode(garmentRecomendationRepository);
+    }
+
+    @Bean
     public DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment(PrendaOcacionRepository prendaOcacionRepository){
         return new DeleteAllPrendaOcacionRelatedToGarment(prendaOcacionRepository);
     }
