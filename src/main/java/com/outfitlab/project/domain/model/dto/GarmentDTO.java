@@ -11,6 +11,7 @@ public class GarmentDTO {
     private String evento;
     private String color;
     private String clima;
+    private String genero;
 
     public GarmentDTO(String nombre, String tipo, String imagenUrl, String garmentCode, String marcaNombre, String color, String clima) {
         this.nombre = nombre;
@@ -22,8 +23,27 @@ public class GarmentDTO {
         this.clima = clima;
     }
 
+    public GarmentDTO(String nombre, String tipo, String imagenUrl, String garmentCode, String marcaNombre, String color, String clima, String genero) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.imagenUrl = imagenUrl;
+        this.garmentCode = garmentCode;
+        this.marcaNombre = marcaNombre;
+        this.color = color;
+        this.clima = clima;
+        this.genero = genero;
+    }
+
     public String getGarmentCode() {
         return garmentCode;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
     }
 
     public void setGarmentCode(String garmentCode) {
@@ -90,7 +110,23 @@ public class GarmentDTO {
                 prendaModel.getGarmentCode(),
                 prendaModel.getMarca().getNombre(),
                 prendaModel.getColor().getNombre(),
-                prendaModel.getClimaAdecuado().getNombre()
+                prendaModel.getClimaAdecuado().getNombre(),
+                prendaModel.getGenero()
         );
+    }
+
+    @Override
+    public String toString() {
+        return "GarmentDTO{" +
+                "nombre='" + nombre + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", imagenUrl='" + imagenUrl + '\'' +
+                ", garmentCode='" + garmentCode + '\'' +
+                ", marcaNombre='" + marcaNombre + '\'' +
+                ", evento='" + evento + '\'' +
+                ", color='" + color + '\'' +
+                ", clima='" + clima + '\'' +
+                ", genero='" + genero + '\'' +
+                '}';
     }
 }
