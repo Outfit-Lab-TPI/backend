@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class GarmentRepositoryImpl implements GarmentRepository {
 
-    private final int PAGE_SIZE = 20;
+    private final int PAGE_SIZE = 10;
     private final GarmentJpaRepository garmentJpaRepository;
     private final BrandJpaRepository brandJpaRepository;
     private final ColorJpaRepository colorJpaRepository;
