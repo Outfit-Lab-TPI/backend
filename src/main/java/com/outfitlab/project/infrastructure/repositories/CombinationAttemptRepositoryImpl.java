@@ -84,6 +84,11 @@ public class CombinationAttemptRepositoryImpl implements CombinationAttemptRepos
         return entities.stream().map(this::mapToModel).toList();
     }
 
+    @Override
+    public void deleteAllByAttempsReltedToCombinationRelatedToGarments(String garmentCode) {
+        this.attemptJpaRepository.deleteAllAttemptsByGarmentCode(garmentCode);
+    }
+
     private CombinationAttemptModel mapToModel(CombinationAttemptEntity entity) {
         PrendaModel sup = new PrendaModel(
                 entity.getCombination().getPrendaSuperior().getId(),

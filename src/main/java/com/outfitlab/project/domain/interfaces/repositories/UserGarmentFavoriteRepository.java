@@ -21,4 +21,6 @@ public interface UserGarmentFavoriteRepository {
 
         PageDTO<PrendaModel> getGarmentsFavoritesForUserByEmail(String userEmail, int page)
                         throws UserNotFoundException, FavoritesException;
+
+    void deleteFavoritesRelatedToGarment(String garmentCode);
 }

@@ -12,12 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RecomendationRepository implements GarmentRecomendationRepository {
+public class RecomendationRepositoryImpl implements GarmentRecomendationRepository {
 
     private final RecomendationJpaRepository recomendationJpaRepository;
     private final GarmentJpaRepository garmentJpaRepository;
 
-    public RecomendationRepository(RecomendationJpaRepository recomendationJpaRepository, GarmentJpaRepository garmentJpaRepository) {
+    public RecomendationRepositoryImpl(RecomendationJpaRepository recomendationJpaRepository, GarmentJpaRepository garmentJpaRepository) {
         this.recomendationJpaRepository = recomendationJpaRepository;
         this.garmentJpaRepository = garmentJpaRepository;
     }
@@ -27,6 +27,11 @@ public class RecomendationRepository implements GarmentRecomendationRepository {
         return getGarmentRecomendationEntities(getPrendaEntity(garmentCode)).stream()
                 .map(GarmentRecomendationEntity::convertToModel)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteRecomendationsByGarmentCode(String garmentCode) {
+        this.recomendationJpaRepository.deleteAllByGarmentCode(garmentCode);
     }
 
     private List<GarmentRecomendationEntity> getGarmentRecomendationEntities(PrendaEntity garment) {

@@ -3,7 +3,7 @@ package com.outfitlab.project.domain.useCases.garment;
 import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRecomendationRepository;
 import com.outfitlab.project.domain.model.GarmentRecomendationModel;
-import com.outfitlab.project.infrastructure.repositories.RecomendationRepository;
+import com.outfitlab.project.infrastructure.repositories.RecomendationRepositoryImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 class GetGarmentRecomendationTest {
 
-    private GarmentRecomendationRepository garmentRecomendationRepository = mock(RecomendationRepository.class);
+    private GarmentRecomendationRepository garmentRecomendationRepository = mock(RecomendationRepositoryImpl.class);
     private GetGarmentRecomendation getGarmentRecomendation = new GetGarmentRecomendation(garmentRecomendationRepository);
 
     @Test
