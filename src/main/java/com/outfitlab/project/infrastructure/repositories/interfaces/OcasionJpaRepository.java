@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface OcacionJpaRepository extends JpaRepository<OcasionEntity, Long> {
+public interface OcasionJpaRepository extends JpaRepository<OcasionEntity, Long> {
     Optional<OcasionEntity> findByNombre(String nombre);
     Optional<OcasionEntity> findOcasionEntityByNombre(String nombre);
 

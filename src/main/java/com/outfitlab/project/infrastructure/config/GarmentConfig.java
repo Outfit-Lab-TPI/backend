@@ -19,7 +19,7 @@ public class GarmentConfig {
     @Bean
     public GarmentRepository garmentRepository(GarmentJpaRepository jpaRepository, BrandJpaRepository brandJpaRepository,
                                                ClimaJpaRepository climaJpaRepository, ColorJpaRepository colorJpaRepository,
-                                               OcacionJpaRepository ocacionJpaRepository) {
+                                               OcasionJpaRepository ocacionJpaRepository) {
         return new GarmentRepositoryImpl(jpaRepository, brandJpaRepository, colorJpaRepository, climaJpaRepository, ocacionJpaRepository);
     }
 

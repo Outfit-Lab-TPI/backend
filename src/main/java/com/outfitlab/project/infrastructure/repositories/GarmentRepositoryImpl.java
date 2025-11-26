@@ -1,7 +1,6 @@
 package com.outfitlab.project.infrastructure.repositories;
 
 import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
-import com.outfitlab.project.domain.interfaces.repositories.ClimaRepository;
 import com.outfitlab.project.domain.interfaces.repositories.GarmentRepository;
 import com.outfitlab.project.domain.model.ClimaModel;
 import com.outfitlab.project.domain.model.ColorModel;
@@ -25,9 +24,9 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     private final BrandJpaRepository brandJpaRepository;
     private final ColorJpaRepository colorJpaRepository;
     private final ClimaJpaRepository climaJpaRepository;
-    private final OcacionJpaRepository ocacionJpaRepository;
+    private final OcasionJpaRepository ocacionJpaRepository;
 
-    public GarmentRepositoryImpl(GarmentJpaRepository garmentJpaRepository, BrandJpaRepository brandJpaRepository, ColorJpaRepository colorJpaRepository, ClimaJpaRepository climaJpaRepository, OcacionJpaRepository ocacionJpaRepository) {
+    public GarmentRepositoryImpl(GarmentJpaRepository garmentJpaRepository, BrandJpaRepository brandJpaRepository, ColorJpaRepository colorJpaRepository, ClimaJpaRepository climaJpaRepository, OcasionJpaRepository ocacionJpaRepository) {
         this.garmentJpaRepository = garmentJpaRepository;
         this.brandJpaRepository = brandJpaRepository;
         this.colorJpaRepository = colorJpaRepository;

@@ -28,7 +28,7 @@ public class RecomendationConfig {
 
     @Bean
     public PrendaOcacionRepository prendaOcacionRepository(PrendaOcacionJpaRepository prendaOcacionJpaRepository){
-        return new PrendaOcacionRepositoryImpl(prendaOcacionJpaRepository);
+        return new PrendaOcasionRepositoryImpl(prendaOcacionJpaRepository);
     }
 
     @Bean
@@ -52,8 +52,8 @@ public class RecomendationConfig {
     }
 
     @Bean
-    public OcacionRepository ocacionRepository(OcacionJpaRepository ocacionJpaRepository){
-        return new OcacionRepositoryImpl(ocacionJpaRepository);
+    public OcacionRepository ocacionRepository(OcasionJpaRepository ocacionJpaRepository){
+        return new OcasionRepositoryImpl(ocacionJpaRepository);
     }
 
     @Bean

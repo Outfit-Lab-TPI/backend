@@ -40,7 +40,10 @@ public class MarcaEntity {
     private String urlSite;
 
     public MarcaEntity(){}
-
+    public MarcaEntity(String codigoMarca, String nombre) {
+        this.codigoMarca = codigoMarca;
+        this.nombre = nombre;
+    }
     public MarcaEntity(String codigoMarca, String nombre, String logoUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.codigoMarca = codigoMarca;
         this.nombre = nombre;
