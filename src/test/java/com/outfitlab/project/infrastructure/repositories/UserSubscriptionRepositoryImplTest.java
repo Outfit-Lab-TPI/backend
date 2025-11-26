@@ -253,9 +253,9 @@ class UserSubscriptionRepositoryImplTest {
 
     @Test
     void givenNonexistentUserWhenDecrementCounterThenThrowException() {
-        when(userJpaRepository.findByEmail("no@mail.com")).thenReturn(null);
+        when(userJpaRepository.findByEmail("noexiste@mail.com")).thenReturn(null);
 
-        assertThatThrownBy(() -> repository.decrementCounter("no@mail.com", "favorites"))
+        assertThatThrownBy(() -> repository.decrementCounter("noexiste@mail.com", "favorites"))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Usuario no encontrado");
     }
