@@ -11,64 +11,132 @@ import static org.mockito.Mockito.*;
 
 public class AddGarmentToFavoriteTest {
 
-        private UserGarmentFavoriteRepository userGarmentFavoriteRepository = mock(
-                        UserGarmentFavoriteRepositoryImpl.class);
+        private UserGarmentFavoriteRepository userGarmentFavoriteRepository = mock(UserGarmentFavoriteRepositoryImpl.class);
+
         private AddGarmentToFavorite addGarmentToFavorite = new AddGarmentToFavorite(userGarmentFavoriteRepository);
 
         @Test
-        public void givenValidGarmentAndUserWhenExecuteThenAddToFavoritesSuccessfully()
-                        throws Exception, UserGarmentFavoriteNotFoundException, FavoritesException {
-                String garmentCode = "G001";
-                String userEmail = "test@aaaa.com";
-                UserGarmentFavoriteEntity fav = new UserGarmentFavoriteEntity();
+        public void givenValidGarmentAndUserWhenExecuteThenAddToFavoritesSuccessfully(){
 
-                when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                                .thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
-                when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail)).thenReturn(fav);
+                String garmentCode = givenGarmentCode();
+                String userEmail = givenUserEmail();
+                UserGarmentFavoriteEntity fav = givenFavoriteEntity();
 
-                String result = addGarmentToFavorite.execute(garmentCode, userEmail);
+                givenFavoriteNotExisting(garmentCode, userEmail);
+                givenAddFavoriteReturns(garmentCode, userEmail, fav);
 
+                String result = whenExecuteAddFavorite(garmentCode, userEmail);
+
+                thenFavoriteAddedSuccessfully(result);
+        }
+
+
+        @Test
+        public void givenExistingFavoriteWhenExecuteThenThrowUserGarmentFavoriteAlreadyExistsException() {
+
+                String garmentCode = givenGarmentCode();
+                String userEmail = givenUserEmail();
+                givenFavoriteAlreadyExists(garmentCode, userEmail);
+
+                thenThrowAlreadyExists(garmentCode, userEmail);
+        }
+
+        @Test
+        public void givenGarmentOrUserNotFoundWhenExecuteThenThrowCorrespondingException(){
+
+                String garmentCode = givenGarmentCode();
+                String userEmail = givenUserEmail();
+
+                givenFavoriteNotExisting(garmentCode, userEmail);
+                givenAddFavoriteThrowsUserNotFound(garmentCode, userEmail);
+
+                thenThrowUserNotFound(garmentCode, userEmail);
+        }
+
+
+        @Test
+        public void givenFavoriteAdditionFailsWhenExecuteThenThrowFavoritesException() {
+
+                String garmentCode = givenGarmentCode();
+                String userEmail = givenUserEmail();
+
+                givenFavoriteNotExisting(garmentCode, userEmail);
+                givenAddFavoriteReturnsNull(garmentCode, userEmail);
+
+                thenThrowFavoritesException(garmentCode, userEmail);
+        }
+
+
+// privados ---------------
+        private UserGarmentFavoriteEntity givenFavoriteEntity() {
+                return new UserGarmentFavoriteEntity();
+        }
+
+        private void givenFavoriteNotExisting(String garment, String user)
+                throws UserGarmentFavoriteNotFoundException {
+                when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garment, user))
+                        .thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
+        }
+
+        private void givenAddFavoriteReturns(String garment, String user, UserGarmentFavoriteEntity entity)
+                throws FavoritesException {
+                when(userGarmentFavoriteRepository.addToFavorite(garment, user))
+                        .thenReturn(entity);
+        }
+
+        private String whenExecuteAddFavorite(String garment, String user) throws FavoritesException {
+                return addGarmentToFavorite.execute(garment, user);
+        }
+
+        private void thenFavoriteAddedSuccessfully(String result) {
                 assertNotNull(result);
                 assertEquals("Prenda añadida a favoritos.", result);
         }
 
-        @Test
-        public void givenExistingFavoriteWhenExecuteThenThrowUserGarmentFavoriteAlreadyExistsException()
-                        throws UserGarmentFavoriteNotFoundException {
-                String garmentCode = "G001";
-                String userEmail = "test@aaaa.com";
-
-                when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                                .thenReturn(null);
-
-                assertThrows(UserGarmentFavoriteAlreadyExistsException.class,
-                                () -> addGarmentToFavorite.execute(garmentCode, userEmail));
+        private void givenFavoriteAlreadyExists(String garment, String user)
+                throws UserGarmentFavoriteNotFoundException {
+                when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garment, user))
+                        .thenReturn(null);
         }
 
-        @Test
-        public void givenGarmentOrUserNotFoundWhenExecuteThenThrowCorrespondingException()
-                        throws UserNotFoundException, UserGarmentFavoriteNotFoundException, GarmentNotFoundException {
-                String garmentCode = "G001";
-                String userEmail = "test@aaaa.com";
-
-                when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                                .thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
-                when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail))
-                                .thenThrow(new UserNotFoundException("Usuario no encontrado"));
-
-                assertThrows(UserNotFoundException.class, () -> addGarmentToFavorite.execute(garmentCode, userEmail));
+        private void thenThrowAlreadyExists(String garment, String user) {
+                assertThrows(
+                        UserGarmentFavoriteAlreadyExistsException.class,
+                        () -> addGarmentToFavorite.execute(garment, user)
+                );
         }
 
-        @Test
-        public void givenFavoriteAdditionFailsWhenExecuteThenThrowFavoritesException()
-                        throws Exception, UserGarmentFavoriteNotFoundException {
-                String garmentCode = "G001";
-                String userEmail = "test@aaa.com";
+        private void givenAddFavoriteThrowsUserNotFound(String garment, String user)
+                throws UserNotFoundException, FavoritesException {
+                when(userGarmentFavoriteRepository.addToFavorite(garment, user))
+                        .thenThrow(new UserNotFoundException("Usuario no encontrado"));
+        }
 
-                when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                                .thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
-                when(userGarmentFavoriteRepository.addToFavorite(garmentCode, userEmail)).thenReturn(null);
+        private void thenThrowUserNotFound(String garment, String user) {
+                assertThrows(
+                        UserNotFoundException.class,
+                        () -> addGarmentToFavorite.execute(garment, user)
+                );
+        }
 
-                assertThrows(FavoritesException.class, () -> addGarmentToFavorite.execute(garmentCode, userEmail));
+        private void givenAddFavoriteReturnsNull(String garment, String user)
+                throws FavoritesException {
+                when(userGarmentFavoriteRepository.addToFavorite(garment, user))
+                        .thenReturn(null);
+        }
+
+        private void thenThrowFavoritesException(String garment, String user) {
+                assertThrows(
+                        FavoritesException.class,
+                        () -> addGarmentToFavorite.execute(garment, user)
+                );
+        }
+
+        private String givenGarmentCode() {
+                return "G001";
+        }
+
+        private String givenUserEmail() {
+                return "test@aaaa.com";
         }
 }
