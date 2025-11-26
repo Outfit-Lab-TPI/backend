@@ -47,8 +47,8 @@ class OcasionRepositoryImplTest {
     private void givenExistingOcaciones(int qty) {
         List<OcasionEntity> entities = new ArrayList<>();
         for (int i = 0; i < qty; i++) {
-            OcasionEntity e = mock(OcasionEntity.class);
-            when(e.convertEntityToModel(e)).thenReturn(new OcasionModel());
+            OcasionEntity e = new OcasionEntity();
+            e.setNombre("Nombre " + i);
             entities.add(e);
         }
         when(ocasionJpaRepository.findAll()).thenReturn(entities);
