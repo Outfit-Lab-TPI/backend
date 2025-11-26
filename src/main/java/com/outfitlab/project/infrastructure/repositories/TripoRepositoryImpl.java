@@ -145,7 +145,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         }
     }
 
-    private MultipartFile convertImageUrlToMultipartFile(String imageUrl) throws ErrorUploadImageToTripoException {
+    protected MultipartFile convertImageUrlToMultipartFile(String imageUrl) throws ErrorUploadImageToTripoException {
         InputStream inputStream = null;
         try {
             URL url = new URL(imageUrl);
@@ -233,7 +233,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         return bodyMap;
     }
 
-    private HttpHeaders getHttpHeaders(MediaType type) {
+    protected HttpHeaders getHttpHeaders(MediaType type) {
         HttpHeaders taskHeaders = new HttpHeaders();
         taskHeaders.setContentType(type);
         taskHeaders.setBearerAuth(tripoApiKey);
@@ -267,7 +267,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         }
     }
 
-    private ResponseEntity<String> generateRequestToUploadImageToTripo(MultipartFile imageFile, String originalFilename) throws ErroBytesException {
+    protected ResponseEntity<String> generateRequestToUploadImageToTripo(MultipartFile imageFile, String originalFilename) throws ErroBytesException {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", tryGetByteArrayResourceFromImage(imageFile, originalFilename));
         HttpHeaders headers = getHttpHeaders(MediaType.MULTIPART_FORM_DATA);
@@ -287,7 +287,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         return imageToken;
     }
 
-    private ResponseEntity<String> requestTripoTaskStatus(String taskId, HttpEntity<Void> entityWithTaskHeaders) {
+    protected ResponseEntity<String> requestTripoTaskStatus(String taskId, HttpEntity<Void> entityWithTaskHeaders) {
         return restTemplate.exchange(
                 taskUrl + "/" + taskId,
                 HttpMethod.GET,

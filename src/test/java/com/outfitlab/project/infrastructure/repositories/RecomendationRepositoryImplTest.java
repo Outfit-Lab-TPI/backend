@@ -1,6 +1,5 @@
 package com.outfitlab.project.infrastructure.repositories;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.outfitlab.project.domain.exceptions.GarmentNotFoundException;
 import com.outfitlab.project.domain.model.GarmentRecomendationModel;

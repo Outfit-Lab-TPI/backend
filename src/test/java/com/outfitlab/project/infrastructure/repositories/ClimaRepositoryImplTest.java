@@ -1,7 +1,5 @@
 package com.outfitlab.project.infrastructure.repositories;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import static org.assertj.core.api.Assertions.*;
 
 import com.outfitlab.project.domain.exceptions.ClimaNotFoundException;
@@ -15,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 @SpringBootTest
