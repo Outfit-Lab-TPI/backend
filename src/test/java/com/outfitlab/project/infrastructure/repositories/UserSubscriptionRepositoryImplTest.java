@@ -115,10 +115,10 @@ class UserSubscriptionRepositoryImplTest {
     void givenInvalidPlanWhenSaveThenThrowException() {
         UserSubscriptionModel model = new UserSubscriptionModel();
         model.setUserEmail("user@mail.com");
-        model.setPlanCode("UNKNOWN");
+        model.setPlanCode("PLAN A");
 
         when(userJpaRepository.findByEmail("user@mail.com")).thenReturn(new UserEntity());
-        when(subscriptionJpaRepository.findByPlanCode("UNKNOWN")).thenReturn(Optional.empty());
+        when(subscriptionJpaRepository.findByPlanCode("PLAN A")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> repository.save(model))
                 .isInstanceOf(RuntimeException.class)
