@@ -41,7 +41,7 @@ public class GarmentConfig {
     }
 
     @Bean
-    public DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment(PrendaOcacionRepository prendaOcacionRepository){
+    public DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment(PrendaOcasionRepository prendaOcacionRepository){
         return new DeleteAllPrendaOcacionRelatedToGarment(prendaOcacionRepository);
     }
 

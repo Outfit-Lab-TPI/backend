@@ -1,16 +1,16 @@
 package com.outfitlab.project.domain.useCases.recomendations;
 
-import com.outfitlab.project.domain.interfaces.repositories.PrendaOcacionRepository;
+import com.outfitlab.project.domain.interfaces.repositories.PrendaOcasionRepository;
 
 public class DeleteAllPrendaOcacionRelatedToGarment {
 
-    private final PrendaOcacionRepository prendaOcacionRepository;
+    private final PrendaOcasionRepository prendaOcacionRepository;
 
-    public DeleteAllPrendaOcacionRelatedToGarment(PrendaOcacionRepository prendaOcacionRepository){
+    public DeleteAllPrendaOcacionRelatedToGarment(PrendaOcasionRepository prendaOcacionRepository){
         this.prendaOcacionRepository = prendaOcacionRepository;
     }
 
     public void execute(String garmentCode){
-        this.prendaOcacionRepository.deleteAllPrendaOcacionByGarment(garmentCode);
+        this.prendaOcacionRepository.deleteAllPrendaOcasionByGarment(garmentCode);
     }
 }

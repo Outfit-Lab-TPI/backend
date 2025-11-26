@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface PrendaOcacionJpaRepository extends JpaRepository<PrendaOcasionEntity, Long> {
+public interface PrendaOcasionJpaRepository extends JpaRepository<PrendaOcasionEntity, Long> {
     @Transactional
     @Modifying
     @Query("""

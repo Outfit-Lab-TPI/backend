@@ -27,7 +27,7 @@ public class RecomendationConfig {
     }
 
     @Bean
-    public PrendaOcacionRepository prendaOcacionRepository(PrendaOcacionJpaRepository prendaOcacionJpaRepository){
+    public PrendaOcasionRepository prendaOcacionRepository(PrendaOcasionJpaRepository prendaOcacionJpaRepository){
         return new PrendaOcasionRepositoryImpl(prendaOcacionJpaRepository);
     }
 
@@ -42,7 +42,7 @@ public class RecomendationConfig {
     }
 
     @Bean
-    public DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment(PrendaOcacionRepository prendaOcacionRepository){
+    public DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment(PrendaOcasionRepository prendaOcacionRepository){
         return new DeleteAllPrendaOcacionRelatedToGarment(prendaOcacionRepository);
     }
 

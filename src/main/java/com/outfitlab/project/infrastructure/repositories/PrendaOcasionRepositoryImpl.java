@@ -1,18 +1,18 @@
 package com.outfitlab.project.infrastructure.repositories;
 
-import com.outfitlab.project.domain.interfaces.repositories.PrendaOcacionRepository;
-import com.outfitlab.project.infrastructure.repositories.interfaces.PrendaOcacionJpaRepository;
+import com.outfitlab.project.domain.interfaces.repositories.PrendaOcasionRepository;
+import com.outfitlab.project.infrastructure.repositories.interfaces.PrendaOcasionJpaRepository;
 
-public class PrendaOcasionRepositoryImpl implements PrendaOcacionRepository {
+public class PrendaOcasionRepositoryImpl implements PrendaOcasionRepository {
 
-    private final PrendaOcacionJpaRepository prendaOcacionJpaRepository;
+    private final PrendaOcasionJpaRepository prendaOcasionJpaRepository;
 
-    public PrendaOcasionRepositoryImpl(PrendaOcacionJpaRepository prendaOcacionJpaRepository){
-        this.prendaOcacionJpaRepository = prendaOcacionJpaRepository;
+    public PrendaOcasionRepositoryImpl(PrendaOcasionJpaRepository prendaOcasionJpaRepository){
+        this.prendaOcasionJpaRepository = prendaOcasionJpaRepository;
     }
 
     @Override
-    public void deleteAllPrendaOcacionByGarment(String garmentCode) {
-        this.prendaOcacionJpaRepository.deleteAllByGarmentCode(garmentCode);
+    public void deleteAllPrendaOcasionByGarment(String garmentCode) {
+        this.prendaOcasionJpaRepository.deleteAllByGarmentCode(garmentCode);
     }
 }

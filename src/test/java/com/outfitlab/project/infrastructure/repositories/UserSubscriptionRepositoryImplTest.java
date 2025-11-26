@@ -233,7 +233,7 @@ class UserSubscriptionRepositoryImplTest {
         user.setId(userId);
         user.setEmail(email);
 
-        SubscriptionEntity plan = new SubscriptionEntity();
+        SubscriptionEntity plan = new SubscriptionEntity("ESTANDAR", planCode);
         plan.setPlanCode(planCode);
 
         UserSubscriptionEntity entity = new UserSubscriptionEntity();
@@ -259,7 +259,7 @@ class UserSubscriptionRepositoryImplTest {
         return entity;
     }
     private void givenExistingPlan(String planCode) {
-        SubscriptionEntity plan = new SubscriptionEntity();
+        SubscriptionEntity plan = new SubscriptionEntity("ESTANDAR", planCode);
         plan.setPlanCode(planCode);
         when(subscriptionJpaRepository.findByPlanCode(planCode)).thenReturn(Optional.of(plan));
     }
@@ -321,7 +321,7 @@ class UserSubscriptionRepositoryImplTest {
     }
 
     private void givenPlanExists(String planCode) {
-        SubscriptionEntity plan = new SubscriptionEntity();
+        SubscriptionEntity plan = new SubscriptionEntity("ESTANDAR", planCode);
         plan.setPlanCode(planCode);
         when(subscriptionJpaRepository.findByPlanCode(planCode)).thenReturn(Optional.of(plan));
     }
