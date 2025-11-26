@@ -15,10 +15,10 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -33,274 +33,210 @@ class UserRepositoryImplTest {
     private UserRepositoryImpl userRepository;
 
     @Test
-    void givenExistingEmailWhenFindUserByEmailThenReturnUserModel() {
-        // ---------- GIVEN ---------
-        String email = "test@mail.com";
+    void shouldReturnUserByEmail() {
+        givenExistingUserWithEmail("test@mail.com");
 
-        UserEntity entity = new UserEntity();
-        entity.setId(1L);
-        entity.setEmail(email);
-        entity.setName("Juan");
-        entity.setLastName("Lopez");
+        UserModel result = whenFindUserByEmail("test@mail.com");
 
-        when(userJpaRepository.findByEmail(email)).thenReturn(entity);
+        thenReturnUserWithEmail(result, "test@mail.com");
+    }
 
-        // ---------- WHEN --------
-        UserModel result = userRepository.findUserByEmail(email);
+    @Test
+    void shouldThrowExceptionWhenEmailDoesNotExist() {
+        String email = "test15@mail.com";
 
-        // ---------- THEN --------
-        assertThat(result).isNotNull();
-        assertThat(result.getEmail()).isEqualTo(email);
-        assertThat(result.getId()).isEqualTo(1L);
+        whenFindingByEmail(email, null);
+
+        thenExceptionShouldBeThrown(email);
         verify(userJpaRepository).findByEmail(email);
+        verify(userJpaRepository, never()).save(any());
     }
 
     @Test
-    void givenValidTokenWhenFindUserByVerificationTokenThenReturnUserModel() {
+    void shouldReturnUserModelWhenTokenIsValid() {
         String token = "abc123";
+        givenUserWithVerificationToken(token, "test@mail.com", 1L);
 
-        UserEntity entity = new UserEntity();
-        entity.setId(1L);
-        entity.setEmail("test@mail.com");
-        entity.setVerificationToken(token);
+        UserModel result = whenFindUserByVerificationToken(token);
 
-        when(userJpaRepository.findByVerificationToken(token)).thenReturn(entity);
-
-        UserModel result = userRepository.findUserByVerificationToken(token);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getEmail()).isEqualTo("test@mail.com");
+        thenUserShouldHaveEmail(result, "test@mail.com");
         verify(userJpaRepository).findByVerificationToken(token);
     }
 
+
     @Test
-    void givenInvalidTokenWhenFindUserByVerificationTokenThenThrowException() {
+    void shouldThrowExceptionWhenTokenIsInvalid() {
         String token = "def456";
-        when(userJpaRepository.findByVerificationToken(token)).thenReturn(null);
+        givenNoUserWithToken(token);
 
-        assertThatThrownBy(() -> userRepository.findUserByVerificationToken(token))
-                .isInstanceOf(UserNotFoundException.class);
+        thenExpectUserNotFoundByToken(token);
 
         verify(userJpaRepository).findByVerificationToken(token);
     }
 
+
     @Test
-    void givenExistingIdWhenFindByIdThenReturnUserModel() {
+    void shouldReturnUserModelWhenIdExists() {
         Long id = 1L;
+        givenUserWithId(id, "test@mail.com");
 
-        UserEntity entity = new UserEntity();
-        entity.setId(id);
-        entity.setEmail("test@mail.com");
+        UserModel result = whenFindById(id);
 
-        when(userJpaRepository.findById(id)).thenReturn(Optional.of(entity));
-
-        UserModel result = userRepository.findById(id);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(id);
-        assertThat(result.getEmail()).isEqualTo("test@mail.com");
+        thenUserShouldHaveId(result, id);
+        thenUserShouldHaveEmail(result, "test@mail.com");
         verify(userJpaRepository).findById(id);
     }
 
+
     @Test
-    void givenNonExistingIdWhenFindByIdThenThrowException() {
+    void shouldThrowExceptionWhenIdDoesNotExist() {
         Long id = 99L;
-        when(userJpaRepository.findById(id)).thenReturn(Optional.empty());
+        givenNoUserWithId(id);
 
-
-        assertThatThrownBy(() -> userRepository.findById(id))
-                .isInstanceOf(UserNotFoundException.class);
+        thenExpectUserNotFoundById(id);
 
         verify(userJpaRepository).findById(id);
     }
 
     @Test
-    void givenUserModelWhenSaveUserThenPersistAndReturnUserModel() {
-        UserModel model = new UserModel();
-        model.setEmail("save@mail.com");
-        model.setName("Juan");
+    void shouldPersistAndReturnUserModelWhenSavingUser() {
+        UserModel model = givenUserModel("save@mail.com", "Juan");
+        UserEntity savedEntity = givenSavedEntity(model, 1L);
 
-        UserEntity savedEntity = new UserEntity(model);
-        savedEntity.setId(1L);
+        whenSavingUserEntity(savedEntity);
+        UserModel result = whenSavingUser(model);
 
-        when(userJpaRepository.save(any(UserEntity.class)))
-                .thenReturn(savedEntity);
-
-        UserModel result = userRepository.saveUser(model);
-        System.out.println(result);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getEmail()).isEqualTo("save@mail.com");
-        assertThat(result.getId()).isNull();
+        thenUserEmailShouldBe(result, "save@mail.com");
+        thenUserIdShouldBeNull(result);
         verify(userJpaRepository).save(any(UserEntity.class));
     }
 
     @Test
-    void givenExistingUsersWhenFindAllThenReturnUserList() {
-        List<UserEntity> entities = new ArrayList<>();
+    void shouldReturnUserListWhenUsersExist() {
+        List<UserEntity> entities = givenUserEntityList();
 
-        UserEntity u1 = new UserEntity();
-        u1.setId(1L);
-        u1.setEmail("u1@mail.com");
+        whenFindingAllUsers(entities);
+        List<UserModel> result = whenCallingFindAll();
 
-        UserEntity u2 = new UserEntity();
-        u2.setId(2L);
-        u2.setEmail("u2@mail.com");
-
-        entities.add(u1);
-        entities.add(u2);
-
-        when(userJpaRepository.findAll()).thenReturn(entities);
-
-        List<UserModel> result = userRepository.findAll();
-
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0).getEmail()).isEqualTo("u1@mail.com");
-        assertThat(result.get(1).getEmail()).isEqualTo("u2@mail.com");
+        thenResultShouldHaveSize(result, 2);
+        thenUserEmailShouldBe(result.get(0), "u1@mail.com");
+        thenUserEmailShouldBe(result.get(1), "u2@mail.com");
         verify(userJpaRepository).findAll();
     }
 
     @Test
-    void givenExistingEmailWhenDesactivateUserThenStatusIsSetToFalse() {
+    void shouldDeactivateUserWhenEmailExists() {
         String email = "test@mail.com";
+        UserEntity entity = givenActiveUserEntity(email);
 
-        UserEntity entity = new UserEntity();
-        entity.setEmail(email);
-        entity.setStatus(true);
+        whenFindingByEmail(email, entity);
+        whenDeactivatingUser(email);
 
-        when(userJpaRepository.findByEmail(email)).thenReturn(entity);
-
-        userRepository.desactivateUser(email);
-
-        assertThat(entity.isStatus()).isFalse();
+        thenUserShouldBeDeactivated(entity);
         verify(userJpaRepository).findByEmail(email);
         verify(userJpaRepository).save(entity);
     }
 
     @Test
-    void givenNonExistingEmailWhenDesactivateUserThenThrowException() {
-        String email = "test15@mail.com";
-        when(userJpaRepository.findByEmail(email)).thenReturn(null);
-
-        assertThatThrownBy(() -> userRepository.desactivateUser(email))
-                .isInstanceOf(UserNotFoundException.class);
-
-        verify(userJpaRepository).findByEmail(email);
-        verify(userJpaRepository, never()).save(any());
-    }
-
-    @Test
-    void givenExistingEmailWhenActivateUserThenStatusTrueAndBrandApprovedTrue() {
-        String email = "test@mail.com";
-
-        UserEntity entity = new UserEntity();
-        entity.setEmail(email);
-        entity.setStatus(false);
-        entity.setBrandApproved(false);
-
-        when(userJpaRepository.findByEmail(email)).thenReturn(entity);
-
-        userRepository.activateUser(email);
-
-        assertThat(entity.isStatus()).isTrue();
-        assertThat(entity.isBrandApproved()).isTrue();
-        verify(userJpaRepository).findByEmail(email);
-        verify(userJpaRepository).save(entity);
-    }
-
-    @Test
-    void givenNonExistingEmailWhenActivateUserThenThrowException() {
+    void shouldThrowExceptionWhenDeactivatingNonExistingUser() {
         String email = "test17@mail.com";
-        when(userJpaRepository.findByEmail(email)).thenReturn(null);
 
-        assertThatThrownBy(() -> userRepository.activateUser(email))
-                .isInstanceOf(UserNotFoundException.class);
+        whenFindingByEmail(email, null);
 
+        thenDesactivateShouldThrowException(email);
         verify(userJpaRepository).findByEmail(email);
         verify(userJpaRepository, never()).save(any());
     }
 
     @Test
-    void givenExistingEmailWhenConvertToAdminThenRoleIsAdmin() {
+    void shouldActivateUserWhenEmailExists() {
         String email = "test@mail.com";
+        UserEntity entity = givenInactiveAndUnapprovedUser(email);
 
-        UserEntity entity = new UserEntity();
-        entity.setEmail(email);
-        entity.setRole(Role.USER);
+        whenFindingByEmail(email, entity);
+        whenActivatingUser(email);
 
-        when(userJpaRepository.findByEmail(email)).thenReturn(entity);
-
-        userRepository.convertToAdmin(email);
-
-        assertThat(entity.getRole()).isEqualTo(Role.ADMIN);
+        thenUserShouldBeActive(entity);
+        thenUserBrandShouldBeApproved(entity);
+        verify(userJpaRepository).findByEmail(email);
         verify(userJpaRepository).save(entity);
     }
 
     @Test
-    void givenExistingEmailWhenConvertToUserThenRoleIsUser() {
+    void shouldThrowExceptionWhenActivatingNonExistingUser() {
+        String email = "test17@mail.com";
+
+        whenFindingByEmail(email, null);
+
+        thenActivateShouldThrowException(email);
+        verify(userJpaRepository).findByEmail(email);
+        verify(userJpaRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldConvertUserToAdminWhenEmailExists() {
         String email = "test@mail.com";
+        UserEntity entity = givenUserWithRole(email, Role.USER);
 
-        UserEntity entity = new UserEntity();
-        entity.setEmail(email);
-        entity.setRole(Role.ADMIN);
+        whenFindingByEmail(email, entity);
+        whenConvertingToAdmin(email);
 
-        when(userJpaRepository.findByEmail(email)).thenReturn(entity);
-
-        userRepository.convertToUser(email);
-
-        assertThat(entity.getRole()).isEqualTo(Role.USER);
+        thenRoleShouldBe(entity, Role.ADMIN);
         verify(userJpaRepository).save(entity);
     }
 
     @Test
-    void givenValidUserAndBrandWHENUpdateBrandUserTHENUserIsUpdatedCorrectly() {
+    void shouldConvertAdminToUserWhenEmailExists() {
+        String email = "test@mail.com";
+        UserEntity entity = givenUserWithRole(email, Role.ADMIN);
+
+        whenFindingByEmail(email, entity);
+        whenConvertingToUser(email);
+
+        thenRoleShouldBe(entity, Role.USER);
+        verify(userJpaRepository).save(entity);
+    }
+
+    @Test
+    void shouldUpdateBrandUserCorrectly() {
         String email = "user@mail.com";
         String brandCode = "TESTBRAND";
+        UserEntity user = givenUser(email);
+        MarcaEntity brand = givenBrand(brandCode);
 
-        UserEntity user = new UserEntity();
-        user.setEmail(email);
+        whenFindingUserByEmail(email, user);
+        whenFindingBrandByCode(brandCode, brand);
+        whenSavingUser(user);
 
-        MarcaEntity brand = new MarcaEntity();
-        brand.setCodigoMarca(brandCode);
+        whenUpdateBrandUser(email, brandCode);
 
-        when(userJpaRepository.findByEmail(email)).thenReturn(user);
-        when(brandJpaRepository.findByCodigoMarca(brandCode)).thenReturn(brand);
-        when(userJpaRepository.save(user)).thenReturn(user);
-
-        userRepository.updateBrandUser(email, brandCode);
-
-        assertThat(user.getBrand()).isEqualTo(brand);
-        assertThat(user.getRole()).isEqualTo(Role.BRAND);
-        assertThat(user.isBrandApproved()).isFalse();
+        thenUserShouldHaveBrand(user, brand);
+        thenUserShouldHaveRole(user, Role.BRAND);
+        thenUserShouldBeUnapproved(user);
         verify(userJpaRepository).save(user);
     }
 
     @Test
-    void givenBrandCodeWhenGetEmailUserRelatedThenReturnEmail() {
+    void shouldReturnEmailWhenBrandUserExists() {
         String brandCode = "TESTBRAND";
+        UserEntity user = givenUser("brand@mail.com");
 
-        UserEntity user = new UserEntity();
-        user.setEmail("brand@mail.com");
+        whenFindingUserByBrandCode(brandCode, user);
 
-        when(userJpaRepository.findByBrand_CodigoMarca(brandCode)).thenReturn(user);
+        String email = whenGetEmailUserRelated(brandCode);
 
-        String email = userRepository.getEmailUserRelatedToBrandByBrandCode(brandCode);
-
-        assertThat(email).isEqualTo("brand@mail.com");
+        thenEmailShouldBe(email, "brand@mail.com");
         verify(userJpaRepository).findByBrand_CodigoMarca(brandCode);
     }
 
     @Test
-    void givenUserDataWhenUpdateUserThenPersistChangesAndReturnModel() {
-        UserEntity entity = new UserEntity();
-        entity.setEmail("old@mail.com");
-        entity.setPassword("oldpass");
-        entity.setUserImageUrl("old.png");
+    void shouldUpdateUserCorrectlyWhenValidDataProvided() {
+        UserEntity entity = givenUserWithFullData();
 
-        when(userJpaRepository.findByEmail("old@mail.com")).thenReturn(entity);
-        when(userJpaRepository.save(entity)).thenReturn(entity);
+        whenFindingUserByEmail("old@mail.com", entity);
+        whenSavingUser(entity);
 
-        UserModel result = userRepository.updateUser(
+        UserModel result = whenUpdateUser(
                 "old@mail.com",
                 "newName",
                 "newLName",
@@ -309,26 +245,19 @@ class UserRepositoryImplTest {
                 "new.png"
         );
 
-        assertThat(entity.getName()).isEqualTo("newName");
-        assertThat(entity.getLastName()).isEqualTo("newLName");
-        assertThat(entity.getEmail()).isEqualTo("new@mail.com");
-        assertThat(entity.getPassword()).isEqualTo("newpass");
-        assertThat(entity.getUserImageUrl()).isEqualTo("new.png");
-
-        assertThat(result.getEmail()).isEqualTo("new@mail.com");
+        thenUserShouldHaveUpdatedFields(entity, "newName", "newLName", "new@mail.com", "newpass", "new.png");
+        thenEmailShouldBe(result.getEmail(), "new@mail.com");
         verify(userJpaRepository).save(entity);
     }
 
     @Test
-    void givenEmptyPasswordWhenUpdateUserThenPasswordIsNotModified() {
-        UserEntity entity = new UserEntity();
-        entity.setEmail("old@mail.com");
-        entity.setPassword("oldpass");
+    void shouldNotModifyPasswordWhenEmptyPasswordProvided() {
+        UserEntity entity = givenUserWithOldPassword();
 
-        when(userJpaRepository.findByEmail("old@mail.com")).thenReturn(entity);
-        when(userJpaRepository.save(entity)).thenReturn(entity);
+        whenFindingUserByEmail("old@mail.com", entity);
+        whenSavingUser(entity);
 
-        userRepository.updateUser(
+        whenUpdateUser(
                 "old@mail.com",
                 "newName",
                 "newLNAme",
@@ -337,7 +266,297 @@ class UserRepositoryImplTest {
                 "image.png"
         );
 
-        assertThat(entity.getPassword()).isEqualTo("oldpass");
-        assertThat(entity.getEmail()).isEqualTo("new@mail.com");
+        thenPasswordShouldBe(entity, "oldpass");
+        thenEmailShouldBe(entity.getEmail(), "new@mail.com");
     }
+
+    private void givenExistingUserWithEmail(String email) {
+        UserEntity entity = new UserEntity();
+        entity.setEmail(email);
+        when(userJpaRepository.findByEmail(email)).thenReturn(entity);
+    }
+
+    private void givenUserDoesNotExist(String email) {
+        when(userJpaRepository.findByEmail(email)).thenReturn(null);
+    }
+
+    private void givenUserWithVerificationToken(String token, String email, Long id) {
+        UserEntity entity = new UserEntity();
+        entity.setId(id);
+        entity.setEmail(email);
+        entity.setVerificationToken(token);
+
+        when(userJpaRepository.findByVerificationToken(token)).thenReturn(entity);
+    }
+
+    private void givenNoUserWithToken(String token) {
+        when(userJpaRepository.findByVerificationToken(token)).thenReturn(null);
+    }
+
+    private void givenUserWithId(Long id, String email) {
+        UserEntity entity = new UserEntity();
+        entity.setId(id);
+        entity.setEmail(email);
+
+        when(userJpaRepository.findById(id)).thenReturn(Optional.of(entity));
+    }
+
+    private void givenNoUserWithId(Long id) {
+        when(userJpaRepository.findById(id)).thenReturn(Optional.empty());
+    }
+
+    private UserModel whenFindUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
+    private UserModel whenFindUserByVerificationToken(String token) {
+        return userRepository.findUserByVerificationToken(token);
+    }
+
+    private UserModel whenFindById(Long id) {
+        return userRepository.findById(id);
+    }
+
+
+    private void thenReturnUserWithEmail(UserModel result, String expectedEmail) {
+        assertNotNull(result);
+        assertEquals(expectedEmail, result.getEmail());
+    }
+
+    private void thenExpectUserNotFound(String email) {
+        assertThrows(
+                UserNotFoundException.class,
+                () -> userRepository.findUserByEmail(email)
+        );
+    }
+
+    private void thenUserShouldHaveEmail(UserModel result, String expectedEmail) {
+        assertThat(result).isNotNull();
+        assertThat(result.getEmail()).isEqualTo(expectedEmail);
+    }
+
+    private void thenUserShouldHaveId(UserModel result, Long expectedId) {
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(expectedId);
+    }
+
+    private void thenExpectUserNotFoundByToken(String token) {
+        assertThatThrownBy(() -> userRepository.findUserByVerificationToken(token))
+                .isInstanceOf(UserNotFoundException.class);
+    }
+
+    private void thenExpectUserNotFoundById(Long id) {
+        assertThatThrownBy(() -> userRepository.findById(id))
+                .isInstanceOf(UserNotFoundException.class);
+    }
+
+    private UserModel givenUserModel(String email, String name) {
+        UserModel m = new UserModel();
+        m.setEmail(email);
+        m.setName(name);
+        return m;
+    }
+
+    private UserEntity givenSavedEntity(UserModel model, Long id) {
+        UserEntity e = new UserEntity(model);
+        e.setId(id);
+        return e;
+    }
+
+    private List<UserEntity> givenUserEntityList() {
+        UserEntity u1 = new UserEntity();
+        u1.setId(1L);
+        u1.setEmail("u1@mail.com");
+
+        UserEntity u2 = new UserEntity();
+        u2.setId(2L);
+        u2.setEmail("u2@mail.com");
+
+        return List.of(u1, u2);
+    }
+
+    private UserEntity givenActiveUserEntity(String email) {
+        UserEntity e = new UserEntity();
+        e.setEmail(email);
+        e.setStatus(true);
+        return e;
+    }
+
+    private void whenSavingUserEntity(UserEntity saved) {
+        when(userJpaRepository.save(any(UserEntity.class))).thenReturn(saved);
+    }
+
+    private UserModel whenSavingUser(UserModel model) {
+        return userRepository.saveUser(model);
+    }
+
+    private void whenFindingAllUsers(List<UserEntity> entities) {
+        when(userJpaRepository.findAll()).thenReturn(entities);
+    }
+
+    private List<UserModel> whenCallingFindAll() {
+        return userRepository.findAll();
+    }
+
+    private void whenFindingByEmail(String email, UserEntity entity) {
+        when(userJpaRepository.findByEmail(email)).thenReturn(entity);
+    }
+
+    private void whenDeactivatingUser(String email) {
+        userRepository.desactivateUser(email);
+    }
+
+    private void thenUserEmailShouldBe(UserModel result, String expected) {
+        assertThat(result.getEmail()).isEqualTo(expected);
+    }
+
+    private void thenUserIdShouldBeNull(UserModel result) {
+        assertThat(result.getId()).isNull();
+    }
+
+    private void thenResultShouldHaveSize(List<UserModel> list, int size) {
+        assertThat(list).hasSize(size);
+    }
+
+    private void thenUserShouldBeDeactivated(UserEntity entity) {
+        assertThat(entity.isStatus()).isFalse();
+    }
+
+    private void thenExceptionShouldBeThrown(String email) {
+        assertThatThrownBy(() -> userRepository.findUserByEmail(email))
+                .isInstanceOf(UserNotFoundException.class);
+    }
+
+
+    private UserEntity givenInactiveAndUnapprovedUser(String email) {
+        UserEntity e = new UserEntity();
+        e.setEmail(email);
+        e.setStatus(false);
+        e.setBrandApproved(false);
+        return e;
+    }
+
+    private UserEntity givenUserWithRole(String email, Role role) {
+        UserEntity e = new UserEntity();
+        e.setEmail(email);
+        e.setRole(role);
+        return e;
+    }
+
+    private void whenActivatingUser(String email) {
+        userRepository.activateUser(email);
+    }
+
+    private void whenConvertingToAdmin(String email) {
+        userRepository.convertToAdmin(email);
+    }
+
+    private void whenConvertingToUser(String email) {
+        userRepository.convertToUser(email);
+    }
+
+    private void thenUserShouldBeActive(UserEntity entity) {
+        assertThat(entity.isStatus()).isTrue();
+    }
+
+    private void thenUserBrandShouldBeApproved(UserEntity entity) {
+        assertThat(entity.isBrandApproved()).isTrue();
+    }
+
+    private void thenDesactivateShouldThrowException(String email) {
+        assertThatThrownBy(() -> userRepository.desactivateUser(email))
+                .isInstanceOf(UserNotFoundException.class);
+    }
+    private void thenActivateShouldThrowException(String email) {
+        assertThatThrownBy(() -> userRepository.activateUser(email))
+                .isInstanceOf(UserNotFoundException.class);
+    }
+
+    private void thenRoleShouldBe(UserEntity entity, Role expected) {
+        assertThat(entity.getRole()).isEqualTo(expected);
+    }
+
+    private UserEntity givenUser(String email) {
+        UserEntity u = new UserEntity();
+        u.setEmail(email);
+        return u;
+    }
+
+    private MarcaEntity givenBrand(String code) {
+        MarcaEntity b = new MarcaEntity();
+        b.setCodigoMarca(code);
+        return b;
+    }
+
+    private UserEntity givenUserWithFullData() {
+        UserEntity e = new UserEntity();
+        e.setEmail("old@mail.com");
+        e.setPassword("oldpass");
+        e.setUserImageUrl("old.png");
+        return e;
+    }
+
+    private UserEntity givenUserWithOldPassword() {
+        UserEntity e = new UserEntity();
+        e.setEmail("old@mail.com");
+        e.setPassword("oldpass");
+        return e;
+    }
+
+    private void whenFindingUserByEmail(String email, UserEntity user) {
+        when(userJpaRepository.findByEmail(email)).thenReturn(user);
+    }
+
+    private void whenFindingBrandByCode(String code, MarcaEntity brand) {
+        when(brandJpaRepository.findByCodigoMarca(code)).thenReturn(brand);
+    }
+
+    private void whenFindingUserByBrandCode(String code, UserEntity user) {
+        when(userJpaRepository.findByBrand_CodigoMarca(code)).thenReturn(user);
+    }
+
+    private void whenSavingUser(UserEntity user) {
+        when(userJpaRepository.save(user)).thenReturn(user);
+    }
+
+    private void whenUpdateBrandUser(String email, String code) {
+        userRepository.updateBrandUser(email, code);
+    }
+
+    private String whenGetEmailUserRelated(String brandCode) {
+        return userRepository.getEmailUserRelatedToBrandByBrandCode(brandCode);
+    }
+
+    private UserModel whenUpdateUser(String email, String n, String ln, String newEmail, String pass, String img) {
+        return userRepository.updateUser(email, n, ln, newEmail, pass, img);
+    }
+
+    private void thenUserShouldHaveBrand(UserEntity user, MarcaEntity brand) {
+        assertThat(user.getBrand()).isEqualTo(brand);
+    }
+
+    private void thenUserShouldHaveRole(UserEntity user, Role role) {
+        assertThat(user.getRole()).isEqualTo(role);
+    }
+
+    private void thenUserShouldBeUnapproved(UserEntity user) {
+        assertThat(user.isBrandApproved()).isFalse();
+    }
+
+    private void thenEmailShouldBe(String actual, String expected) {
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    private void thenUserShouldHaveUpdatedFields(UserEntity e, String n, String ln, String email, String pass, String img) {
+        assertThat(e.getName()).isEqualTo(n);
+        assertThat(e.getLastName()).isEqualTo(ln);
+        assertThat(e.getEmail()).isEqualTo(email);
+        assertThat(e.getPassword()).isEqualTo(pass);
+        assertThat(e.getUserImageUrl()).isEqualTo(img);
+    }
+
+    private void thenPasswordShouldBe(UserEntity e, String expected) {
+        assertThat(e.getPassword()).isEqualTo(expected);
+    }
+
 }
