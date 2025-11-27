@@ -45,6 +45,14 @@ public class RecomendationRepositoryImpl implements GarmentRecomendationReposito
         this.recomendationJpaRepository.saveAll(sugerenciasToCeate);
     }
 
+    @Override
+    public void deleteRecomendationByGarmentsCode(String garmentCodePrimary, String garmentCodeSecondary, String type) {
+        if (type.equalsIgnoreCase("inferior"))
+            this.recomendationJpaRepository.deleteWhenPrimaryIsBottom(garmentCodePrimary, garmentCodeSecondary);
+        else
+            this.recomendationJpaRepository.deleteWhenPrimaryIsTop(garmentCodePrimary, garmentCodeSecondary);
+    }
+
     private List<GarmentRecomendationEntity> getGarmentRecomendationEntitiesToCreate(String type, List<String> sugerencias, PrendaEntity prendaPrincipal) {
         List<GarmentRecomendationEntity> sugerenciasToCeate = new ArrayList<>();
 

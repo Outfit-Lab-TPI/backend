@@ -108,6 +108,10 @@ public class UserModel {
         this.email = email;
     }
 
+    public UserModel() {
+
+    }
+
     /*
      * public String getPassword() {
      * return "";

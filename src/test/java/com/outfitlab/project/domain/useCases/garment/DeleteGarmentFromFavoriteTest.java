@@ -11,69 +11,135 @@ import static org.mockito.Mockito.*;
 
 public class DeleteGarmentFromFavoriteTest {
 
-    private UserGarmentFavoriteRepository userGarmentFavoriteRepository = mock(UserGarmentFavoriteRepositoryImpl.class);
-    private DeleteGarmentFromFavorite deleteGarmentFromFavorite = new DeleteGarmentFromFavorite(userGarmentFavoriteRepository);
+    private UserGarmentFavoriteRepository userGarmentFavoriteRepository =
+            mock(UserGarmentFavoriteRepositoryImpl.class);
+
+    private DeleteGarmentFromFavorite deleteGarmentFromFavorite =
+            new DeleteGarmentFromFavorite(userGarmentFavoriteRepository);
 
     @Test
-    public void givenExistingFavoriteWhenExecuteThenDeleteSuccessfully() throws Exception, UserGarmentFavoriteNotFoundException {
-        String garmentCode = "G001";
-        String userEmail = "user@sasas.com";
-        UserGarmentFavoriteModel fav = new UserGarmentFavoriteModel();
+    public void givenExistingFavoriteWhenExecuteThenDeleteSuccessfully() throws Exception {
 
-        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
+        String garmentCode = givenGarmentCode();
+        String userEmail = givenUserEmail();
+        UserGarmentFavoriteModel fav = givenFavoriteModel();
+
+        givenFavoriteExists(garmentCode, userEmail, fav);
+        givenDeleteSuccess(garmentCode, userEmail);
+
+        String result = whenExecuteDeleteFavorite(garmentCode, userEmail);
+
+        thenFavoriteDeletedSuccessfully(result);
+    }
+
+    @Test
+    public void givenNonexistentFavoriteWhenExecuteThenThrowUserGarmentFavoriteNotFoundException(){
+        String garmentCode = givenGarmentCode();
+        String userEmail = givenUserEmail();
+
+        givenFavoriteDoesNotExist(garmentCode, userEmail);
+
+        thenThrowFavoriteNotFound(garmentCode, userEmail);
+    }
+
+    @Test
+    public void givenUserNotFoundWhenExecuteThenThrowUserNotFoundException() {
+
+        String garmentCode = givenGarmentCode();
+        String userEmail = givenUserEmail();
+        UserGarmentFavoriteModel fav = givenFavoriteModel();
+
+        givenFavoriteExists(garmentCode, userEmail, fav);
+        givenDeleteThrowsUserNotFound(garmentCode, userEmail);
+
+        thenThrowUserNotFound(garmentCode, userEmail);
+    }
+
+    @Test
+    public void givenGarmentNotFoundWhenExecuteThenThrowGarmentNotFoundException()
+            throws Exception {
+
+        String garmentCode = givenGarmentCode();
+        String userEmail = givenUserEmail();
+        UserGarmentFavoriteModel fav = givenFavoriteModel();
+
+        givenFavoriteExists(garmentCode, userEmail, fav);
+        givenDeleteThrowsGarmentNotFound(garmentCode, userEmail);
+
+        thenThrowGarmentNotFound(garmentCode, userEmail);
+    }
+
+
+    //privadoss  ----------------------
+    private void givenDeleteThrowsGarmentNotFound(String garment, String user)
+            throws Exception {
+        doThrow(new GarmentNotFoundException("Prenda no encontrada"))
+                .when(userGarmentFavoriteRepository).deleteFromFavorites(garment, user);
+    }
+
+    private void thenThrowGarmentNotFound(String garment, String user) {
+        assertThrows(
+                GarmentNotFoundException.class,
+                () -> deleteGarmentFromFavorite.execute(garment, user)
+        );
+    }
+
+    private String givenGarmentCode() {
+        return "G001";
+    }
+
+    private UserGarmentFavoriteModel givenFavoriteModel() {
+        return new UserGarmentFavoriteModel();
+    }
+    private String givenUserEmail() {
+        return "user@sasas.com";
+    }
+
+
+    private void givenFavoriteExists(String garment, String user, UserGarmentFavoriteModel fav)
+            throws UserGarmentFavoriteNotFoundException {
+        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garment, user))
                 .thenReturn(fav);
+    }
 
-        doNothing().when(userGarmentFavoriteRepository).deleteFromFavorites(garmentCode, userEmail);
+    private void givenDeleteSuccess(String garment, String user) throws Exception {
+        doNothing().when(userGarmentFavoriteRepository)
+                .deleteFromFavorites(garment, user);
+    }
 
-        String result = deleteGarmentFromFavorite.execute(garmentCode, userEmail);
+    private String whenExecuteDeleteFavorite(String garment, String user) throws Exception {
+        return deleteGarmentFromFavorite.execute(garment, user);
+    }
 
+    private void thenFavoriteDeletedSuccessfully(String result) {
         assertNotNull(result);
         assertEquals("Prenda eliminada de favoritos.", result);
     }
 
-    @Test
-    public void givenNonexistentFavoriteWhenExecuteThenThrowUserGarmentFavoriteNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
-        String garmentCode = "G001";
-        String userEmail = "user@asasa.com";
 
-        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
+    private void givenFavoriteDoesNotExist(String garment, String user)
+            throws UserGarmentFavoriteNotFoundException {
+        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garment, user))
                 .thenThrow(new UserGarmentFavoriteNotFoundException("No está en favoritos"));
+    }
 
-        assertThrows(UserGarmentFavoriteNotFoundException.class, () ->
-                deleteGarmentFromFavorite.execute(garmentCode, userEmail)
+    private void thenThrowFavoriteNotFound(String garment, String user) {
+        assertThrows(
+                UserGarmentFavoriteNotFoundException.class,
+                () -> deleteGarmentFromFavorite.execute(garment, user)
         );
     }
 
-    @Test
-    public void givenUserNotFoundWhenExecuteThenThrowUserNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
-        String garmentCode = "G001";
-        String userEmail = "user@asas.com";
-        UserGarmentFavoriteModel fav = new UserGarmentFavoriteModel();
-
-        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                .thenReturn(fav);
+    private void givenDeleteThrowsUserNotFound(String garment, String user){
         doThrow(new UserNotFoundException("Usuario no encontrado"))
-                .when(userGarmentFavoriteRepository).deleteFromFavorites(garmentCode, userEmail);
+                .when(userGarmentFavoriteRepository).deleteFromFavorites(garment, user);
+    }
 
-        assertThrows(UserNotFoundException.class, () ->
-                deleteGarmentFromFavorite.execute(garmentCode, userEmail)
+    private void thenThrowUserNotFound(String garment, String user) {
+        assertThrows(
+                UserNotFoundException.class,
+                () -> deleteGarmentFromFavorite.execute(garment, user)
         );
     }
 
-    @Test
-    public void givenGarmentNotFoundWhenExecuteThenThrowGarmentNotFoundException() throws Exception, UserGarmentFavoriteNotFoundException {
-        String garmentCode = "G001";
-        String userEmail = "user@asasa.com";
-        UserGarmentFavoriteModel fav = new UserGarmentFavoriteModel();
-
-        when(userGarmentFavoriteRepository.findByGarmentCodeAndUserEmail(garmentCode, userEmail))
-                .thenReturn(fav);
-        doThrow(new GarmentNotFoundException("Prenda no encontrada"))
-                .when(userGarmentFavoriteRepository).deleteFromFavorites(garmentCode, userEmail);
-
-        assertThrows(GarmentNotFoundException.class, () ->
-                deleteGarmentFromFavorite.execute(garmentCode, userEmail)
-        );
-    }
 }
-

@@ -32,6 +32,11 @@ public class RecomendationConfig {
     }
 
     @Bean
+    public DeleteRecomendationByPrimaryAndSecondaryGarmentCode deleteRecomendationByPrimaryAndSecondaryGarmentCode(GarmentRecomendationRepository recomendationRepository){
+        return new DeleteRecomendationByPrimaryAndSecondaryGarmentCode(recomendationRepository);
+    }
+
+    @Bean
     public CreateSugerenciasByGarmentsCode createSugerenciasByGarmentsCode(GarmentRecomendationRepository garmentRecomendationRepository){
         return new CreateSugerenciasByGarmentsCode(garmentRecomendationRepository);
     }
