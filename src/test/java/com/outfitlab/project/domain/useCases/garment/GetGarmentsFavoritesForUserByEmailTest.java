@@ -14,53 +14,91 @@ import static org.mockito.Mockito.*;
 
 public class GetGarmentsFavoritesForUserByEmailTest {
 
-    private UserGarmentFavoriteRepository userGarmentFavoriteRepository = mock(UserGarmentFavoriteRepositoryImpl.class);
-    private GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail = new GetGarmentsFavoritesForUserByEmail(userGarmentFavoriteRepository);
+    private final UserGarmentFavoriteRepository userGarmentFavoriteRepository = mock(UserGarmentFavoriteRepositoryImpl.class);
+    private final GetGarmentsFavoritesForUserByEmail getGarmentsFavoritesForUserByEmail = new GetGarmentsFavoritesForUserByEmail(userGarmentFavoriteRepository);
 
     @Test
-    public void givenValidUserAndPageWhenExecuteThenReturnFavoritesPage() throws Exception, FavoritesException {
+    public void givenValidUserAndPageWhenExecuteThenReturnFavoritesPage() throws Exception {
         String userEmail = "user@example.com";
         int page = 1;
         PageDTO<PrendaModel> expectedPage = new PageDTO<>();
 
-        when(userGarmentFavoriteRepository.getGarmentsFavoritesForUserByEmail(userEmail, page)).thenReturn(expectedPage);
+        mockRepositoryReturnPage(userEmail, page, expectedPage);
 
         PageDTO<PrendaModel> result = getGarmentsFavoritesForUserByEmail.execute(userEmail, page);
 
-        assertNotNull(result);
-        assertEquals(expectedPage, result);
-        verify(userGarmentFavoriteRepository, times(1)).getGarmentsFavoritesForUserByEmail(userEmail, page);
+        thenReturnFavoritePage(expectedPage, result, userEmail, page);
     }
 
     @Test
-    public void givenNegativePageNumberWhenExecuteThenThrowPageLessThanZeroException() throws UserNotFoundException, FavoritesException {
+    public void givenNegativePageNumberWhenExecuteThenThrowPageLessThanZeroException() {
         String userEmail = "user@example.com";
         int page = -1;
 
-        assertThrows(PageLessThanZeroException.class, () -> getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
+        whenThrowsPageLessThanZeroException(userEmail, page);
+
         verify(userGarmentFavoriteRepository, never()).getGarmentsFavoritesForUserByEmail(anyString(), anyInt());
     }
 
     @Test
-    public void givenNonexistentUserWhenExecuteThenThrowUserNotFoundException() throws Exception, FavoritesException {
+    public void givenNonexistentUserWhenExecuteThenThrowUserNotFoundException() throws Exception {
         String userEmail = "notfound@example.com";
         int page = 0;
 
-        when(userGarmentFavoriteRepository.getGarmentsFavoritesForUserByEmail(userEmail, page)).thenThrow(new UserNotFoundException("Usuario no encontrado"));
+        mockRepositoryThrow(userEmail, page, new UserNotFoundException("Usuario no encontrado"));
 
-        assertThrows(UserNotFoundException.class, () -> getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
-        verify(userGarmentFavoriteRepository, times(1)).getGarmentsFavoritesForUserByEmail(userEmail, page);
+        whenThrowsUserNotFoundException(userEmail, page);
+
+        verifyRepositoryCalledOnce(userEmail, page);
     }
 
     @Test
-    public void givenRepositoryFailureWhenExecuteThenThrowFavoritesException() throws Exception, FavoritesException {
+    public void givenRepositoryFailureWhenExecuteThenThrowFavoritesException() throws Exception {
         String userEmail = "user@example.com";
         int page = 2;
 
-        when(userGarmentFavoriteRepository.getGarmentsFavoritesForUserByEmail(userEmail, page)).thenThrow(new FavoritesException("Error al obtener favoritos"));
+        mockRepositoryThrow(userEmail, page, new FavoritesException("Error al obtener favoritos"));
+        whenThrowsFavoritesException(userEmail, page);
 
-        assertThrows(FavoritesException.class, () -> getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
-        verify(userGarmentFavoriteRepository, times(1)).getGarmentsFavoritesForUserByEmail(userEmail, page);
+        verifyRepositoryCalledOnce(userEmail, page);
+    }
+
+
+
+// privadoss
+    private void whenThrowsUserNotFoundException(String userEmail, int page) {
+        assertThrows(UserNotFoundException.class,
+                () -> getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
+    }
+
+    private void whenThrowsFavoritesException(String userEmail, int page) {
+        assertThrows(FavoritesException.class,
+                () -> getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
+    }
+
+    private void whenThrowsPageLessThanZeroException(String userEmail, int page) {
+        assertThrows(PageLessThanZeroException.class, () -> getGarmentsFavoritesForUserByEmail.execute(userEmail, page));
+    }
+
+    private void mockRepositoryReturnPage(String email, int page, PageDTO<PrendaModel> response)
+            throws Exception {
+        when(userGarmentFavoriteRepository.getGarmentsFavoritesForUserByEmail(email, page))
+                .thenReturn(response);
+    }
+
+    private void thenReturnFavoritePage(PageDTO<PrendaModel> expectedPage, PageDTO<PrendaModel> result, String userEmail, int page) {
+        assertEquals(expectedPage, result);
+        verifyRepositoryCalledOnce(userEmail, page);
+    }
+
+    private void mockRepositoryThrow(String email, int page, Exception exception)
+            throws Exception {
+        when(userGarmentFavoriteRepository.getGarmentsFavoritesForUserByEmail(email, page))
+                .thenThrow(exception);
+    }
+
+    private void verifyRepositoryCalledOnce(String email, int page) {
+        verify(userGarmentFavoriteRepository, times(1))
+                .getGarmentsFavoritesForUserByEmail(email, page);
     }
 }
-

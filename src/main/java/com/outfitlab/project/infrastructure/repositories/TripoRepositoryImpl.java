@@ -16,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,7 +62,13 @@ public class TripoRepositoryImpl implements TripoRepository {
         uploadResult.put("originalFilename", originalFilename);
         uploadResult.put("fileExtension", getFileExtension(originalFilename));
 
-        ResponseEntity<String> response = generateRequestToUploadImageToTripo(imageFile, originalFilename);
+        ResponseEntity<String> response;
+        try {
+            response = generateRequestToUploadImageToTripo(imageFile, originalFilename);
+        } catch (HttpStatusCodeException e) {
+            log.warn("Tripo upload failed. status={} body={}", e.getStatusCode(), e.getResponseBodyAsString());
+            throw new ErrorUploadImageToTripoException("Tripo devolvió " + e.getStatusCode() + ": " + e.getResponseBodyAsString());
+        }
         checkIfResponseIsOk(response);
         uploadResult.put("imageToken", tryGetImageToken(response));
 
@@ -76,7 +83,13 @@ public class TripoRepositoryImpl implements TripoRepository {
         String taskBody = tryGetTaskBody(mapper, bodyMap);
 
         HttpEntity<String> taskEntity = new HttpEntity<>(taskBody, taskHeaders);
-        ResponseEntity<String> taskResponse = restTemplate.postForEntity(taskUrl, taskEntity, String.class);
+        ResponseEntity<String> taskResponse;
+        try {
+            taskResponse = restTemplate.postForEntity(taskUrl, taskEntity, String.class);
+        } catch (HttpStatusCodeException e) {
+            log.warn("Tripo task creation failed. status={} body={}", e.getStatusCode(), e.getResponseBodyAsString());
+            throw new ErrorGenerateGlbException("Tripo devolvió " + e.getStatusCode() + ": " + e.getResponseBodyAsString());
+        }
         checkIfStatusResponseIsOk(taskResponse);
 
         return tryGetTaskIdFromResponse(mapper, taskResponse);
@@ -145,7 +158,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         }
     }
 
-    private MultipartFile convertImageUrlToMultipartFile(String imageUrl) throws ErrorUploadImageToTripoException {
+    protected MultipartFile convertImageUrlToMultipartFile(String imageUrl) throws ErrorUploadImageToTripoException {
         InputStream inputStream = null;
         try {
             URL url = new URL(imageUrl);
@@ -234,7 +247,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         return bodyMap;
     }
 
-    private HttpHeaders getHttpHeaders(MediaType type) {
+    protected HttpHeaders getHttpHeaders(MediaType type) {
         HttpHeaders taskHeaders = new HttpHeaders();
         taskHeaders.setContentType(type);
         taskHeaders.setBearerAuth(tripoApiKey);
@@ -268,7 +281,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         }
     }
 
-    private ResponseEntity<String> generateRequestToUploadImageToTripo(MultipartFile imageFile, String originalFilename) throws ErroBytesException {
+    protected ResponseEntity<String> generateRequestToUploadImageToTripo(MultipartFile imageFile, String originalFilename) throws ErroBytesException {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", tryGetByteArrayResourceFromImage(imageFile, originalFilename));
         HttpHeaders headers = getHttpHeaders(MediaType.MULTIPART_FORM_DATA);
@@ -288,7 +301,7 @@ public class TripoRepositoryImpl implements TripoRepository {
         return imageToken;
     }
 
-    private ResponseEntity<String> requestTripoTaskStatus(String taskId, HttpEntity<Void> entityWithTaskHeaders) {
+    protected ResponseEntity<String> requestTripoTaskStatus(String taskId, HttpEntity<Void> entityWithTaskHeaders) {
         return restTemplate.exchange(
                 taskUrl + "/" + taskId,
                 HttpMethod.GET,

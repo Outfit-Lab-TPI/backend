@@ -15,49 +15,98 @@ import static org.mockito.Mockito.*;
 
 class GetGarmentsByTypeTest {
 
-    private GarmentRepository garmentRepository = mock(GarmentRepositoryImpl.class);
-    private GetGarmentsByType getGarmentsByType = new GetGarmentsByType(garmentRepository);
+    private final GarmentRepository garmentRepository = mock(GarmentRepositoryImpl.class);
+    private final GetGarmentsByType getGarmentsByType = new GetGarmentsByType(garmentRepository);
 
     @Test
     public void givenValidTypeWithGarmentsWhenExecuteThenReturnPageSuccessfully() throws GarmentNotFoundException {
-        String type = "superior";
-        int page = 0;
-        Page<PrendaModel> pageResponse = new PageImpl<>(List.of(new PrendaModel(), new PrendaModel()));
+        String type = givenType("superior");
+        int page = givenPage(0);
+        Page<PrendaModel> pageResponse = givenPageWithElements(2);
 
-        when(garmentRepository.getGarmentsByType(type.toLowerCase(), page)).thenReturn(pageResponse);
+        mockRepositoryReturning(type, page, pageResponse);
 
-        Page<PrendaModel> result = getGarmentsByType.execute(type, page);
+        Page<PrendaModel> result = whenExecute(type, page);
 
-        assertNotNull(result);
-        assertEquals(2, result.getContent().size());
-        verify(garmentRepository, times(1)).getGarmentsByType("superior", page);
+        thenResultNotNull(result);
+        thenResultHasSize(result, 2);
+        thenRepositoryCalledOnce(type, page);
     }
 
     @Test
     public void givenValidTypeWithNoGarmentsWhenExecuteThenThrowGarmentNotFoundException() {
-        String type = "inferior";
-        int page = 1;
-        Page<PrendaModel> emptyPage = new PageImpl<>(List.of());
+        String type = givenType("inferior");
+        int page = givenPage(1);
+        Page<PrendaModel> emptyPage = givenEmptyPage();
 
-        when(garmentRepository.getGarmentsByType(type.toLowerCase(), page)).thenReturn(emptyPage);
+        mockRepositoryReturning(type, page, emptyPage);
 
-        GarmentNotFoundException exception = assertThrows(GarmentNotFoundException.class, () -> getGarmentsByType.execute(type, page));
+        GarmentNotFoundException ex = assertThrows(GarmentNotFoundException.class,
+                () -> whenExecute(type, page));
 
-        assertTrue(exception.getMessage().contains("No encontramos prendas de tipo: " + type));
-        verify(garmentRepository, times(1)).getGarmentsByType("inferior", page);
+        thenMessageContains(ex, "No encontramos prendas de tipo: " + type);
+        thenRepositoryCalledOnce(type, page);
     }
 
     @Test
     public void givenEmptyPageWhenExecuteThenThrowGarmentNotFoundException() {
-        String type = "accesorio";
-        int page = 2;
-        Page<PrendaModel> emptyPage = new PageImpl<>(List.of());
+        String type = givenType("accesorio");
+        int page = givenPage(2);
+        Page<PrendaModel> emptyPage = givenEmptyPage();
 
-        when(garmentRepository.getGarmentsByType(type.toLowerCase(), page)).thenReturn(emptyPage);
+        mockRepositoryReturning(type, page, emptyPage);
 
-        assertThrows(GarmentNotFoundException.class, () -> getGarmentsByType.execute(type, page));
-        verify(garmentRepository, times(1)).getGarmentsByType("accesorio", page);
+        assertThrows(GarmentNotFoundException.class, () -> whenExecute(type, page));
+        thenRepositoryCalledOnce(type, page);
     }
 
-}
 
+
+    // privados ---
+    private String givenType(String type) {
+        return type;
+    }
+
+    private int givenPage(int page) {
+        return page;
+    }
+
+    private Page<PrendaModel> givenPageWithElements(int count) {
+        return new PageImpl<>(
+                java.util.stream.Stream.generate(PrendaModel::new).limit(count).toList()
+        );
+    }
+
+    private Page<PrendaModel> givenEmptyPage() {
+        return new PageImpl<>(List.of());
+    }
+
+    private void mockRepositoryReturning(String type, int page, Page<PrendaModel> result) {
+        when(garmentRepository.getGarmentsByType(type.toLowerCase(), page)).thenReturn(result);
+    }
+
+    private Page<PrendaModel> whenExecute(String type, int page) throws GarmentNotFoundException {
+        return getGarmentsByType.execute(type, page);
+    }
+
+    private void thenResultNotNull(Object result) {
+        assertNotNull(result);
+    }
+
+    private void thenResultHasSize(Page<?> page, int size) {
+        assertEquals(size, page.getContent().size());
+    }
+
+    private void thenResultIsEmpty(Page<?> page) {
+        assertTrue(page.isEmpty());
+    }
+
+    private void thenMessageContains(Exception ex, String expected) {
+        assertTrue(ex.getMessage().contains(expected));
+    }
+
+    private void thenRepositoryCalledOnce(String type, int page) {
+        verify(garmentRepository, times(1))
+                .getGarmentsByType(type.toLowerCase(), page);
+    }
+}

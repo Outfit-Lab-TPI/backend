@@ -4,6 +4,7 @@ import com.outfitlab.project.domain.exceptions.ErrorGenerateGlbException;
 import com.outfitlab.project.domain.exceptions.ErrorReadJsonException;
 import com.outfitlab.project.domain.interfaces.repositories.TripoRepository;
 import com.outfitlab.project.infrastructure.repositories.TripoRepositoryImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -15,45 +16,75 @@ import static org.mockito.Mockito.*;
 public class GenerateImageToModelTrippoTest {
 
     private TripoRepository tripoRepository = mock(TripoRepositoryImpl.class);
-    private GenerateImageToModelTrippo generateImageToModelTrippo = new GenerateImageToModelTrippo(tripoRepository);
+    private GenerateImageToModelTrippo generateImageToModelTrippo;
+
+    private final String IMAGE_URL = "https://testeo.com/image.png";
+    private final String SUCCESS_TASK_ID = "GLB_TASK_ID_14125";
+    private final String KEY_IMAGE_URL = "imageUrl";
+    private Map<String, Object> validUploadData;
+
+    @BeforeEach
+    void setUp() {
+        generateImageToModelTrippo = new GenerateImageToModelTrippo(tripoRepository);
+        validUploadData = new HashMap<>();
+        validUploadData.put(KEY_IMAGE_URL, IMAGE_URL);
+    }
+
 
     @Test
-    public void givenValidUploadDataWhenExecuteThenReturnSuccessResponse() throws ErrorGenerateGlbException, ErrorReadJsonException {
-        Map<String, Object> uploadData = new HashMap<>();
-        uploadData.put("imageUrl", "https://testeo.com/image.png");
-        String idResult = "GLB_TASK_ID_14125";
+    public void shouldReturnTaskIdWhenGlbGenerationIsSuccessful() throws Exception {
+        givenRepositoryReturnsTaskId(validUploadData, SUCCESS_TASK_ID);
 
-        when(tripoRepository.requestGenerateGlbToTripo(uploadData)).thenReturn(idResult);
+        String result = whenExecuteGenerateGlb(validUploadData);
 
-        String result = generateImageToModelTrippo.execute(uploadData);
-
-        assertNotNull(result);
-        assertEquals(idResult, result);
-        verify(tripoRepository, times(1)).requestGenerateGlbToTripo(uploadData);
+        thenReturnedResultIsCorrect(result, SUCCESS_TASK_ID);
+        thenRepositoryWasCalledOnce(validUploadData);
     }
 
     @Test
-    public void givenValidDataWhenGenerateGlbThenThrowErrorGenerateGlbException() throws ErrorGenerateGlbException, ErrorReadJsonException {
-        Map<String, Object> uploadData = new HashMap<>();
-        uploadData.put("imageUrl", "https://testeo.com/image.png");
+    public void shouldPropagateErrorGenerateGlbExceptionWhenTripoFails() {
+        givenRepositoryThrowsException(validUploadData, new ErrorGenerateGlbException("Error al generar GLB"));
 
-        when(tripoRepository.requestGenerateGlbToTripo(uploadData))
-                .thenThrow(new ErrorGenerateGlbException("Error al generar GLB"));
-
-        assertThrows(ErrorGenerateGlbException.class, () -> generateImageToModelTrippo.execute(uploadData));
-        verify(tripoRepository, times(1)).requestGenerateGlbToTripo(uploadData);
+        thenExecutionThrowsException(validUploadData, ErrorGenerateGlbException.class);
     }
 
     @Test
-    public void givenValidDataWhenGenerateGlbThenThrowErrorReadJsonException() throws ErrorGenerateGlbException, ErrorReadJsonException {
-        Map<String, Object> uploadData = new HashMap<>();
-        uploadData.put("imageUrl", "https://testeo.com/image.png");
+    public void shouldPropagateErrorReadJsonExceptionWhenApiResponseIsInvalid() {
+        givenRepositoryThrowsException(validUploadData, new ErrorReadJsonException("Error al leer JSON"));
 
-        when(tripoRepository.requestGenerateGlbToTripo(uploadData))
-                .thenThrow(new ErrorReadJsonException("Error al leer JSON"));
+        thenExecutionThrowsException(validUploadData, ErrorReadJsonException.class);
+    }
 
-        assertThrows(ErrorReadJsonException.class, () -> generateImageToModelTrippo.execute(uploadData));
-        verify(tripoRepository, times(1)).requestGenerateGlbToTripo(uploadData);
+
+    //privadoss
+    private void givenRepositoryReturnsTaskId(Map<String, Object> data, String taskId) throws ErrorGenerateGlbException, ErrorReadJsonException {
+        when(tripoRepository.requestGenerateGlbToTripo(data)).thenReturn(taskId);
+    }
+
+    private void givenRepositoryThrowsException(Map<String, Object> data, Exception exception) {
+        try {
+            doThrow(exception).when(tripoRepository).requestGenerateGlbToTripo(data);
+        } catch (ErrorGenerateGlbException | ErrorReadJsonException e) {
+        }
+    }
+
+
+    private String whenExecuteGenerateGlb(Map<String, Object> data) throws ErrorGenerateGlbException, ErrorReadJsonException {
+        return generateImageToModelTrippo.execute(data);
+    }
+
+    private void thenReturnedResultIsCorrect(String result, String expectedTaskId) {
+        assertNotNull(result, "El resultado no debe ser nulo.");
+        assertEquals(expectedTaskId, result, "El ID de tarea devuelto debe coincidir con el esperado.");
+    }
+
+    private void thenExecutionThrowsException(Map<String, Object> data, Class<? extends Exception> expectedException) {
+        assertThrows(expectedException, () -> generateImageToModelTrippo.execute(data));
+
+        thenRepositoryWasCalledOnce(data);
+    }
+
+    private void thenRepositoryWasCalledOnce(Map<String, Object> data) {
+        verify(tripoRepository, times(1)).requestGenerateGlbToTripo(data);
     }
 }
-

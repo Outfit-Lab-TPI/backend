@@ -21,7 +21,7 @@ public class ColorRepositoryImpl implements ColorRepository {
     @Override
     public List<ColorModel> findAllColores() {
         List<ColorEntity> colors = this.colorJpaRepository.findAll();
-        if (colors.isEmpty()) throw new ColorNotFoundException("No encontramos ocaciones.");
+        if (colors.isEmpty()) throw new ColorNotFoundException("No encontramos ocasiones.");
         return colors.stream().map(ColorEntity::convertEntityToModel)
                 .toList();
     }

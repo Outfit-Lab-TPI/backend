@@ -19,7 +19,7 @@ import org.springframework.data.domain.PageRequest;
 
 public class UserGarmentFavoriteRepositoryImpl implements UserGarmentFavoriteRepository {
 
-    private final int PAGE_SIZE = 20;
+    private final int PAGE_SIZE = 10;
     private final UserGarmentFavoriteJpaRepository userGarmentFavoriteJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final GarmentJpaRepository garmentJpaRepository;

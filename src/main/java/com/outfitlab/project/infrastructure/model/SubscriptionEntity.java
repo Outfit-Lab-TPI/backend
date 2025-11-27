@@ -47,6 +47,11 @@ public class SubscriptionEntity {
     @Column(name = "has_advanced_reports", columnDefinition = "boolean default false")
     private boolean hasAdvancedReports = false;
 
+    public SubscriptionEntity(String name, String planCode) {
+        this.name = name;
+        this.planCode = planCode;
+    }
+
     public Long getId() {
         return id;
     }

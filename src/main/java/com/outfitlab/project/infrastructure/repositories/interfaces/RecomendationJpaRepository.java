@@ -23,4 +23,25 @@ public interface RecomendationJpaRepository extends JpaRepository<GarmentRecomen
        OR gr.bottomGarment.garmentCode = :garmentCode
     """)
     void deleteAllByGarmentCode(@Param("garmentCode") String garmentCode);
+
+
+
+    @Modifying
+    @Transactional
+    @Query("""
+        delete from GarmentRecomendationEntity gr 
+        where gr.bottomGarment.garmentCode = :primaryCode
+          and gr.topGarment.garmentCode = :secondaryCode
+    """)
+    void deleteWhenPrimaryIsBottom(String primaryCode, String secondaryCode);
+
+
+    @Modifying
+    @Transactional
+    @Query("""
+        delete from GarmentRecomendationEntity gr 
+        where gr.topGarment.garmentCode = :primaryCode
+          and gr.bottomGarment.garmentCode = :secondaryCode
+    """)
+    void deleteWhenPrimaryIsTop(String primaryCode, String secondaryCode);
 }

@@ -13,49 +13,103 @@ import static org.mockito.Mockito.*;
 
 class GetGarmentRecomendationTest {
 
-    private GarmentRecomendationRepository garmentRecomendationRepository = mock(RecomendationRepositoryImpl.class);
-    private GetGarmentRecomendation getGarmentRecomendation = new GetGarmentRecomendation(garmentRecomendationRepository);
+    private final GarmentRecomendationRepository garmentRecomendationRepository = mock(RecomendationRepositoryImpl.class);
+
+    private final GetGarmentRecomendation getGarmentRecomendation = new GetGarmentRecomendation(garmentRecomendationRepository);
 
     @Test
-    public void givenValidGarmentCodeWhenRecommendationsExistThenReturnListSuccessfully() throws GarmentNotFoundException {
-        String garmentCode = "G001";
-        List<GarmentRecomendationModel> recomendations = List.of(new GarmentRecomendationModel(), new GarmentRecomendationModel());
+    public void givenValidGarmentCodeWhenRecommendationsExistThenReturnListSuccessfully()
+            throws GarmentNotFoundException {
 
-        when(garmentRecomendationRepository.findRecomendationsByGarmentCode(garmentCode))
-                .thenReturn(recomendations);
+        String garmentCode = givenGarmentCode("G001");
+        List<GarmentRecomendationModel> expectedList = givenRecommendationListOfSize(2);
 
-        List<GarmentRecomendationModel> result = getGarmentRecomendation.execute(garmentCode);
+        mockRepositoryReturning(garmentCode, expectedList);
 
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(garmentRecomendationRepository, times(1)).findRecomendationsByGarmentCode(garmentCode);
+        List<GarmentRecomendationModel> result = whenExecutingWith(garmentCode);
+
+        thenResultNotNull(result);
+        thenResultHasSize(result, 2);
+        thenRepositoryCalledOnce(garmentCode);
     }
 
     @Test
-    public void givenValidGarmentCodeWhenNoRecommendationsExistThenReturnEmptyList() throws GarmentNotFoundException {
-        String garmentCode = "G002";
+    public void givenValidGarmentCodeWhenNoRecommendationsExistThenReturnEmptyList()
+            throws GarmentNotFoundException {
 
-        when(garmentRecomendationRepository.findRecomendationsByGarmentCode(garmentCode))
-                .thenReturn(List.of());
+        String garmentCode = givenGarmentCode("G002");
 
-        List<GarmentRecomendationModel> result = getGarmentRecomendation.execute(garmentCode);
+        mockRepositoryReturningEmpty(garmentCode);
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(garmentRecomendationRepository, times(1)).findRecomendationsByGarmentCode(garmentCode);
+        List<GarmentRecomendationModel> result = whenExecutingWith(garmentCode);
+
+        thenResultNotNull(result);
+        thenResultIsEmpty(result);
+        thenRepositoryCalledOnce(garmentCode);
     }
 
     @Test
-    public void givenInvalidGarmentCodeWhenExecuteThenThrowGarmentNotFoundException() throws GarmentNotFoundException {
-        String garmentCode = "cualquiera";
+    public void givenInvalidGarmentCodeWhenExecuteThenThrowGarmentNotFoundException()
+            throws GarmentNotFoundException {
 
-        when(garmentRecomendationRepository.findRecomendationsByGarmentCode(garmentCode))
-                .thenThrow(new GarmentNotFoundException("Prenda no encontrada"));
+        String garmentCode = givenGarmentCode("INVALID");
+
+        mockRepositoryThrowingNotFound(garmentCode);
 
         assertThrows(GarmentNotFoundException.class, () ->
-                getGarmentRecomendation.execute(garmentCode)
+                whenExecutingWith(garmentCode)
         );
 
-        verify(garmentRecomendationRepository, times(1)).findRecomendationsByGarmentCode(garmentCode);
+        thenRepositoryCalledOnce(garmentCode);
+    }
+
+    // privadosss
+    private String givenGarmentCode(String code) {
+        return code;
+    }
+
+    private List<GarmentRecomendationModel> givenRecommendationListOfSize(int size) {
+        return java.util.stream.Stream
+                .generate(GarmentRecomendationModel::new)
+                .limit(size)
+                .toList();
+    }
+
+    private void mockRepositoryReturning(String garmentCode, List<GarmentRecomendationModel> result) {
+        when(garmentRecomendationRepository.findRecomendationsByGarmentCode(garmentCode))
+                .thenReturn(result);
+    }
+
+    private void mockRepositoryReturningEmpty(String garmentCode) {
+        when(garmentRecomendationRepository.findRecomendationsByGarmentCode(garmentCode))
+                .thenReturn(List.of());
+    }
+
+    private void mockRepositoryThrowingNotFound(String garmentCode) {
+        when(garmentRecomendationRepository.findRecomendationsByGarmentCode(garmentCode))
+                .thenThrow(new GarmentNotFoundException("Prenda no encontrada"));
+    }
+
+    private List<GarmentRecomendationModel> whenExecutingWith(String garmentCode)
+            throws GarmentNotFoundException {
+
+        return getGarmentRecomendation.execute(garmentCode);
+    }
+
+    private void thenResultNotNull(Object result) {
+        assertNotNull(result);
+    }
+
+    private void thenResultHasSize(List<?> list, int size) {
+        assertEquals(size, list.size());
+    }
+
+    private void thenResultIsEmpty(List<?> list) {
+        assertTrue(list.isEmpty());
+    }
+
+    private void thenRepositoryCalledOnce(String garmentCode) {
+        verify(garmentRecomendationRepository, times(1))
+                .findRecomendationsByGarmentCode(garmentCode);
     }
 }

@@ -146,3 +146,42 @@ docker compose up --build
 | `MAX_FILE_SIZE` / `MAX_REQUEST_SIZE` | Límites upload | `50MB` |
 | `LOG_LEVEL_ROOT` / `LOG_LEVEL_OUTFITLAB` | Logging | `INFO` / `DEBUG` |
 | `SERVER_PORT` | Puerto interno | `8080` |
+
+## Testing
+Utilizacion de Patron Given - When - Then
+## - Given: preparar datos y mocks. Ej:
+
+     private UserSubscriptionEntity givenExistingSubscriptionReturningEntity(String email, String planCode, int combinations) {
+        UserSubscriptionEntity entity = givenSubscriptionEntity(email, planCode, 10L, combinations);
+        when(userSubscriptionJpaRepository.findByUserEmail(email))
+                .thenReturn(Optional.of(entity));
+        return entity;
+    }
+## - WHEN: ejecutar el método a probar. Ej:
+
+    private void whenFindingSubscriptionByUserEmail(String email, UserSubscriptionEntity entity) {
+        when(userSubscriptionJpaRepository.findByUserEmail(email)).thenReturn(Optional.of(entity));
+    }
+
+## - THEN: verificar resultados o excepciones. Ej:
+
+    private void thenSubscriptionShouldHaveCombinationsUsed(UserSubscriptionModel model, int expected) {
+        assertThat(model).isNotNull();
+        assertThat(model.getCombinationsUsed()).isEqualTo(expected);
+    }
+
+## - Test completo del metodo
+    @Test
+    void shouldReturnSubscriptionModelWhenEmailExists() throws SubscriptionNotFoundException {
+        String email = "test@mail.com";
+        UserSubscriptionEntity entity = givenExistingSubscriptionReturningEntity(email, "BASIC", 10);
+
+        whenFindingSubscriptionByUserEmail(email, entity);
+
+        UserSubscriptionModel result = whenFindByUserEmail(email);
+
+        thenSubscriptionShouldHaveCombinationsUsed(result, 10);
+        verify(userSubscriptionJpaRepository).findByUserEmail(email);
+    }
+
+
