@@ -1,6 +1,6 @@
 package com.outfitlab.project.domain.useCases.recomendations;
 
-import com.outfitlab.project.domain.interfaces.repositories.PrendaOcacionRepository;
+import com.outfitlab.project.domain.interfaces.repositories.PrendaOcasionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeleteAllPrendaOcacionRelatedToGarmentTest {
 
-    private PrendaOcacionRepository prendaOcacionRepository = mock(PrendaOcacionRepository.class);
+    private PrendaOcasionRepository prendaOcasionRepository = mock(PrendaOcasionRepository.class);
     private DeleteAllPrendaOcacionRelatedToGarment deleteAllPrendaOcacionRelatedToGarment;
 
     private final String VALID_GARMENT_CODE = "REMERA-001";
@@ -18,9 +18,8 @@ public class DeleteAllPrendaOcacionRelatedToGarmentTest {
 
     @BeforeEach
     void setUp() {
-        deleteAllPrendaOcacionRelatedToGarment = new DeleteAllPrendaOcacionRelatedToGarment(prendaOcacionRepository);
+        deleteAllPrendaOcacionRelatedToGarment = new DeleteAllPrendaOcacionRelatedToGarment(prendaOcasionRepository);
     }
-
 
     @Test
     public void shouldCallRepositoryToDeleteAllPrendaOcacionByValidGarmentCode() {
@@ -58,11 +57,10 @@ public class DeleteAllPrendaOcacionRelatedToGarmentTest {
         thenRepositoryDeleteAllWasCalled(VALID_GARMENT_CODE, 1);
     }
 
-
-    //privadoss
+    // privadoss
     private void givenRepositoryThrowsRuntimeException(String garmentCode) {
         doThrow(new RuntimeException("Simulated DB error"))
-                .when(prendaOcacionRepository).deleteAllPrendaOcacionByGarment(garmentCode);
+                .when(prendaOcasionRepository).deleteAllPrendaOcasionByGarment(garmentCode);
     }
 
     private void whenExecuteDeleteAll(String garmentCode) {
@@ -70,6 +68,6 @@ public class DeleteAllPrendaOcacionRelatedToGarmentTest {
     }
 
     private void thenRepositoryDeleteAllWasCalled(String expectedGarmentCode, int times) {
-        verify(prendaOcacionRepository, times(times)).deleteAllPrendaOcacionByGarment(expectedGarmentCode);
+        verify(prendaOcasionRepository, times(times)).deleteAllPrendaOcasionByGarment(expectedGarmentCode);
     }
 }
