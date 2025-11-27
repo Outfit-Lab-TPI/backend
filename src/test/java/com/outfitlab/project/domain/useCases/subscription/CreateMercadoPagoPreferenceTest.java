@@ -6,19 +6,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateMercadoPagoPreferenceTest {
 
     private CreateMercadoPagoPreference createPreferenceUseCase;
-
-    private static final String PLAN_ID = "premium-demo-1";
-    private static final String USER_EMAIL = "test@example.com";
-    private static final BigDecimal VALID_PRICE = new BigDecimal("25000.00");
-    private static final String CURRENCY = "ARS";
-    private static final String WEBHOOK_URL = "http://localhost:8080";
-    private static final String FRONTEND_URL = "http://localhost:5173";
+    private final String PLAN_ID = "premium-demo-1";
+    private final String USER_EMAIL = "test@example.com";
+    private final BigDecimal VALID_PRICE = new BigDecimal("25000.00");
+    private final String CURRENCY = "ARS";
+    private final String WEBHOOK_URL = "http://localhost:8080";
+    private final String FRONTEND_URL = "http://localhost:5173";
 
     @BeforeEach
     void setUp() {
