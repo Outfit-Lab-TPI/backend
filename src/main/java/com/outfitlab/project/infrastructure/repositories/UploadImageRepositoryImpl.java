@@ -24,6 +24,13 @@ public class UploadImageRepositoryImpl implements com.outfitlab.project.domain.i
     @Value("${AWS_BUCKET_NAME}")
     private String bucketName;
 
+    public UploadImageRepositoryImpl(S3Client s3Client, String region, String bucketName) {
+        this.s3Client = s3Client;
+        this.region = region;
+        this.bucketName = bucketName;
+    }
+
+
     @Override
     public String uploadFile(MultipartFile file, String folder) {
         try {
@@ -73,4 +80,8 @@ public class UploadImageRepositoryImpl implements com.outfitlab.project.domain.i
         if (index == -1) {throw new IllegalArgumentException("URL de S3 inválida: " + url);}
         return url.substring(index + ".amazonaws.com/".length());
     }
+
+
+    public void setRegion(String region) { this.region = region; }
+    public void setBucketName(String bucketName) { this.bucketName = bucketName; }
 }

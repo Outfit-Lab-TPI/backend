@@ -104,7 +104,7 @@ public class GeminiClientImpl implements GeminiClient {
         return objectMapper.writeValueAsString(directRequest);
     }
 
-    private String extractJsonContent(String apiResponseBody) throws Exception {
+    protected String extractJsonContent(String apiResponseBody) throws Exception {
         Map<String, Object> responseMap = objectMapper.readValue(apiResponseBody, Map.class);
 
         List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseMap.get("candidates");

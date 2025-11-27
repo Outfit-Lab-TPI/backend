@@ -34,183 +34,135 @@ class UserSubscriptionRepositoryImplTest {
     private UserSubscriptionRepositoryImpl repository;
 
     @Test
-    void givenEmailWhenFindByUserEmailThenReturnSubscriptionModel() throws SubscriptionNotFoundException {
-        UserEntity user = new UserEntity();
-        user.setEmail("test@mail.com");
+    void shouldReturnSubscriptionModelWhenEmailExists() throws SubscriptionNotFoundException {
+        String email = "test@mail.com";
+        UserSubscriptionEntity entity = givenExistingSubscriptionReturningEntity(email, "BASIC", 10);
 
-        SubscriptionEntity plan = new SubscriptionEntity();
-        plan.setPlanCode("BASIC");
+        whenFindingSubscriptionByUserEmail(email, entity);
 
-        UserSubscriptionEntity entity = new UserSubscriptionEntity();
-        entity.setUser(user);
-        entity.setSubscription(plan);
-        entity.setCombinationsUsed(10);
+        UserSubscriptionModel result = whenFindByUserEmail(email);
 
-        when(userSubscriptionJpaRepository.findByUserEmail("test@mail.com"))
-                .thenReturn(Optional.of(entity));
-
-        UserSubscriptionModel result = repository.findByUserEmail("test@mail.com");
-
-        assertThat(result).isNotNull();
-        assertThat(result.getCombinationsUsed()).isEqualTo(10);
-        verify(userSubscriptionJpaRepository).findByUserEmail("test@mail.com");
+        thenSubscriptionShouldHaveCombinationsUsed(result, 10);
+        verify(userSubscriptionJpaRepository).findByUserEmail(email);
     }
 
     @Test
-    void givenEmailWhenSubscriptionNotFoundThenThrowException() {
-        when(userSubscriptionJpaRepository.findByUserEmail("missing@mail.com"))
-                .thenReturn(Optional.empty());
+    void shouldThrowExceptionWhenSubscriptionNotFound() {
+        String email = "missing@mail.com";
 
-        assertThatThrownBy(() -> repository.findByUserEmail("missing@mail.com"))
+        whenFindingSubscriptionByUserEmailEmpty(email);
+
+        assertThatThrownBy(() -> whenFindByUserEmail(email))
                 .isInstanceOf(SubscriptionNotFoundException.class)
-                .hasMessageContaining("missing@mail.com");
+                .hasMessageContaining(email);
 
-        verify(userSubscriptionJpaRepository).findByUserEmail("missing@mail.com");
+        verify(userSubscriptionJpaRepository).findByUserEmail(email);
     }
 
+
     @Test
-    void givenSubscriptionModelWhenSaveThenPersistAndReturnModel() {
-        UserEntity user = new UserEntity();
-        user.setEmail("user@mail.com");
-        user.setId(5L);
+    void shouldSaveSubscriptionCorrectly() {
+        String email = "user@mail.com";
+        String planCode = "PREMIUM";
 
-        SubscriptionEntity plan = new SubscriptionEntity();
-        plan.setPlanCode("PREMIUM");
+        givenExistingUser(email, 5L);
+        givenExistingPlan(planCode);
+        givenSavedSubscription(3);
 
-        when(userJpaRepository.findByEmail("user@mail.com")).thenReturn(user);
-        when(subscriptionJpaRepository.findByPlanCode("PREMIUM")).thenReturn(Optional.of(plan));
+        UserSubscriptionModel request = givenSubscriptionModel(email, planCode, 3);
+        UserSubscriptionModel result = whenSave(request);
 
-        UserSubscriptionEntity savedEntity = new UserSubscriptionEntity();
-        savedEntity.setUser(user);
-        savedEntity.setSubscription(plan);
-        savedEntity.setCombinationsUsed(3);
-
-        when(userSubscriptionJpaRepository.save(any(UserSubscriptionEntity.class))).thenReturn(savedEntity);
-
-        UserSubscriptionModel model = new UserSubscriptionModel();
-        model.setUserEmail("user@mail.com");
-        model.setPlanCode("PREMIUM");
-        model.setCombinationsUsed(3);
-
-        UserSubscriptionModel result = repository.save(model);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getCombinationsUsed()).isEqualTo(3);
+        thenSubscriptionHasCombinations(result, 3);
         verify(userSubscriptionJpaRepository).save(any(UserSubscriptionEntity.class));
     }
 
     @Test
-    void givenInvalidUserWhenSaveThenThrowException() {
-        UserSubscriptionModel model = new UserSubscriptionModel();
-        model.setUserEmail("fail@mail.com");
+    void shouldThrowExceptionWhenUserNotFoundOnSave() {
+        String email = "fail@mail.com";
+        givenNoUser(email);
 
-        when(userJpaRepository.findByEmail("fail@mail.com")).thenReturn(null);
+        UserSubscriptionModel request = givenSubscriptionModel(email, null, 0);
 
-        assertThatThrownBy(() -> repository.save(model))
+        assertThatThrownBy(() -> whenSave(request))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Usuario no encontrado");
     }
 
     @Test
-    void givenInvalidPlanWhenSaveThenThrowException() {
-        UserSubscriptionModel model = new UserSubscriptionModel();
-        model.setUserEmail("user@mail.com");
-        model.setPlanCode("PLAN A");
+    void shouldThrowExceptionWhenPlanNotFoundOnSave() {
+        String email = "user@mail.com";
+        String planCode = "INVALID_PLAN";
 
-        when(userJpaRepository.findByEmail("user@mail.com")).thenReturn(new UserEntity());
-        when(subscriptionJpaRepository.findByPlanCode("PLAN A")).thenReturn(Optional.empty());
+        givenExistingUser(email, 1L);
+        givenNoPlan(planCode);
 
-        assertThatThrownBy(() -> repository.save(model))
+        UserSubscriptionModel request = givenSubscriptionModel(email, planCode, 0);
+
+        assertThatThrownBy(() -> whenSave(request))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Plan no encontrado");
     }
 
     @Test
-    void givenSubscriptionModelWhenUpdateThenUpdateAndReturnModel() {
-        SubscriptionEntity oldPlan = new SubscriptionEntity();
-        oldPlan.setPlanCode("ESTANDAR");
+    void shouldUpdateSubscriptionCorrectly() {
+        String email = "test@mail.com";
 
-        UserSubscriptionEntity existingUserSubs = new UserSubscriptionEntity();
-        existingUserSubs.setCombinationsUsed(1);
-        existingUserSubs.setUser(new UserEntity("test@mail.com"));
-        existingUserSubs.setSubscription(oldPlan);
+        givenExistingSubscription(email, "ESTANDAR", 1);
+        givenExistingPlan("ESTANDAR");
+        givenExistingPlan("PRO");
 
-        SubscriptionEntity newPlan = new SubscriptionEntity();
-        newPlan.setPlanCode("PRO");
+        UserSubscriptionModel request = givenSubscriptionModel(email, "PRO", 7);
+        UserSubscriptionModel result = whenUpdate(request);
 
-        when(userSubscriptionJpaRepository.findByUserEmail("test@mail.com"))
-                .thenReturn(Optional.of(existingUserSubs));
-        when(subscriptionJpaRepository.findByPlanCode("ESTANDAR"))
-                .thenReturn(Optional.of(oldPlan));
-        when(subscriptionJpaRepository.findByPlanCode("PRO"))
-                .thenReturn(Optional.of(newPlan));
-        when(userSubscriptionJpaRepository.save(existingUserSubs)).thenReturn(existingUserSubs);
-
-        UserSubscriptionModel model = new UserSubscriptionModel();
-        model.setUserEmail("test@mail.com");
-        model.setPlanCode("PRO");
-        model.setCombinationsUsed(7);
-
-        UserSubscriptionModel result = repository.update(model);
-
-        assertThat(existingUserSubs.getSubscription()).isEqualTo(newPlan);
-        assertThat(existingUserSubs.getCombinationsUsed()).isEqualTo(7);
-        assertThat(result).isNotNull();
+        thenSubscriptionPlanIs(email, "PRO");
+        thenSubscriptionHasCombinations(result, 7);
     }
 
     @Test
-    void givenNonExistingSubscriptionWhenUpdateThenThrowException() {
-        UserSubscriptionModel model = new UserSubscriptionModel();
-        model.setUserEmail("noexiste@mail.com");
+    void shouldThrowExceptionWhenSubscriptionNotFoundOnUpdate() {
+        String email = "noexiste@mail.com";
+        UserSubscriptionModel model = givenSubscriptionModel(email, null, 0);
 
-        when(userSubscriptionJpaRepository.findByUserEmail("noexiste@mail.com"))
-                .thenReturn(Optional.empty());
+        givenNoSubscription(email);
 
-        assertThatThrownBy(() -> repository.update(model))
+        assertThatThrownBy(() -> whenUpdate(model))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Suscripción no encontrada");
     }
 
     @Test
-    void givenInvalidPlanWhenUpdateThenThrowException() {
-        UserSubscriptionModel model = new UserSubscriptionModel();
-        model.setUserEmail("test@mail.com");
-        model.setPlanCode("TURBO");
+    void shouldThrowExceptionWhenPlanNotFoundOnUpdate() {
+        String email = "test@mail.com";
+        String planCode = "TURBO";
 
-        when(userSubscriptionJpaRepository.findByUserEmail("test@mail.com"))
-                .thenReturn(Optional.of(new UserSubscriptionEntity()));
-        when(subscriptionJpaRepository.findByPlanCode("TURBO"))
-                .thenReturn(Optional.empty());
+        givenExistingSubscription(email, "ANY_PLAN", 0);
+        givenNoPlan(planCode);
 
-        assertThatThrownBy(() -> repository.update(model))
+        UserSubscriptionModel model = givenSubscriptionModel(email, planCode, 0);
+
+        assertThatThrownBy(() -> whenUpdate(model))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Plan no encontrado");
     }
 
     @Test
-    void givenEmailAndCombinationsWhenIncrementCounterThenCallsIncrementCombinations() {
-        UserEntity user = new UserEntity();
-        user.setId(1L);
+    void shouldIncrementCombinationsCounter() {
+        String email = "test@mail.com";
+        givenExistingUser(email, 1L);
 
-        when(userJpaRepository.findByEmail("test@mail.com")).thenReturn(user);
+        whenIncrementCounter(email, "combinations");
 
-        repository.incrementCounter("test@mail.com", "combinations");
-
-        verify(userSubscriptionJpaRepository).incrementCombinationsByUserId(1L);
+        thenIncrementCombinationsWasCalled(1L);
     }
-
     @Test
-    void givenEmailAndFavoritesWhenIncrementCounterThenCallsIncrementFavorites() {
-        UserEntity user = new UserEntity();
-        user.setId(1L);
+    void shouldIncrementModelsCounter() {
+        String email = "test@mail.com";
+        givenExistingUser(email, 1L);
 
-        when(userJpaRepository.findByEmail("test@mail.com")).thenReturn(user);
+        whenIncrementCounter(email, "3d_models");
 
-        repository.incrementCounter("test@mail.com", "favorites");
-
-        verify(userSubscriptionJpaRepository).incrementFavoritesByUserId(1L);
+        thenIncrementModelsWasCalled(1L);
     }
-
     @Test
     void givenEmailAnd3dModelsWhenIncrementCounterThenCallsIncrementModels() {
         UserEntity user = new UserEntity();
@@ -224,40 +176,193 @@ class UserSubscriptionRepositoryImplTest {
     }
 
     @Test
-    void givenNonexistentUserWhenIncrementCounterThenThrowException() {
-        when(userJpaRepository.findByEmail("noexiste@mail.com")).thenReturn(null);
+    void shouldThrowExceptionWhenUserNotFoundOnCounterIncrement() {
+        String email = "noexiste@mail.com";
+        givenNoUser(email);
 
-        assertThatThrownBy(() -> repository.incrementCounter("noexiste@mail.com", "combinations"))
+        assertThatThrownBy(() -> whenIncrementCounter(email, "combinations"))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Usuario no encontrado");
     }
 
     @Test
-    void givenEmailAndFavoritesWhenDecrementCounterThenCallsDecrementFavorites() {
-        UserEntity user = new UserEntity();
-        user.setId(2L);
+    void shouldDecrementFavoritesWhenCounterIsFavorites() {
+        givenUserWithId("test@mail.com", 2L);
 
-        when(userJpaRepository.findByEmail("test@mail.com")).thenReturn(user);
+        whenDecrementCounter("test@mail.com", "favorites");
 
-        repository.decrementCounter("test@mail.com", "favorites");
-
-        verify(userSubscriptionJpaRepository).decrementFavoritesByUserId(2L);
+        thenDecrementFavoritesWasCalled(2L);
     }
 
     @Test
-    void givenNonFavoriteCounterWhenDecrementCounterThenDoNothing() {
-        repository.decrementCounter("test@mail.com", "models");
+    void shouldDoNothingWhenCounterIsNotFavorite() {
+        // No hace falta givenUser porque no lo usa internamente
+        whenDecrementCounter("test@mail.com", "models");
 
+        thenDecrementFavoritesWasNeverCalled();
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUserDoesNotExistOnDecrement() {
+        givenNoUserForEmail("noexiste@mail.com");
+
+        assertThatThrownBy(() -> whenDecrementCounter("noexiste@mail.com", "favorites"))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Usuario no encontrado");
+    }
+
+    private void whenFindingSubscriptionByUserEmail(String email, UserSubscriptionEntity entity) {
+        when(userSubscriptionJpaRepository.findByUserEmail(email)).thenReturn(Optional.of(entity));
+    }
+
+    private void whenFindingSubscriptionByUserEmailEmpty(String email) {
+        when(userSubscriptionJpaRepository.findByUserEmail(email)).thenReturn(Optional.empty());
+    }
+
+    private UserSubscriptionModel whenFindByUserEmail(String email) throws SubscriptionNotFoundException {
+        return repository.findByUserEmail(email);
+    }
+
+    private void thenSubscriptionShouldHaveCombinationsUsed(UserSubscriptionModel model, int expected) {
+        assertThat(model).isNotNull();
+        assertThat(model.getCombinationsUsed()).isEqualTo(expected);
+    }
+
+    private UserSubscriptionEntity givenSubscriptionEntity(String email, String planCode, Long userId, int combinations) {
+        UserEntity user = new UserEntity();
+        user.setId(userId);
+        user.setEmail(email);
+
+        SubscriptionEntity plan = new SubscriptionEntity("ESTANDAR", planCode);
+        plan.setPlanCode(planCode);
+
+        UserSubscriptionEntity entity = new UserSubscriptionEntity();
+        entity.setId(99L);
+        entity.setUser(user);
+        entity.setSubscription(plan);
+        entity.setCombinationsUsed(combinations);
+
+        return entity;
+    }
+
+    private void givenExistingSubscription(String email, String planCode, int combinations) {
+        UserSubscriptionEntity entity = givenSubscriptionEntity(email, planCode, 10L, combinations);
+        when(userSubscriptionJpaRepository.findByUserEmail(email)).thenReturn(Optional.of(entity));
+        when(userSubscriptionJpaRepository.save(any(UserSubscriptionEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+    }
+
+    private UserSubscriptionEntity givenExistingSubscriptionReturningEntity(String email, String planCode, int combinations) {
+        UserSubscriptionEntity entity = givenSubscriptionEntity(email, planCode, 10L, combinations);
+        when(userSubscriptionJpaRepository.findByUserEmail(email))
+                .thenReturn(Optional.of(entity));
+        return entity;
+    }
+    private void givenExistingPlan(String planCode) {
+        SubscriptionEntity plan = new SubscriptionEntity("ESTANDAR", planCode);
+        plan.setPlanCode(planCode);
+        when(subscriptionJpaRepository.findByPlanCode(planCode)).thenReturn(Optional.of(plan));
+    }
+
+    private void givenSavedSubscription(int combinations) {
+        UserSubscriptionEntity entity = givenSubscriptionEntity("user@mail.com", "PREMIUM", 5L, combinations);
+        when(userSubscriptionJpaRepository.save(any(UserSubscriptionEntity.class)))
+                .thenReturn(entity);
+    }
+
+    private void givenNoSubscription(String email) {
+        when(userSubscriptionJpaRepository.findByUserEmail(email))
+                .thenReturn(Optional.empty());
+    }
+
+    private void givenExistingUser(String email, Long id) {
+        UserEntity user = new UserEntity();
+        user.setEmail(email);
+        user.setId(id);
+        when(userJpaRepository.findByEmail(email)).thenReturn(user);
+    }
+
+    private void givenNoUser(String email) {
+        when(userJpaRepository.findByEmail(email)).thenReturn(null);
+    }
+
+
+    private void givenNoPlan(String planCode) {
+        when(subscriptionJpaRepository.findByPlanCode(planCode))
+                .thenReturn(Optional.empty());
+    }
+
+    private UserSubscriptionModel givenSubscriptionModel(String email, String planCode, int used) {
+        UserSubscriptionModel model = new UserSubscriptionModel();
+        model.setUserEmail(email);
+        model.setPlanCode(planCode);
+        model.setCombinationsUsed(used);
+        return model;
+    }
+
+    private UserSubscriptionModel whenSave(UserSubscriptionModel model) {
+        return repository.save(model);
+    }
+
+    private UserSubscriptionModel whenUpdate(UserSubscriptionModel model) {
+        return repository.update(model);
+    }
+
+    private void thenSubscriptionHasCombinations(UserSubscriptionModel result, int expected) {
+        assertThat(result).isNotNull();
+        assertThat(result.getCombinationsUsed()).isEqualTo(expected);
+    }
+
+    private void thenSubscriptionPlanIs(String email, String expectedPlan) {
+        SubscriptionEntity subscription =
+                userSubscriptionJpaRepository.findByUserEmail(email).get().getSubscription();
+
+        assertThat(subscription.getPlanCode()).isEqualTo(expectedPlan);
+    }
+
+    private void givenPlanExists(String planCode) {
+        SubscriptionEntity plan = new SubscriptionEntity("ESTANDAR", planCode);
+        plan.setPlanCode(planCode);
+        when(subscriptionJpaRepository.findByPlanCode(planCode)).thenReturn(Optional.of(plan));
+    }
+
+    private void whenIncrementCounter(String email, String counterType) {
+        repository.incrementCounter(email, counterType);
+    }
+
+    private void whenDecrementCounter(String email, String counterType) {
+        repository.decrementCounter(email, counterType);
+    }
+
+    private void thenIncrementCombinationsWasCalled(Long userId) {
+        verify(userSubscriptionJpaRepository).incrementCombinationsByUserId(userId);
+    }
+
+    private void thenIncrementFavoritesWasCalled(Long userId) {
+        verify(userSubscriptionJpaRepository).incrementFavoritesByUserId(userId);
+    }
+
+    private void thenIncrementModelsWasCalled(Long userId) {
+        verify(userSubscriptionJpaRepository).incrementModelsByUserId(userId);
+    }
+
+    private void thenDecrementFavoritesWasCalled(Long userId) {
+        verify(userSubscriptionJpaRepository).decrementFavoritesByUserId(userId);
+    }
+
+    private void givenUserWithId(String email, Long id) {
+        UserEntity user = new UserEntity();
+        user.setEmail(email);
+        user.setId(id);
+
+        when(userJpaRepository.findByEmail(email)).thenReturn(user);
+    }
+
+    private void givenNoUserForEmail(String email) {
+        when(userJpaRepository.findByEmail(email)).thenReturn(null);
+    }
+
+    private void thenDecrementFavoritesWasNeverCalled() {
         verify(userSubscriptionJpaRepository, never()).decrementFavoritesByUserId(anyLong());
     }
-
-    @Test
-    void givenNonexistentUserWhenDecrementCounterThenThrowException() {
-        when(userJpaRepository.findByEmail("noexiste@mail.com")).thenReturn(null);
-
-        assertThatThrownBy(() -> repository.decrementCounter("noexiste@mail.com", "favorites"))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Usuario no encontrado");
-    }
-
 }
