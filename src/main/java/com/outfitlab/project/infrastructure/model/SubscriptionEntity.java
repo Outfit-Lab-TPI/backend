@@ -2,12 +2,14 @@ package com.outfitlab.project.infrastructure.model;
 
 import com.outfitlab.project.domain.model.SubscriptionModel;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "suscription_entity")
+@NoArgsConstructor
 public class SubscriptionEntity {
 
-    @Id
+        @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
